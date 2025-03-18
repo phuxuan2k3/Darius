@@ -27,14 +27,14 @@ func startGRPC() {
 	}
 
 	//get llm host and model
-	llmHost := viper.GetString("llm.host")
-	if llmHost == "" || !strings.HasPrefix(llmHost, "http") {
-		llmHost = "http://104.199.250.71:2525/api/chat/completions"
-	}
-	llmModel := viper.GetString("llm.model")
-	if llmModel == "" || strings.HasPrefix(llmModel, "$") {
-		llmModel = "gpt-4o-mini"
-	}
+	// llmHost := viper.GetString("llm.host")
+	// if llmHost == "" || !strings.HasPrefix(llmHost, "http") {
+	// 	llmHost = "http://104.199.250.71:2525/api/chat/completions"
+	// }
+	// llmModel := viper.GetString("llm.model")
+	// if llmModel == "" || strings.HasPrefix(llmModel, "$") {
+	// 	llmModel = "gpt-4o-mini"
+	// }
 
 	llmGRPCAddress := viper.GetString("llm_grpc.host")
 	if llmGRPCAddress == "" || strings.HasPrefix(llmGRPCAddress, "$") {
