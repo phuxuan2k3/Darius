@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SuggestService_SuggestCriteria_FullMethodName  = "/suggest.SuggestService/SuggestCriteria"
-	SuggestService_SuggestOptions_FullMethodName   = "/suggest.SuggestService/SuggestOptions"
-	SuggestService_SuggestQuestions_FullMethodName = "/suggest.SuggestService/SuggestQuestions"
+	SuggestService_SuggestCriteria_FullMethodName          = "/suggest.SuggestService/SuggestCriteria"
+	SuggestService_SuggestOptions_FullMethodName           = "/suggest.SuggestService/SuggestOptions"
+	SuggestService_SuggestQuestions_FullMethodName         = "/suggest.SuggestService/SuggestQuestions"
+	SuggestService_SuggestInterviewQuestion_FullMethodName = "/suggest.SuggestService/SuggestInterviewQuestion"
 )
 
 // SuggestServiceClient is the client API for SuggestService service.
@@ -31,6 +32,7 @@ type SuggestServiceClient interface {
 	SuggestCriteria(ctx context.Context, in *SuggestCriteriaRequest, opts ...grpc.CallOption) (*SuggestCriteriaResponse, error)
 	SuggestOptions(ctx context.Context, in *SuggestOptionsRequest, opts ...grpc.CallOption) (*SuggestOptionsResponse, error)
 	SuggestQuestions(ctx context.Context, in *SuggestQuestionsRequest, opts ...grpc.CallOption) (*SuggestQuestionsResponse, error)
+	SuggestInterviewQuestion(ctx context.Context, in *SuggestInterviewQuestionRequest, opts ...grpc.CallOption) (*SuggestInterviewQuestionResponse, error)
 }
 
 type suggestServiceClient struct {
@@ -71,6 +73,16 @@ func (c *suggestServiceClient) SuggestQuestions(ctx context.Context, in *Suggest
 	return out, nil
 }
 
+func (c *suggestServiceClient) SuggestInterviewQuestion(ctx context.Context, in *SuggestInterviewQuestionRequest, opts ...grpc.CallOption) (*SuggestInterviewQuestionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SuggestInterviewQuestionResponse)
+	err := c.cc.Invoke(ctx, SuggestService_SuggestInterviewQuestion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SuggestServiceServer is the server API for SuggestService service.
 // All implementations must embed UnimplementedSuggestServiceServer
 // for forward compatibility.
@@ -78,6 +90,7 @@ type SuggestServiceServer interface {
 	SuggestCriteria(context.Context, *SuggestCriteriaRequest) (*SuggestCriteriaResponse, error)
 	SuggestOptions(context.Context, *SuggestOptionsRequest) (*SuggestOptionsResponse, error)
 	SuggestQuestions(context.Context, *SuggestQuestionsRequest) (*SuggestQuestionsResponse, error)
+	SuggestInterviewQuestion(context.Context, *SuggestInterviewQuestionRequest) (*SuggestInterviewQuestionResponse, error)
 	mustEmbedUnimplementedSuggestServiceServer()
 }
 
@@ -96,6 +109,9 @@ func (UnimplementedSuggestServiceServer) SuggestOptions(context.Context, *Sugges
 }
 func (UnimplementedSuggestServiceServer) SuggestQuestions(context.Context, *SuggestQuestionsRequest) (*SuggestQuestionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SuggestQuestions not implemented")
+}
+func (UnimplementedSuggestServiceServer) SuggestInterviewQuestion(context.Context, *SuggestInterviewQuestionRequest) (*SuggestInterviewQuestionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SuggestInterviewQuestion not implemented")
 }
 func (UnimplementedSuggestServiceServer) mustEmbedUnimplementedSuggestServiceServer() {}
 func (UnimplementedSuggestServiceServer) testEmbeddedByValue()                        {}
@@ -172,6 +188,24 @@ func _SuggestService_SuggestQuestions_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SuggestService_SuggestInterviewQuestion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SuggestInterviewQuestionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SuggestServiceServer).SuggestInterviewQuestion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SuggestService_SuggestInterviewQuestion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SuggestServiceServer).SuggestInterviewQuestion(ctx, req.(*SuggestInterviewQuestionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SuggestService_ServiceDesc is the grpc.ServiceDesc for SuggestService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +224,10 @@ var SuggestService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SuggestQuestions",
 			Handler:    _SuggestService_SuggestQuestions_Handler,
+		},
+		{
+			MethodName: "SuggestInterviewQuestion",
+			Handler:    _SuggestService_SuggestInterviewQuestion_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
