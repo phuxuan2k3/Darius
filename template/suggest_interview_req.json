@@ -1,0 +1,32 @@
+{
+  "context": {
+    "field": "AI Engineering",
+    "position": "AI Engineer Intern",
+    "language": "English",
+    "models": "en-GB-male",
+    "speed": -5,
+    "level": "Easy",
+    "maxQuestions": 10,
+    "skipIntro": false,
+    "coding": false,
+    "interviewId": "random-id"
+  },
+  "submissions": [
+    {
+      "question": "Could you introduce yourself?",
+      "answer": "I'm John Doe, a fourth-year student in University of Science."
+    },
+    {
+      "question": "What are your strengths and weaknesses?",
+      "answer": "I'm good at coding and problem-solving, but I'm not good at communication."
+    },
+    {
+      "question": "What are your favourite projects?",
+      "answer": "I love the project that I built an AI chatbot for my school."
+    },
+    {
+      "question": "What are your experience with AI?"
+    }
+  ],
+  "remainingQuestions": 7
+}

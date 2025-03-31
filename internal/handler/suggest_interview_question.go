@@ -7,6 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"regexp"
+	"strings"
 )
 
 func (h *handler) SuggestInterviewQuestion(ctx context.Context, req *suggest.SuggestInterviewQuestionRequest) (*suggest.SuggestInterviewQuestionResponse, error) {
@@ -24,9 +26,13 @@ func (h *handler) SuggestInterviewQuestion(ctx context.Context, req *suggest.Sug
 	}
 	log.Println("[SuggestInterviewQuestion] LLM response:", llmResponse)
 
+	return convertToInterviewQuestionResponse(llmResponse)
+}
+
+func convertToInterviewQuestionResponse(llmResponse string) (*suggest.SuggestInterviewQuestionResponse, error) {
 	input := llmResponse
 
-	jsonStr, err := extractJSONQuestions(input)
+	jsonStr, err := extractAndSanitizeJSON(input)
 	if err != nil {
 		log.Println("Lỗi:", err)
 		return nil, err
@@ -42,9 +48,29 @@ func (h *handler) SuggestInterviewQuestion(ctx context.Context, req *suggest.Sug
 	return questionListResp, nil
 }
 
+func extractAndSanitizeJSON(input string) (string, error) {
+	// Bước 1: Chuẩn hóa escape sequences
+	normalized := strings.ReplaceAll(input, `\n`, "\n")
+	normalized = strings.ReplaceAll(normalized, `\t`, "\t")
+
+	// Bước 2: Regex bắt JSON object hoặc array (không dùng đệ quy)
+	re := regexp.MustCompile(`(?s)(\{.*?\}|\[.*?\])`)
+	match := re.FindString(normalized)
+	if match == "" {
+		return "", fmt.Errorf("no valid JSON found in input")
+	}
+
+	// Bước 3: Kiểm tra tính hợp lệ
+	if !json.Valid([]byte(match)) {
+		return "", fmt.Errorf("invalid JSON after sanitization")
+	}
+
+	return match, nil
+}
+
 func promtGenerate(req *suggest.SuggestInterviewQuestionRequest, listOfPreviosQuestions string) string {
 	return fmt.Sprintf(`
-	You are an expert in creating interview questions. Your task is to generate the next interview question (only 1 question) based on the provided interview information and guidelines. Follow these steps:
+	You are an expert in creating interview questions. Your task is to generate the next two (only 2) interview questions based on the provided interview information and guidelines. Follow these steps:
 	1. Provided Input:
 	   - General Information:
 		Field: %v,
@@ -55,7 +81,7 @@ func promtGenerate(req *suggest.SuggestInterviewQuestionRequest, listOfPreviosQu
 		List of previous questions: %v,
 	2. Your Task:
 	   - Review the general information about the test to understand its context, purpose, and constraints.
-	   - Generate the next question for the interview that align with the interview's context, feild, language, position, difficulty level, and format.
+	   - Generate the next two (2) questions for the interview that align with the interview's context, feild, language, position, difficulty level, and format.
 	   - Ensure the questions are clear, precise, and meaningful.
 	   - Provide the output in the specified JSON format.
 	3. Output Format:
