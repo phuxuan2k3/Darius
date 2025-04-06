@@ -39,13 +39,13 @@ func startGRPC() {
 	llmGRPCAddress := viper.GetString("llm_grpc.host")
 	fmt.Print("llmGRPCAddress before hardcode: ", llmGRPCAddress)
 	if llmGRPCAddress == "" || strings.HasPrefix(llmGRPCAddress, "$") {
-		llmGRPCAddress = "104.199.250.71"
+		llmGRPCAddress = "arceus"
 	}
 	llmGRPCPort := viper.GetString("llm_grpc.port")
 	fmt.Print("llmGRPCPort before hardcode: ", llmGRPCPort)
 
 	if llmGRPCPort == "" || strings.HasPrefix(llmGRPCPort, "$") {
-		llmGRPCPort = "2524"
+		llmGRPCPort = "8080"
 	}
 	llmGRPCModel := viper.GetString("llm.model")
 	if llmGRPCModel == "" || strings.HasPrefix(llmGRPCModel, "$") {
