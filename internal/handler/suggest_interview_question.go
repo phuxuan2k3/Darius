@@ -17,9 +17,9 @@ func (h *handler) SuggestInterviewQuestion(ctx context.Context, req *suggest.Sug
 		return nil, errors.New("context or submissions is nil")
 	}
 
-	listOfPreviosQuestions := convertSubmissionToString(req.GetSubmissions())
-	prompt := promtGenerate(req, listOfPreviosQuestions)
-	
+	listOfPreviosQuestions := convertSuggestInterviewSubmissionToString(req.GetSubmissions())
+	prompt := generateSuggestInterviewQuestionPrompt(req, listOfPreviosQuestions)
+
 	llmResponse, err := h.llmGRPCService.Generate(ctx, prompt)
 	if err != nil {
 		return nil, err
@@ -68,7 +68,16 @@ func extractAndSanitizeJSON(input string) (string, error) {
 	return match, nil
 }
 
-func promtGenerate(req *suggest.SuggestInterviewQuestionRequest, listOfPreviosQuestions string) string {
+func parseInterviewQuestions(jsonStr string) (*suggest.SuggestInterviewQuestionResponse, error) {
+	var questions *suggest.SuggestInterviewQuestionResponse
+	err := json.Unmarshal([]byte(jsonStr), &questions)
+	if err != nil {
+		return nil, fmt.Errorf("lỗi giải mã JSON: %v", err)
+	}
+	return questions, nil
+}
+
+func generateSuggestInterviewQuestionPrompt(req *suggest.SuggestInterviewQuestionRequest, listOfPreviosQuestions string) string {
 	return fmt.Sprintf(`
 	You are an expert in creating interview questions. Your task is to generate the next two (only 2) interview questions based on the provided interview information and guidelines. Follow these steps:
 	1. Provided Input:
@@ -91,22 +100,13 @@ func promtGenerate(req *suggest.SuggestInterviewQuestionRequest, listOfPreviosQu
 	Now, based on the input, generate the output in the specified format
 	
 		`, req.GetContext().GetField(), req.GetContext().GetPosition(), req.GetContext().GetLanguage(), req.GetContext().GetLevel(), req.GetContext().GetMaxQuestions(), listOfPreviosQuestions)
-}	
-
-func convertSubmissionToString(submissions []*suggest.SuggestInterviewQuestionRequest_Submission) string {
-	listOfPreviosQuestions := ""
-	for index, submission := range submissions {
-		listOfPreviosQuestions += fmt.Sprintln("Question ", index+1,":", submission.GetQuestion())
-		listOfPreviosQuestions += fmt.Sprintln("Answer ", index+1,":", submission.GetAnswer())
-	}
-	return listOfPreviosQuestions
 }
 
-func parseInterviewQuestions(jsonStr string) (*suggest.SuggestInterviewQuestionResponse, error) {
-	var questions *suggest.SuggestInterviewQuestionResponse
-	err := json.Unmarshal([]byte(jsonStr), &questions)
-	if err != nil {
-		return nil, fmt.Errorf("lỗi giải mã JSON: %v", err)
+func convertSuggestInterviewSubmissionToString(submissions []*suggest.SuggestInterviewQuestionRequest_Submission) string {
+	listOfPreviosQuestions := ""
+	for index, submission := range submissions {
+		listOfPreviosQuestions += fmt.Sprintln("Question ", index+1, ":", submission.GetQuestion())
+		listOfPreviosQuestions += fmt.Sprintln("Answer ", index+1, ":", submission.GetAnswer())
 	}
-	return questions, nil
+	return listOfPreviosQuestions
 }

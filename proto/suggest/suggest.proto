@@ -34,6 +34,13 @@ service SuggestService {
         body: "*"
         };
     }
+
+    rpc ScoreInterview(ScoreInterviewRequest) returns (ScoreInterviewResponse) {
+        option (google.api.http) = {
+        post: "/v1/score_interview"
+        body: "*"
+        };
+    }
 } 
 
 message SuggestInterviewQuestionRequest {
@@ -131,4 +138,26 @@ message SuggestQuestionsRequest {
     int32 number_of_question = 9;
     string candidate_seniority = 10;
     string context = 11;   
+}
+
+message ScoreInterviewRequest {
+    message Submission {
+        int32 index = 1;
+        string question = 2;
+        string answer = 3;
+    }
+    repeated Submission submissions = 1;
+}
+
+message ScoreInterviewResponse {
+    message Submission{
+        int32 index = 1;
+        string comment = 2;
+        string score = 3;
+    }
+    repeated Submission submission = 1;
+    map<string, int32> totalScore = 2;
+    string positive_feedback = 3;
+    string actionable_feedback = 4;
+    string final_comment = 5;
 }
