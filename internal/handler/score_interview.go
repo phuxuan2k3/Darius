@@ -101,7 +101,7 @@ json
 Copy
 Edit
 {
-  "submissions": [
+  "result": [
     {
       "index": 1,
       "comment": "Your comment here (optional, can be empty)",

@@ -10,7 +10,7 @@ import (
 func Test_sanitizeAndParseResponse(t *testing.T) {
 	t.Run("Test sanitizeAndParseResponse", func(t *testing.T) {
 		input := `{
-  "submission": [
+  "result": [
     {
       "index": 1,
       "comment": "The introduction is clear but very brief. Including more details such as major, interests, or relevant experience would provide a fuller picture.",
@@ -34,14 +34,14 @@ func Test_sanitizeAndParseResponse(t *testing.T) {
     "D": 0,
     "F": 0
   },
-  "positive_feedback": "- Demonstrates awareness of strengths and weaknesses.\n- Shows interest in meaningful projects like building an AI chatbot.",
-  "actionable_feedback": "- Expand answers with specific examples, technical details, and outcomes.\n- Provide a more comprehensive self-introduction, including background and goals.\n- Use clear structure and elaboration to strengthen communication.",
-  "final_comment": "The candidate shows potential and a genuine interest in technology, but responses are too brief and lack sufficient detail. With more preparation and elaboration, the candidate could present a much stronger impression."
+  "positiveFeedback": "- Demonstrates awareness of strengths and weaknesses.\n- Shows interest in meaningful projects like building an AI chatbot.",
+  "actionableFeedback": "- Expand answers with specific examples, technical details, and outcomes.\n- Provide a more comprehensive self-introduction, including background and goals.\n- Use clear structure and elaboration to strengthen communication.",
+  "finalComment": "The candidate shows potential and a genuine interest in technology, but responses are too brief and lack sufficient detail. With more preparation and elaboration, the candidate could present a much stronger impression."
 }
 
 `
 		expected := &suggest.ScoreInterviewResponse{
-			Submission: []*suggest.ScoreInterviewResponse_Submission{
+			Result: []*suggest.ScoreInterviewResponse_Submission{
 				{
 					Index:   1,
 					Comment: "The introduction is clear but very brief. Including more details such as major, interests, or relevant experience would provide a fuller picture.",
@@ -75,6 +75,6 @@ func Test_sanitizeAndParseResponse(t *testing.T) {
 			t.Fatalf("Expected no error, got %v", err)
 		}
 
-		assert.Equal(t, expected.Submission, result.Submission)
+		assert.Equal(t, expected, result)
 	})
 }

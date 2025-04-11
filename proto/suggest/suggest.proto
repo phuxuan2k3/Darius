@@ -155,9 +155,9 @@ message ScoreInterviewResponse {
         string comment = 2;
         string score = 3;
     }
-    repeated Submission submission = 1;
+    repeated Submission result = 1;
     map<string, int32> totalScore = 2;
-    string positive_feedback = 3;
-    string actionable_feedback = 4;
-    string final_comment = 5;
+    string positiveFeedback = 3;
+    string actionableFeedback = 4;
+    string finalComment = 5;
 }
