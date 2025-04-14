@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"context"
 	"darius/internal/handler"
+	f2_score "darius/internal/handler/f2-score"
 	llm_grpc "darius/internal/llm-grpc"
 
 	hello "darius/pkg/proto/hello"
@@ -13,6 +15,7 @@ import (
 
 	"flag"
 
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -62,6 +65,43 @@ func startGRPC() {
 	arceusClient := suggest.NewArceusClient(conn)
 	llmGRPCService := llm_grpc.NewService(arceusClient, llmGRPCModel)
 
+	// message queue
+	f2scoreReqQueueAddr := viper.GetString("F2_SCORE_REQ_QUEUE_ADDRESS")
+	f2scoreReqQueueName := viper.GetString("F2_SCORE_REQ_QUEUE_NAME")
+
+	f2reqConn, f2reqCh, f2reqQ := conectRequestQueue(f2scoreReqQueueAddr, f2scoreReqQueueName)
+	if f2reqCh == nil || f2reqQ == nil {
+		log.Fatal("Failed to connect to RabbitMQ")
+	}
+	defer f2reqConn.Close()
+
+	f2scoreRespQueueAddr := viper.GetString("F2_SCORE_RESP_QUEUE_ADDRESS")
+	f2scoreRespQueueName := viper.GetString("F2_SCORE_RESP_QUEUE_NAME")
+	f2respConn, f2respCh, f2respQ := conectRequestQueue(f2scoreRespQueueAddr, f2scoreRespQueueName)
+	if f2respCh == nil || f2respQ == nil {
+		log.Fatal("Failed to connect to RabbitMQ")
+	}
+	defer f2respConn.Close()
+
+	f2scoringHandler := f2_score.NewScoringHandler(llmGRPCService, f2respCh, f2respQ)
+
+	msgs, err := f2reqCh.Consume(f2reqQ.Name, "", false, false, false, false, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	const maxWorker = 2
+	for i := 0; i < maxWorker; i++ {
+		go func() {
+			for msg := range msgs {
+				f2scoringHandler.Score(context.Background(), &f2_score.ScoreRequest{
+					Msg: msg,
+				})
+				msg.Ack(false)
+			}
+		}()
+	}
+
 	// r, err := c.GenerateText(context.Background(),
 	// 	&suggest.GenerateTextRequest{
 	// 		Model:   llmModel,
@@ -90,4 +130,29 @@ func startGRPC() {
 		log.Fatalf("Failed to serve: %v", err)
 	}
 
+}
+
+func conectRequestQueue(addr, queueName string) (*amqp.Connection, *amqp.Channel, *amqp.Queue) {
+	if addr == "" || queueName == "" {
+		log.Fatal("RabbitMQ address or queue is not set")
+		return nil, nil, nil
+	}
+
+	conn, err := amqp.Dial(addr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ch, err := conn.Channel()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer ch.Close()
+
+	q, err := ch.QueueDeclare(queueName, true, false, false, false, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return conn, ch, &q
 }

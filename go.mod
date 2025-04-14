@@ -3,7 +3,9 @@ module darius
 go 1.23.6
 
 require (
+	github.com/envoyproxy/protoc-gen-validate v1.1.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.1
+	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/spf13/cast v1.7.1
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0

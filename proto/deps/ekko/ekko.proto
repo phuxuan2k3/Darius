@@ -1,0 +1,393 @@
+syntax = "proto3";
+
+package ekko;
+
+option go_package = "ekko/api;ekko";
+
+import "validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+service Ekko {
+
+  rpc CreateField (CreateFieldRequest) returns (CreateFieldResponse)  {
+    option (google.api.http) = {
+      post: "/ekko/field/create"
+      body: "*"
+    };
+  };
+  rpc UpdateField (UpdateFieldRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/ekko/field/update"
+      body: "*"
+    };
+  };
+  rpc DeleteField (DeleteFieldRequest) returns (google.protobuf.Empty)  {
+    option (google.api.http) = {
+      post: "/ekko/field/delete"
+      body: "*"
+    };
+  };
+
+  // Scenario api
+  rpc CreateScenario (CreateScenarioRequest) returns (CreateScenarioResponse) {
+    option (google.api.http) = {
+      post: "/ekko/scenario/create"
+      body: "*"
+    };
+  };
+  rpc UpdateScenario (UpdateScenarioRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/ekko/scenario/update"
+      body: "*"
+    };
+  };
+  rpc DeleteScenario (DeleteScenarioRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/ekko/scenario/delete"
+      body: "*"
+    };
+  };
+  rpc ListScenario (ListScenarioRequest) returns (ListScenarioResponse){
+    option (google.api.http) = {
+      post: "/ekko/scenario/list"
+      body: "*" 
+    };
+  };
+  rpc FavoriteScenario (FavoriteScenarioRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/ekko/scenario/favorite"
+      body: "*"
+    };
+  };
+  rpc RatingScenario (RatingScenarioRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/ekko/scenario/rating"
+      body: "*"
+    };
+  };
+
+  // Submission for candidate
+  rpc ListAttempt (ListAttemptRequest) returns (ListAttemptResponse){
+    option (google.api.http) = {
+      post: "/ekko/attempt/list"
+      body: "*"
+    };
+  };
+  rpc GetAttempt (GetAttemptRequest) returns (GetAttemptResponse){
+    option (google.api.http) = {
+      post: "/ekko/attempt/get"
+      body: "*"
+    };
+  };
+  rpc SubmitAnswer (SubmitAnswerRequest) returns (SubmitAnswerResponse){
+    option (google.api.http) = {
+      post: "/ekko/submit"
+      body: "*"
+    };
+  };
+
+  // Submission for bm
+  rpc ListAllSubmission (ListAllSubmissionRequest) returns (ListAllSubmissionResponse){
+    option (google.api.http) = {
+      post: "/ekko/submission/list"
+      body: "*"
+    };
+  };
+  
+}
+
+service Chronobreak {   
+  rpc ListField (ListFieldRequest) returns (ListFieldResponse){
+    option (google.api.http) = {
+      post: "/chronobreak/field/list"
+      body: "*"
+    };
+  };
+  rpc ListScenario (ListScenarioRequest) returns (ListScenarioResponse){
+    option (google.api.http) = {
+      post: "/chronobreak/scenario/noauth/list"
+      body: "*"
+    };
+  };
+  rpc GetScenario (GetScenarioRequest) returns (GetScenarioResponse){
+    option (google.api.http) = {
+      post: "/chronobreak/scenario"
+      body: "*"
+    };
+  };
+}
+
+
+enum SortType {
+    SORT_TYPE_UNKNOWN = 0;
+    SORT_TYPE_ASC =  1;
+    SORT_TYPE_DESC = 2;
+}
+
+message SortMethod {
+    string name = 1 [
+      (validate.rules).string = {
+        min_len: 1
+      }
+    ];
+    SortType type = 2;
+}
+
+message TestRequest {
+}
+
+message TestResponse {
+    string message = 1;
+}
+
+enum SubmissionStatus {
+  SUBMISSION_STATUS_UNKNOWN = 0;
+  SUBMISSION_STATUS_IN_PROGRESS = 1;
+  SUBMISSION_STATUS_FAILED = 2;
+  SUBMISSION_STATUS_SUCCESS = 3;
+}
+
+enum PublicationStatus {
+  PUBLICATION_STATUS_UNKNOWN = 0;
+  PUBLICATION_STATUS_DRAFT = 1;
+  PUBLICATION_STATUS_PUBLISHED = 2;
+}
+
+message Answer {
+  uint64 question_id = 1;
+  string answer = 2;
+  float relevance = 3;
+  float clarity_completeness = 4;
+  float accuracy = 5;
+  float overall = 6;
+  SubmissionStatus status = 7;
+  BaseData base_data = 8;
+}
+
+message EvaluationRequest {
+  EvalutionScenario scenario = 1;
+  repeated QuestionAnswerPair data = 2; 
+  message EvalutionScenario {
+    string name = 1;
+    string description = 2;
+  } 
+  message QuestionAnswerPair {
+    uint64 id = 1;
+    string question = 2;
+    string answer = 3;
+    string criteria = 4;
+  } 
+}
+
+message EvaluationResponse {
+  repeated Result result = 1;
+  message Result {
+    uint64 id = 1;
+    double relevance = 2;
+    double clarity_completeness = 3;
+    double accuracy = 4;
+    double overall = 5;
+    SubmissionStatus status = 6;
+  } 
+}
+
+
+message Attempt {
+  uint64 id = 1;
+  uint64 scenario_id = 2;
+  repeated Answer answers = 3;
+  BaseData base_data = 4;
+  int32 attempt_number = 5;    
+}
+
+message Submission {
+  uint64 id = 1;
+  uint64 scenario_id = 2;
+  uint64 candidate_id = 3;
+  repeated Attempt attempts = 4;
+}
+
+message BaseData {
+  google.protobuf.Timestamp created_at = 1;
+  google.protobuf.Timestamp updated_at = 2;
+}
+
+message Field {
+  uint64 id = 1;
+  string name = 2;
+  BaseData base_data = 3;
+}
+
+message Scenario {
+  uint64 id = 1;
+  string name = 2;
+  string description = 3;
+  BaseData base_data = 4;
+  float rating = 5;
+  repeated Field fields = 6;
+  int32 total_participant = 7;
+  repeated Question questions = 8;
+}
+
+message Question{
+  uint64 id = 1;
+  string criteria =3;
+  string hint = 4;
+  string content = 5;
+  BaseData base_data = 6;    
+}
+
+message ListAllSubmissionRequest {
+  uint64 scenario_id = 1;
+  int32 page_index = 2 [(validate.rules).int32 = {gte: 0}];
+  int32 page_size = 3 [(validate.rules).int32 = {gte: 1}];
+  repeated SortMethod sort_method = 4;
+  google.protobuf.Timestamp from = 5;
+  google.protobuf.Timestamp to = 6;
+}
+
+message ListAllSubmissionResponse {
+  repeated Submission submissions = 1;
+  int32 total_count = 2;
+  int32 total_page = 3;
+  ListAllSubmissionRequest request = 4;
+}
+
+message ListAttemptRequest {
+  uint64 scenario_id = 1;    
+  int32 page_index = 2 [(validate.rules).int32 = {gte: 0}];
+  int32 page_size = 3 [(validate.rules).int32 = {gte: 1}];
+  repeated SortMethod sort_method = 4;
+}
+
+message ListAttemptResponse {
+  repeated Attempt attempts = 1;
+  int32 total_count = 2;
+  int32 total_page = 3;
+  ListAttemptRequest request = 4;
+}
+
+message GetAttemptRequest {
+  uint64 id = 1;
+}
+
+message SubmitAnswerRequest {
+  uint64 scenario_id = 1;
+  repeated SubmittedAnswer answers = 2;
+  message SubmittedAnswer {
+      uint64 question_id = 1;
+      string answer = 2;
+  }
+}
+
+
+
+message SubmitAnswerResponse {
+  Attempt attempt = 1;
+}
+
+message GetAttemptResponse {
+  Attempt attempt = 1;
+}
+
+message CreateFieldResponse {
+  Field field = 1;
+}
+
+message CreateFieldRequest {
+  string name = 1;
+}
+
+message UpdateFieldRequest {
+  uint64 id = 1;  
+  string name = 2;
+}
+
+message DeleteFieldRequest {
+  repeated uint64 ids = 1;    
+}
+
+message ListFieldRequest {
+  repeated uint64 ids = 1;
+  repeated SortMethod sort_methods = 2;
+  int32 page_index = 3 [(validate.rules).int32 = {gte: 0}];
+  int32 page_size = 4 [(validate.rules).int32 = {gte: 1}];
+  optional string search_content = 5;
+}
+
+message ListFieldResponse{
+  repeated Field fields = 1;  
+  int32 total_count = 2;
+  int32 total_page = 3;
+  ListFieldRequest request = 4;   
+}
+
+message CreateScenarioRequest {
+  string name = 1;
+  string description = 2;
+  repeated uint64 field_ids = 3;
+  repeated ScenarioQuestion questions = 4;
+}
+
+message CreateScenarioResponse {
+  Scenario scenario = 1;
+}
+
+message UpdateScenarioRequest {
+  uint64 id = 1;
+  string name = 2;
+  string description = 3;
+  repeated uint64 field_ids = 4;
+  repeated ScenarioQuestion questions = 5;
+}
+
+message ScenarioQuestion {
+  string criteria = 1;
+  string hint = 2;
+  string content = 3;   
+}
+
+message DeleteScenarioRequest {
+  repeated uint64 ids = 1;
+}
+
+message ListScenarioRequest {
+  repeated uint64 bm_ids = 1;
+  optional string search_content = 2;
+  repeated SortMethod sort_methods = 3;
+  int32 page_index = 4 [(validate.rules).int32 = {gte: 0}];   
+  int32 page_size = 5 [(validate.rules).int32 = {gte: 1}];
+  optional bool is_favorite = 6;
+  optional bool is_finished = 7;
+  repeated uint64 field_ids = 8;
+  google.protobuf.Timestamp from = 9;
+  google.protobuf.Timestamp to = 10;
+  optional float min_rating = 11;
+  optional int32 min_participant = 12;  
+}
+
+message ListScenarioResponse {
+  repeated Scenario scenario = 1;
+  int32 total_count = 2;
+  int32 total_page = 3;
+  ListScenarioRequest request = 4;
+}
+
+message GetScenarioRequest {
+  uint64 id = 1;
+}
+
+message GetScenarioResponse {
+  Scenario scenario = 1; 
+}
+
+message FavoriteScenarioRequest {
+  uint64 id = 1;
+}
+
+message RatingScenarioRequest {
+  uint64 id = 1;
+  float rating = 2 [(validate.rules).float = {gte: 0, lte: 5}];
+}
