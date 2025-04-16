@@ -69,7 +69,7 @@ func startGRPC() {
 	f2scoreReqQueueAddr := viper.GetString("F2_SCORE_REQ_QUEUE_ADDRESS")
 	f2scoreReqQueueName := viper.GetString("F2_SCORE_REQ_QUEUE_NAME")
 
-	f2reqConn, f2reqCh, f2reqQ := conectRequestQueue(f2scoreReqQueueAddr, f2scoreReqQueueName)
+	f2reqConn, f2reqCh, f2reqQ := conectQueue(f2scoreReqQueueAddr, f2scoreReqQueueName)
 	if f2reqCh == nil || f2reqQ == nil {
 		log.Fatal("Failed to connect to RabbitMQ")
 	}
@@ -77,7 +77,7 @@ func startGRPC() {
 
 	f2scoreRespQueueAddr := viper.GetString("F2_SCORE_RESP_QUEUE_ADDRESS")
 	f2scoreRespQueueName := viper.GetString("F2_SCORE_RESP_QUEUE_NAME")
-	f2respConn, f2respCh, f2respQ := conectRequestQueue(f2scoreRespQueueAddr, f2scoreRespQueueName)
+	f2respConn, f2respCh, f2respQ := conectQueue(f2scoreRespQueueAddr, f2scoreRespQueueName)
 	if f2respCh == nil || f2respQ == nil {
 		log.Fatal("Failed to connect to RabbitMQ")
 	}
@@ -132,11 +132,13 @@ func startGRPC() {
 
 }
 
-func conectRequestQueue(addr, queueName string) (*amqp.Connection, *amqp.Channel, *amqp.Queue) {
+func conectQueue(addr, queueName string) (*amqp.Connection, *amqp.Channel, *amqp.Queue) {
 	if addr == "" || queueName == "" {
 		log.Fatal("RabbitMQ address or queue is not set")
 		return nil, nil, nil
 	}
+
+	log.Printf("Connecting to RabbitMQ at %v, queue %v", addr, queueName)
 
 	conn, err := amqp.Dial(addr)
 	if err != nil {
@@ -147,7 +149,6 @@ func conectRequestQueue(addr, queueName string) (*amqp.Connection, *amqp.Channel
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer ch.Close()
 
 	q, err := ch.QueueDeclare(queueName, true, false, false, false, nil)
 	if err != nil {
