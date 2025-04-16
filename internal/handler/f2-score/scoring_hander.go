@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	amqp "github.com/rabbitmq/amqp091-go"
-	"google.golang.org/protobuf/proto"
+	proto "google.golang.org/protobuf/encoding/protojson"
 )
 
 type ScoringHandler interface {
