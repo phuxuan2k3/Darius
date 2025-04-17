@@ -29,7 +29,7 @@ func (s *service) Generate(ctx context.Context, text string) (string, error) {
 	})
 
 	if err != nil {
-		log.Printf("Error calling arceus service: %v", err)
+		log.Printf("Error calling Arceus service: %v", err)
 		return "", err
 	}
 
