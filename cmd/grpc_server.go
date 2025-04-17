@@ -51,6 +51,8 @@ func startGRPC() {
 		llmGRPCPort = "8080"
 	}
 	llmGRPCModel := viper.GetString("LLM_GRPC_MODEL")
+	log.Print("llmGRPCModel before hardcode: ", llmGRPCModel)
+
 	if llmGRPCModel == "" || strings.HasPrefix(llmGRPCModel, "$") {
 		llmGRPCModel = "gpt-4o-mini"
 	}
