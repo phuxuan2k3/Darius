@@ -63,6 +63,7 @@ func startGRPC() {
 	defer conn.Close()
 
 	arceusClient := suggest.NewArceusClient(conn)
+	log.Printf("Connected to LLM gRPC server at %s", *addr)
 	llmGRPCService := llm_grpc.NewService(arceusClient, llmGRPCModel)
 
 	// message queue

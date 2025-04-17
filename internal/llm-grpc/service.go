@@ -3,6 +3,7 @@ package llm_grpc
 import (
 	"context"
 	suggest "darius/pkg/proto/suggest"
+	"log"
 )
 
 type Service interface {
@@ -26,7 +27,9 @@ func (s *service) Generate(ctx context.Context, text string) (string, error) {
 		Content: text,
 		Model:   s.llm_model,
 	})
+
 	if err != nil {
+		log.Printf("Error calling arceus service: %v", err)
 		return "", err
 	}
 
