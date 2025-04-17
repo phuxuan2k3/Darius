@@ -40,17 +40,17 @@ func startGRPC() {
 	// }
 
 	llmGRPCAddress := viper.GetString("LLM_GRPC_HOST")
-	fmt.Print("llmGRPCAddress before hardcode: ", llmGRPCAddress)
+	log.Print("llmGRPCAddress before hardcode: ", llmGRPCAddress)
 	if llmGRPCAddress == "" || strings.HasPrefix(llmGRPCAddress, "$") {
 		llmGRPCAddress = "arceus"
 	}
 	llmGRPCPort := viper.GetString("LLM_GRPC_PORT")
-	fmt.Print("llmGRPCPort before hardcode: ", llmGRPCPort)
+	log.Print("llmGRPCPort before hardcode: ", llmGRPCPort)
 
 	if llmGRPCPort == "" || strings.HasPrefix(llmGRPCPort, "$") {
 		llmGRPCPort = "8080"
 	}
-	llmGRPCModel := viper.GetString("llm.model")
+	llmGRPCModel := viper.GetString("LLM_GRPC_MODEL")
 	if llmGRPCModel == "" || strings.HasPrefix(llmGRPCModel, "$") {
 		llmGRPCModel = "gpt-4o-mini"
 	}
