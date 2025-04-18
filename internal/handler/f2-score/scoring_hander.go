@@ -112,7 +112,7 @@ Return the result in the following JSON format:
       "clarityCompleteness": <float64 1-10>,
       "accuracy": <float64 1-10>,
       "overall": <float64 1-10>,
-      "status": "SUBMISSION_STATUS_SUCCESS" or "SUBMISSION_STATUS_FAILED"
+      "status": <unit64 2:SUBMISSION_STATUS_FAILED, 3:SUBMISSION_STATUS_SUCCESS>
     },
     ...
   ]
