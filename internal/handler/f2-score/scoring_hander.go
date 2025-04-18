@@ -107,11 +107,11 @@ Return the result in the following JSON format:
 {
   "result": [
     {
-      "id": "<question_id>",
-      "relevance": <number 1-10>,
-      "clarityCompleteness": <number 1-10>,
-      "accuracy": <number 1-10>,
-      "overall": <number 1-10>,
+      "id": <uint64 question_id>,
+      "relevance": <float64 1-10>,
+      "clarityCompleteness": <float64 1-10>,
+      "accuracy": <float64 1-10>,
+      "overall": <float64 1-10>,
       "status": "SUBMISSION_STATUS_SUCCESS" or "SUBMISSION_STATUS_FAILED"
     },
     ...
