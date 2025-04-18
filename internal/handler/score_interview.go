@@ -30,7 +30,7 @@ func (h *handler) ScoreInterview(ctx context.Context, req *suggest.ScoreIntervie
 }
 
 func sanitizeAndParseResponse(input string) (*suggest.ScoreInterviewResponse, error) {
-	// B1: Lấy JSON từ dấu { đầu tiên đến } cuối cùng
+	// B1: Lấy JSON từ dấu { đầu tiên đến } cuối cùng.
 	start := strings.Index(input, "{")
 	end := strings.LastIndex(input, "}")
 	if start == -1 || end == -1 || start > end {
