@@ -2,7 +2,7 @@ package f2_score
 
 import (
 	"context"
-	llm_grpc "darius/internal/llm-grpc"
+	llmManager "darius/managers/llm"
 	ekko "darius/pkg/proto/deps/ekko"
 	"encoding/json"
 	"errors"
@@ -19,16 +19,16 @@ type ScoringHandler interface {
 }
 
 type scoringHandler struct {
-	llmGRPCService llm_grpc.Service
-	queueChannel   *amqp.Channel
-	queueQueue     *amqp.Queue
+	llmManager   llmManager.Manager
+	queueChannel *amqp.Channel
+	queueQueue   *amqp.Queue
 }
 
-func NewScoringHandler(llmGRPCService llm_grpc.Service, queueChannel *amqp.Channel, queueQueue *amqp.Queue) ScoringHandler {
+func NewScoringHandler(llmManager llmManager.Manager, queueChannel *amqp.Channel, queueQueue *amqp.Queue) ScoringHandler {
 	return &scoringHandler{
-		llmGRPCService: llmGRPCService,
-		queueChannel:   queueChannel,
-		queueQueue:     queueQueue,
+		llmManager:   llmManager,
+		queueChannel: queueChannel,
+		queueQueue:   queueQueue,
 	}
 }
 func (h *scoringHandler) Score(ctx context.Context, req *ScoreRequest) {
@@ -40,7 +40,7 @@ func (h *scoringHandler) Score(ctx context.Context, req *ScoreRequest) {
 	}
 
 	prompt := generatePrompt(data)
-	llmResponse, err := h.llmGRPCService.Generate(ctx, prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, "f2-scoring", prompt)
 	if err != nil {
 		log.Printf("Error generating response: %v", err)
 		return

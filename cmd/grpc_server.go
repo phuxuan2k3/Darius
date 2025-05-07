@@ -2,10 +2,12 @@ package cmd
 
 import (
 	"context"
+	"darius/cmd/db"
 	"darius/internal/handler"
 	f2_score "darius/internal/handler/f2-score"
-	llm_grpc "darius/internal/llm-grpc"
-
+	databaseService "darius/internal/services/database"
+	llm_grpc "darius/internal/services/llm-grpc"
+	llmManager "darius/managers/llm"
 	hello "darius/pkg/proto/hello"
 	suggest "darius/pkg/proto/suggest"
 	"fmt"
@@ -13,6 +15,7 @@ import (
 	"net"
 	"strings"
 
+	arceus "darius/pkg/proto/deps/arceus"
 	"flag"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -26,18 +29,8 @@ func startGRPC() {
 	port := viper.GetString("grpc.port")
 	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
+		log.Printf("Failed to listen: %v", err)
 	}
-
-	//get llm host and model
-	// llmHost := viper.GetString("llm.host")
-	// if llmHost == "" || !strings.HasPrefix(llmHost, "http") {
-	// 	llmHost = "http://104.199.250.71:2525/api/chat/completions"
-	// }
-	// llmModel := viper.GetString("llm.model")
-	// if llmModel == "" || strings.HasPrefix(llmModel, "$") {
-	// 	llmModel = "gpt-4o-mini"
-	// }
 
 	llmGRPCAddress := viper.GetString("LLM_GRPC_HOST")
 	log.Print("llmGRPCAddress before hardcode: ", llmGRPCAddress)
@@ -60,11 +53,11 @@ func startGRPC() {
 	flag.Parse()
 	conn, err := grpc.NewClient(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		log.Printf("did not connect: %v", err)
 	}
 	defer conn.Close()
 
-	arceusClient := suggest.NewArceusClient(conn)
+	arceusClient := arceus.NewArceusClient(conn)
 	log.Printf("Connected to LLM gRPC server at %s", *addr)
 	llmGRPCService := llm_grpc.NewService(arceusClient, llmGRPCModel)
 
@@ -74,7 +67,7 @@ func startGRPC() {
 
 	f2reqConn, f2reqCh, f2reqQ := conectQueue(f2scoreReqQueueAddr, f2scoreReqQueueName)
 	if f2reqCh == nil || f2reqQ == nil {
-		log.Fatal("Failed to connect to RabbitMQ")
+		log.Printf("Failed to connect to RabbitMQ")
 	}
 	defer f2reqConn.Close()
 
@@ -82,27 +75,37 @@ func startGRPC() {
 	f2scoreRespQueueName := viper.GetString("F2_SCORE_RESP_QUEUE_NAME")
 	f2respConn, f2respCh, f2respQ := conectQueue(f2scoreRespQueueAddr, f2scoreRespQueueName)
 	if f2respCh == nil || f2respQ == nil {
-		log.Fatal("Failed to connect to RabbitMQ")
+		log.Printf("Failed to connect to RabbitMQ")
 	}
 	defer f2respConn.Close()
 
-	f2scoringHandler := f2_score.NewScoringHandler(llmGRPCService, f2respCh, f2respQ)
-
-	msgs, err := f2reqCh.Consume(f2reqQ.Name, "", false, false, false, false, nil)
+	db, err := db.NewDatabase()
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("Failed to connect to database: %v", err)
 	}
 
-	const maxWorker = 2
-	for i := 0; i < maxWorker; i++ {
-		go func() {
-			for msg := range msgs {
-				f2scoringHandler.Score(context.Background(), &f2_score.ScoreRequest{
-					Msg: msg,
-				})
-				msg.Ack(false)
-			}
-		}()
+	dbService := databaseService.NewService(db)
+	llmManager := llmManager.NewManager(llmGRPCService, dbService)
+
+	if f2reqCh != nil && f2respCh != nil {
+		f2scoringHandler := f2_score.NewScoringHandler(llmManager, f2respCh, f2respQ)
+
+		msgs, err := f2reqCh.Consume(f2reqQ.Name, "", false, false, false, false, nil)
+		if err != nil {
+			log.Print(err)
+		}
+
+		const maxWorker = 2
+		for i := 0; i < maxWorker; i++ {
+			go func() {
+				for msg := range msgs {
+					f2scoringHandler.Score(context.Background(), &f2_score.ScoreRequest{
+						Msg: msg,
+					})
+					msg.Ack(false)
+				}
+			}()
+		}
 	}
 
 	// r, err := c.GenerateText(context.Background(),
@@ -115,13 +118,13 @@ func startGRPC() {
 	// 	Model: llmModel,
 	// })
 	// if err != nil {
-	// 	log.Fatalf("could not greet: %v", err)
+	// 	log.Printff("could not greet: %v", err)
 	// }
 	// log.Printf("Greeting: %s", r.Content)
 
 	handler := handler.NewHandlerWithDeps(handler.Dependency{
 		// LlmService: LlmService,
-		LLMGRPC: llmGRPCService,
+		LLMManager: llmManager,
 	})
 
 	grpcServer := grpc.NewServer()
@@ -137,7 +140,7 @@ func startGRPC() {
 
 func conectQueue(addr, queueName string) (*amqp.Connection, *amqp.Channel, *amqp.Queue) {
 	if addr == "" || queueName == "" {
-		log.Fatal("RabbitMQ address or queue is not set")
+		log.Printf("RabbitMQ address or queue is not set")
 		return nil, nil, nil
 	}
 
@@ -146,16 +149,19 @@ func conectQueue(addr, queueName string) (*amqp.Connection, *amqp.Channel, *amqp
 	conn, err := amqp.Dial(addr)
 	if err != nil {
 		log.Fatal(err)
+		return nil, nil, nil
 	}
 
 	ch, err := conn.Channel()
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return nil, nil, nil
 	}
 
 	q, err := ch.QueueDeclare(queueName, true, false, false, false, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return nil, nil, nil
 	}
 
 	return conn, ch, &q

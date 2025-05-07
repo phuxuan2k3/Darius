@@ -2,7 +2,7 @@ package handler
 
 import (
 	"context"
-	llm "darius/internal/llm"
+	llm "darius/internal/services/llm"
 	"darius/pkg/proto/suggest"
 	"encoding/json"
 	"fmt"
@@ -174,7 +174,7 @@ Now, based on the user's input, generate the output in the specified format
 	// 	Model:   viper.GetString("llm.model"),
 	// 	Content: prompt,
 	// })
-	llmResponse, err := h.llmGRPCService.Generate(ctx, prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, "f1-suggest-question", prompt)
 	if err != nil {
 		return nil, err
 	}

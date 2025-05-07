@@ -9,7 +9,7 @@ import (
 	"log"
 	"strings"
 
-	"google.golang.org/protobuf/proto"
+	proto "google.golang.org/protobuf/encoding/protojson"
 )
 
 func (h *handler) ScoreInterview(ctx context.Context, req *suggest.ScoreInterviewRequest) (*suggest.ScoreInterviewResponse, error) {
@@ -20,7 +20,7 @@ func (h *handler) ScoreInterview(ctx context.Context, req *suggest.ScoreIntervie
 
 	prompt := generateScoreInterviewPrompt(req)
 
-	llmResponse, err := h.llmGRPCService.Generate(ctx, prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, "f3-score-interview", prompt)
 	if err != nil {
 		return nil, err
 	}

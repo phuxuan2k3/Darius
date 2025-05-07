@@ -31,10 +31,10 @@ func Test_promtGenerate(t *testing.T) {
 	t.Run("Test promtGenerate", func(t *testing.T) {
 		req := &suggest.SuggestInterviewQuestionRequest{
 			Context: &suggest.SuggestInterviewQuestionRequest_Context{
-				Field:        "Software Engineering",
-				Position:     "Backend Developer",
+				Position:     "Software Engineering",
+				Experience:   "Backend Developer",
 				Language:     "Go",
-				Level:        "Intermediate",
+				Skills:       "Intermediate",
 				MaxQuestions: 5,
 			},
 			Submissions: []*suggest.SuggestInterviewQuestionRequest_Submission{
@@ -53,15 +53,15 @@ func Test_promtGenerate(t *testing.T) {
 	t.Run("Test promtGenerate with Full submissions", func(t *testing.T) {
 		req := &suggest.SuggestInterviewQuestionRequest{
 			Context: &suggest.SuggestInterviewQuestionRequest_Context{
-				Field:        "AI Engineering",
-				Position:     "AI Engineer Intern",
+				Position:     "AI Engineering",
+				Experience:   "AI Engineer Intern",
 				Language:     "English",
 				Models:       "en-BG-male",
 				Speed:        -5,
-				Level:        "Easy",
+				Skills:       "Easy",
 				MaxQuestions: 10,
 				SkipIntro:    false,
-				Coding:       false,
+				SkipCode:     false,
 				InterviewId:  "random-id",
 			},
 			Submissions: []*suggest.SuggestInterviewQuestionRequest_Submission{

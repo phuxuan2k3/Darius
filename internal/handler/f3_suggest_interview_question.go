@@ -20,7 +20,7 @@ func (h *handler) SuggestInterviewQuestion(ctx context.Context, req *suggest.Sug
 	listOfPreviosQuestions := convertSuggestInterviewSubmissionToString(req.GetSubmissions())
 	prompt := generateSuggestInterviewQuestionPrompt(req, listOfPreviosQuestions)
 
-	llmResponse, err := h.llmGRPCService.Generate(ctx, prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, "f3-suggest-interview", prompt)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +99,7 @@ func generateSuggestInterviewQuestionPrompt(req *suggest.SuggestInterviewQuestio
 		}
 	Now, based on the input, generate the output in the specified format
 	
-		`, req.GetContext().GetField(), req.GetContext().GetPosition(), req.GetContext().GetLanguage(), req.GetContext().GetLevel(), req.GetContext().GetMaxQuestions(), listOfPreviosQuestions)
+		`, req.GetContext().GetPosition(), req.GetContext().GetExperience(), req.GetContext().GetLanguage(), req.GetContext().GetSkills(), req.GetContext().GetMaxQuestions(), listOfPreviosQuestions)
 }
 
 func convertSuggestInterviewSubmissionToString(submissions []*suggest.SuggestInterviewQuestionRequest_Submission) string {

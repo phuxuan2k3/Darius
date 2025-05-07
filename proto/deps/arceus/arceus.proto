@@ -4,6 +4,7 @@ package arceus;
 
 option go_package = "myproject/pkg/suggest";
 
+import "validate/validate.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 
@@ -16,6 +17,9 @@ service Arceus {
   };
 
 }
+
+
+
 
 enum SortType {
     SORT_TYPE_UNKNOWN = 0;
@@ -39,6 +43,15 @@ message Conversation {
   repeated Message messages = 2;  
 }
 
+message SortMethod {
+    string name = 1 [
+      (validate.rules).string = {
+        min_len: 1
+      }
+    ];
+    SortType type = 2;
+}
+
 message GenerateTextRequest {
   string content = 1;
   string model = 2;
@@ -49,4 +62,11 @@ message GenerateTextResponse {
   string content = 1;
   uint64 conversation_id = 2;
   google.protobuf.Timestamp created_at = 3;
+  Usage usage = 4;
+}
+
+message Usage {
+  int32 prompt_tokens = 1;
+  int32 total_tokens = 2;
+  int32 completion_tokens = 3;
 }

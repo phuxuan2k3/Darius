@@ -1,28 +1,28 @@
 package handler
 
 import (
-	llm "darius/internal/llm"
-	llm_grpc "darius/internal/llm-grpc"
+	llm "darius/internal/services/llm"
+	llmManager "darius/managers/llm"
 	hello "darius/pkg/proto/hello"
 	suggest "darius/pkg/proto/suggest"
 )
 
 type Dependency struct {
 	LlmService llm.LLM
-	LLMGRPC    llm_grpc.Service
+	LLMManager llmManager.Manager
 }
 
 type handler struct {
 	hello.HelloServiceServer
 	suggest.SuggestServiceServer
 
-	llmService     llm.LLM
-	llmGRPCService llm_grpc.Service
+	llmService llm.LLM
+	llmManager llmManager.Manager
 }
 
 func NewHandlerWithDeps(deps Dependency) *handler {
 	return &handler{
-		llmService:     deps.LlmService,
-		llmGRPCService: deps.LLMGRPC,
+		llmService: deps.LlmService,
+		llmManager: deps.LLMManager,
 	}
 }

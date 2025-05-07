@@ -45,15 +45,15 @@ service SuggestService {
 
 message SuggestInterviewQuestionRequest {
     message Context {
-        string field = 1;
-        string position = 2;
+        string position = 1;
+        string experience = 2;
         string language = 3;
         string models = 4;
         int32 speed = 5;
-        string level = 6;
+        string skills = 6;
         int32 maxQuestions = 7;
         bool skipIntro = 8;
-        bool coding = 9;
+        bool skipCode = 9;
         string interviewId = 10;
     }
     message Submission {
@@ -66,7 +66,7 @@ message SuggestInterviewQuestionRequest {
 }
 
 message SuggestInterviewQuestionResponse {
-    repeated string question = 1;
+    repeated string questions = 1;
 }
 
 message GeneralInfo {
