@@ -95,7 +95,7 @@ func generateSuggestInterviewQuestionPrompt(req *suggest.SuggestInterviewQuestio
 	   - Provide the output in the specified JSON format.
 	3. Output Format:
 		   {
-		"question": ["The next question content here"],
+		"questions": ["The next question content here"],
 		}
 	Now, based on the input, generate the output in the specified format
 	
