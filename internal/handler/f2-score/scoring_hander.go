@@ -3,6 +3,7 @@ package f2_score
 import (
 	"context"
 	llmManager "darius/managers/llm"
+	"darius/models"
 	ekko "darius/pkg/proto/deps/ekko"
 	"encoding/json"
 	"errors"
@@ -40,7 +41,7 @@ func (h *scoringHandler) Score(ctx context.Context, req *ScoreRequest) {
 	}
 
 	prompt := generatePrompt(data)
-	llmResponse, err := h.llmManager.Generate(ctx, "f2-scoring", prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, models.F2, prompt)
 	if err != nil {
 		log.Printf("Error generating response: %v", err)
 		return

@@ -4,6 +4,7 @@ import (
 	"context"
 	databaseService "darius/internal/services/database"
 	llm_grpc "darius/internal/services/llm-grpc"
+	"darius/metrics"
 	"log"
 )
 
@@ -35,5 +36,7 @@ func (m *manager) Generate(ctx context.Context, entryPoint string, req string) (
 		log.Fatalf("Error creating LLM call report: %v", err)
 		return "", err
 	}
+
+	metrics.LLMRequestCounter.WithLabelValues(entryPoint).Inc()
 	return resp.GetContent(), nil
 }

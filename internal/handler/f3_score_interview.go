@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"darius/models"
 	suggest "darius/pkg/proto/suggest"
 	"encoding/json"
 	"errors"
@@ -20,7 +21,7 @@ func (h *handler) ScoreInterview(ctx context.Context, req *suggest.ScoreIntervie
 
 	prompt := generateScoreInterviewPrompt(req)
 
-	llmResponse, err := h.llmManager.Generate(ctx, "f3-score-interview", prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, models.F3, prompt)
 	if err != nil {
 		return nil, err
 	}
