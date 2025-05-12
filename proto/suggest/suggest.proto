@@ -41,7 +41,25 @@ service SuggestService {
         body: "*"
         };
     }
+
+    rpc SuggestOutlines(SuggestOutlinesRequest) returns (SuggestOutlinesResponse) {
+        option (google.api.http) = {
+        post: "/v1/suggest_outlines"
+        body: "*"
+        };
+    }
 } 
+
+message SuggestOutlinesRequest {
+    string title = 1;
+    string description = 2;
+    string difficulty = 3;
+    repeated string tags = 4;
+    repeated string outlines = 5; // Những gợi ý đã điền
+}
+message SuggestOutlinesResponse {
+    repeated string outlines = 1; // Gợi ý từ LLM, khoảng 1 - 3 items
+}
 
 message SuggestInterviewQuestionRequest {
     message Context {

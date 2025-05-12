@@ -27,6 +27,7 @@ type SuggestServiceClient interface {
 	SuggestQuestions(ctx context.Context, in *SuggestQuestionsRequest, opts ...grpc.CallOption) (*SuggestQuestionsResponse, error)
 	SuggestInterviewQuestion(ctx context.Context, in *SuggestInterviewQuestionRequest, opts ...grpc.CallOption) (*SuggestInterviewQuestionResponse, error)
 	ScoreInterview(ctx context.Context, in *ScoreInterviewRequest, opts ...grpc.CallOption) (*ScoreInterviewResponse, error)
+	SuggestOutlines(ctx context.Context, in *SuggestOutlinesRequest, opts ...grpc.CallOption) (*SuggestOutlinesResponse, error)
 }
 
 type suggestServiceClient struct {
@@ -82,6 +83,15 @@ func (c *suggestServiceClient) ScoreInterview(ctx context.Context, in *ScoreInte
 	return out, nil
 }
 
+func (c *suggestServiceClient) SuggestOutlines(ctx context.Context, in *SuggestOutlinesRequest, opts ...grpc.CallOption) (*SuggestOutlinesResponse, error) {
+	out := new(SuggestOutlinesResponse)
+	err := c.cc.Invoke(ctx, "/suggest.SuggestService/SuggestOutlines", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SuggestServiceServer is the server API for SuggestService service.
 // All implementations must embed UnimplementedSuggestServiceServer
 // for forward compatibility
@@ -91,6 +101,7 @@ type SuggestServiceServer interface {
 	SuggestQuestions(context.Context, *SuggestQuestionsRequest) (*SuggestQuestionsResponse, error)
 	SuggestInterviewQuestion(context.Context, *SuggestInterviewQuestionRequest) (*SuggestInterviewQuestionResponse, error)
 	ScoreInterview(context.Context, *ScoreInterviewRequest) (*ScoreInterviewResponse, error)
+	SuggestOutlines(context.Context, *SuggestOutlinesRequest) (*SuggestOutlinesResponse, error)
 	mustEmbedUnimplementedSuggestServiceServer()
 }
 
@@ -112,6 +123,9 @@ func (UnimplementedSuggestServiceServer) SuggestInterviewQuestion(context.Contex
 }
 func (UnimplementedSuggestServiceServer) ScoreInterview(context.Context, *ScoreInterviewRequest) (*ScoreInterviewResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ScoreInterview not implemented")
+}
+func (UnimplementedSuggestServiceServer) SuggestOutlines(context.Context, *SuggestOutlinesRequest) (*SuggestOutlinesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SuggestOutlines not implemented")
 }
 func (UnimplementedSuggestServiceServer) mustEmbedUnimplementedSuggestServiceServer() {}
 
@@ -216,6 +230,24 @@ func _SuggestService_ScoreInterview_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SuggestService_SuggestOutlines_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SuggestOutlinesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SuggestServiceServer).SuggestOutlines(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/suggest.SuggestService/SuggestOutlines",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SuggestServiceServer).SuggestOutlines(ctx, req.(*SuggestOutlinesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SuggestService_ServiceDesc is the grpc.ServiceDesc for SuggestService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +274,10 @@ var SuggestService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ScoreInterview",
 			Handler:    _SuggestService_ScoreInterview_Handler,
+		},
+		{
+			MethodName: "SuggestOutlines",
+			Handler:    _SuggestService_SuggestOutlines_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
