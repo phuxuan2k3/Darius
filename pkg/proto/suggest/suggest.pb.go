@@ -1073,16 +1073,16 @@ type SuggestInterviewQuestionRequest_Context struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Position     string `protobuf:"bytes,1,opt,name=position,proto3" json:"position,omitempty"`
-	Experience   string `protobuf:"bytes,2,opt,name=experience,proto3" json:"experience,omitempty"`
-	Language     string `protobuf:"bytes,3,opt,name=language,proto3" json:"language,omitempty"`
-	Models       string `protobuf:"bytes,4,opt,name=models,proto3" json:"models,omitempty"`
-	Speed        int32  `protobuf:"varint,5,opt,name=speed,proto3" json:"speed,omitempty"`
-	Skills       string `protobuf:"bytes,6,opt,name=skills,proto3" json:"skills,omitempty"`
-	MaxQuestions int32  `protobuf:"varint,7,opt,name=maxQuestions,proto3" json:"maxQuestions,omitempty"`
-	SkipIntro    bool   `protobuf:"varint,8,opt,name=skipIntro,proto3" json:"skipIntro,omitempty"`
-	SkipCode     bool   `protobuf:"varint,9,opt,name=skipCode,proto3" json:"skipCode,omitempty"`
-	InterviewId  string `protobuf:"bytes,10,opt,name=interviewId,proto3" json:"interviewId,omitempty"`
+	Position     string   `protobuf:"bytes,1,opt,name=position,proto3" json:"position,omitempty"`
+	Experience   string   `protobuf:"bytes,2,opt,name=experience,proto3" json:"experience,omitempty"`
+	Language     string   `protobuf:"bytes,3,opt,name=language,proto3" json:"language,omitempty"`
+	Models       string   `protobuf:"bytes,4,opt,name=models,proto3" json:"models,omitempty"`
+	Speed        int32    `protobuf:"varint,5,opt,name=speed,proto3" json:"speed,omitempty"`
+	Skills       []string `protobuf:"bytes,6,rep,name=skills,proto3" json:"skills,omitempty"`
+	MaxQuestions int32    `protobuf:"varint,7,opt,name=maxQuestions,proto3" json:"maxQuestions,omitempty"`
+	SkipIntro    bool     `protobuf:"varint,8,opt,name=skipIntro,proto3" json:"skipIntro,omitempty"`
+	SkipCode     bool     `protobuf:"varint,9,opt,name=skipCode,proto3" json:"skipCode,omitempty"`
+	InterviewId  string   `protobuf:"bytes,10,opt,name=interviewId,proto3" json:"interviewId,omitempty"`
 }
 
 func (x *SuggestInterviewQuestionRequest_Context) Reset() {
@@ -1152,11 +1152,11 @@ func (x *SuggestInterviewQuestionRequest_Context) GetSpeed() int32 {
 	return 0
 }
 
-func (x *SuggestInterviewQuestionRequest_Context) GetSkills() string {
+func (x *SuggestInterviewQuestionRequest_Context) GetSkills() []string {
 	if x != nil {
 		return x.Skills
 	}
-	return ""
+	return nil
 }
 
 func (x *SuggestInterviewQuestionRequest_Context) GetMaxQuestions() int32 {
@@ -1414,7 +1414,7 @@ var file_proto_suggest_suggest_proto_rawDesc = []byte{
 	0x65, 0x6c, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x6d, 0x6f, 0x64, 0x65, 0x6c,
 	0x73, 0x12, 0x14, 0x0a, 0x05, 0x73, 0x70, 0x65, 0x65, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x05,
 	0x52, 0x05, 0x73, 0x70, 0x65, 0x65, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x6b, 0x69, 0x6c, 0x6c,
-	0x73, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x6b, 0x69, 0x6c, 0x6c, 0x73, 0x12,
+	0x73, 0x18, 0x06, 0x20, 0x03, 0x28, 0x09, 0x52, 0x06, 0x73, 0x6b, 0x69, 0x6c, 0x6c, 0x73, 0x12,
 	0x22, 0x0a, 0x0c, 0x6d, 0x61, 0x78, 0x51, 0x75, 0x65, 0x73, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18,
 	0x07, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0c, 0x6d, 0x61, 0x78, 0x51, 0x75, 0x65, 0x73, 0x74, 0x69,
 	0x6f, 0x6e, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x73, 0x6b, 0x69, 0x70, 0x49, 0x6e, 0x74, 0x72, 0x6f,

@@ -86,7 +86,8 @@ func generateSuggestInterviewQuestionPrompt(req *suggest.SuggestInterviewQuestio
 		Field: %v,
 		Position: %v,
 		Language: %v,
-		Level: %v,
+		Skills: %v,
+
 		Max Question: %v,
 		List of previous questions: %v,
 	2. Your Task:
@@ -102,7 +103,6 @@ func generateSuggestInterviewQuestionPrompt(req *suggest.SuggestInterviewQuestio
 	
 		`, req.GetContext().GetPosition(), req.GetContext().GetExperience(), req.GetContext().GetLanguage(), req.GetContext().GetSkills(), req.GetContext().GetMaxQuestions(), listOfPreviosQuestions)
 }
-
 func convertSuggestInterviewSubmissionToString(submissions []*suggest.SuggestInterviewQuestionRequest_Submission) string {
 	listOfPreviosQuestions := ""
 	for index, submission := range submissions {

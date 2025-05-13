@@ -34,7 +34,7 @@ func Test_promtGenerate(t *testing.T) {
 				Position:     "Software Engineering",
 				Experience:   "Backend Developer",
 				Language:     "Go",
-				Skills:       "Intermediate",
+				Skills:       []string{"Intermediate"},
 				MaxQuestions: 5,
 			},
 			Submissions: []*suggest.SuggestInterviewQuestionRequest_Submission{
@@ -58,7 +58,7 @@ func Test_promtGenerate(t *testing.T) {
 				Language:     "English",
 				Models:       "en-BG-male",
 				Speed:        -5,
-				Skills:       "Easy",
+				Skills:       []string{"Easy"},
 				MaxQuestions: 10,
 				SkipIntro:    false,
 				SkipCode:     false,

@@ -68,7 +68,7 @@ message SuggestInterviewQuestionRequest {
         string language = 3;
         string models = 4;
         int32 speed = 5;
-        string skills = 6;
+        repeated string skills = 6;
         int32 maxQuestions = 7;
         bool skipIntro = 8;
         bool skipCode = 9;
@@ -134,11 +134,6 @@ message Question {
     string questionContent = 1;
     repeated AnswerOption optionList = 2;
 }
-
-// message SuggestQuestionsRequest {
-//     GeneralInfo generalInfo = 1;
-//     repeated CriteriaEleRequest criteriaList = 2;
-// }
 
 message SuggestQuestionsResponse {
     repeated Question questionList = 1;
