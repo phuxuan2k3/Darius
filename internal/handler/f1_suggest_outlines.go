@@ -47,13 +47,11 @@ Output format:
 		return nil, fmt.Errorf("error parsing response: %v", err)
 	}
 	// Convert the parsed response to the expected format
-	var outlines []string
+	var outlines = &suggest.SuggestOutlinesResponse{}
 	err = json.Unmarshal([]byte(parsedResponse), &outlines)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshalling outlines: %v", err)
 	}
 
-	return &suggest.SuggestOutlinesResponse{
-		Outlines: outlines,
-	}, nil
+	return outlines, nil
 }
