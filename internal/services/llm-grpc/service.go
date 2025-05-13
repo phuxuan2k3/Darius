@@ -33,5 +33,5 @@ func (s *service) Generate(ctx context.Context, text string) (resp *arceus.Gener
 		return &arceus.GenerateTextResponse{}, err
 	}
 
-	return res, nil
+	return res, err
 }

@@ -179,9 +179,7 @@ Now, based on the user's input, generate the output in the specified format
 	if err != nil {
 		return nil, err
 	}
-	if err != nil {
-		return nil, err
-	}
+
 	input := llmResponse
 
 	jsonStr, err := extractJSONQuestions(input)
