@@ -6,6 +6,7 @@ import (
 	"darius/models"
 	"darius/pkg/proto/suggest"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"regexp"
@@ -117,64 +118,39 @@ Now, based on the user's input, generate the output in the specified format.
 
 func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQuestionsRequest) (*suggest.SuggestQuestionsResponse, error) {
 	prompt := fmt.Sprintf(`
-You are an expert in creating test questions and answers. Your task is to generate a set of questions and answers based on the provided test information and guidelines. Follow these steps:
-1. Input Provided by the User:
-   - General Information:
-    Name: %v,
-	Description: %v,
-	Fields: %v,
-	Duration: %v,
-	Difficulty: %v,
-	QuestionType: %v,
-	Language: %v,
-	Options: %v,
-	NumberOfQuestion: %v,
-	CandidateSeniority: %v,
-	Context: %v
-2. Your Task:
-   - Review the general information about the test to understand its context, purpose, and constraints.
-   - Generate a set of questions and answers that align with the test's context, difficulty level, and format.
-   - Ensure the questions are clear, precise, and meaningful.
-   - Provide the output in the specified JSON format.
-3. Output Format:
-   [
-     {
-       questionContent: "[Question 1]",
-       optionList: [
-         {
-           optionContent: "[Option 1]",
-           isCorrect: [true/false]
-         },
-         {
-           optionContent: "[Option 2]",
-           isCorrect: [true/false]
-         },
-         ...
-       ]
-     },
-     {
-       questionContent: "[Question 2]",
-       optionList: [
-         {
-           optionContent: "[Option 1]",
-           isCorrect: [true/false]
-         },
-         {
-           optionContent: "[Option 2]",
-           isCorrect: [true/false]
-         },
-         ...
-       ]
-     },
-     ...
-   ]
-Now, based on the user's input, generate the output in the specified format
+You are an AI that generates multiple-choice questions based on provided metadata.
+Given the following input, generate a list of questions in strict JSON format.
+-Input:
+    Title: %v;
+    Description: %v;
+    Minutes to answer: %v;
+    Language: %v;
+    Difficulty: %v;
+    Tags: %v;
+    Outlines: %v;
+    Number Of Questions: %v;
+    Number Of Options: %v;
 
-	`, req.GetName(), req.GetDescription(), req.GetFields(), req.GetDuration(), req.GetDifficulty(), req.GetQuestionType(), req.GetLanguage(), req.GetOptions(), req.GetNumberOfQuestion(), req.GetCandidateSeniority(), req.GetContext())
-	// llmResponse, err := h.llmService.Generate(ctx, &llm.LLMRequest{
-	// 	Model:   viper.GetString("llm.model"),
-	// 	Content: prompt,
-	// })
+
+-Output format (strictly follow this structure):
+{
+    questions: {
+        text: string;
+        options: string[];
+        points: number; // positive
+        correctOption: number; // index of correct option, starting from 0
+    }[];
+}
+
+Requirements:
+The number of questions and options must match numberOfQuestions and numberOfOptions respectively.
+All questions must relate to the provided title, description, tags, and outlines.
+The questions should be appropriate for the given difficulty level.
+All options must be plausible, but only one is correct (correctOption).
+points should be a positive integer (e.g., 1 to 10) assigned to each question based on relevance and depth.
+Ensure the final result is valid JSON and strictly follows the output structure.
+	`, req.GetTitle(), req.GetDescription(), req.GetMinutesToAnswer(), req.GetLanguage(), req.GetDifficulty(), req.GetTags(), req.GetOutlines(), req.GetNumberOfQuestions(), req.GetNumberOfOptions())
+
 	llmResponse, err := h.llmManager.Generate(ctx, models.F1, prompt)
 	if err != nil {
 		return nil, err
@@ -195,29 +171,22 @@ Now, based on the user's input, generate the output in the specified format
 		return nil, err
 	}
 
-	return &suggest.SuggestQuestionsResponse{
-		QuestionList: questionListResp,
-	}, nil
+	return questionListResp, nil
 }
 
 func extractJSONQuestions(input string) (string, error) {
-	re := regexp.MustCompile(`(?s)\[\s*\{.*\}\s*\]`)
-	match := re.FindString(input)
-	if match == "" {
-		fmt.Println("extractJSONQuestions: Không tìm thấy JSON hợp lệ")
-		return "", fmt.Errorf("không tìm thấy JSON hợp lệ")
+	start := strings.Index(input, "{")
+	end := strings.LastIndex(input, "}")
+	if start == -1 || end == -1 || start > end {
+		return "", errors.New("no JSON object found in input")
 	}
+	jsonStr := input[start : end+1]
 
-	match, err := sanitizeJSON(match)
-	if err != nil {
-		return "", fmt.Errorf("lỗi vệ sinh JSON: %v", err)
-	}
-
-	return match, nil
+	return jsonStr, nil
 }
 
-func parseQuestions(jsonStr string) ([]*suggest.Question, error) {
-	var questions []*suggest.Question
+func parseQuestions(jsonStr string) (*suggest.SuggestQuestionsResponse, error) {
+	var questions *suggest.SuggestQuestionsResponse
 	err := json.Unmarshal([]byte(jsonStr), &questions)
 	if err != nil {
 		return nil, fmt.Errorf("lỗi giải mã JSON: %v", err)

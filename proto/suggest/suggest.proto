@@ -131,26 +131,26 @@ message AnswerOption {
 }
 
 message Question {
-    string questionContent = 1;
-    repeated AnswerOption optionList = 2;
+    string text = 1;
+    repeated string options = 2;
+    int32 point = 3;
+    int32 correctOption = 4;
 }
 
 message SuggestQuestionsResponse {
-    repeated Question questionList = 1;
+    repeated Question questions = 1;
 }
 
 message SuggestQuestionsRequest {
-    string name = 1;
-    string description =2;
-    repeated string fields = 3;
-    string duration = 4;
+    string title = 1;
+    string description = 2;
+    int32 minutesToAnswer = 3;
+    string language = 4;
     string difficulty = 5;
-    string question_type = 6;
-    string language = 7;
-    int32 options = 8;
-    int32 number_of_question = 9;
-    string candidate_seniority = 10;
-    string context = 11;   
+    repeated string tags = 6;
+    repeated string outlines = 7; 
+    int32 numberOfQuestions = 8; 
+    int32 numberOfOptions = 9;
 }
 
 message ScoreInterviewRequest {
