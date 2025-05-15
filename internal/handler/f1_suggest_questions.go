@@ -137,7 +137,7 @@ Given the following input, generate a list of questions in strict JSON format.
     questions: {
         text: string;
         options: string[];
-        points: number; // positive
+        point: number; // positive
         correctOption: number; // index of correct option, starting from 0
     }[];
 }
