@@ -155,6 +155,7 @@ Ensure the final result is valid JSON and strictly follows the output structure.
 	if err != nil {
 		return nil, err
 	}
+	log.Println("[SuggestQuestions] LLM response:", llmResponse)
 
 	input := llmResponse
 
