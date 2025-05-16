@@ -170,8 +170,13 @@ message ScoreInterviewResponse {
         string score = 3;
     }
     repeated Submission result = 1;
-    map<string, int32> totalScore = 2;
-    string positiveFeedback = 3;
-    string actionableFeedback = 4;
-    string finalComment = 5;
+    message SkillScore {
+        string skill = 1;
+        string score = 2;
+    }
+    repeated SkillScore skills = 2;
+    map<string, int32> totalScore = 3;
+    string positiveFeedback =4;
+    string actionableFeedback = 5;
+    string finalComment = 6;
 }
