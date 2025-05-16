@@ -133,7 +133,7 @@ message AnswerOption {
 message Question {
     string text = 1;
     repeated string options = 2;
-    int32 point = 3;
+    int32 points = 3;
     int32 correctOption = 4;
 }
 
