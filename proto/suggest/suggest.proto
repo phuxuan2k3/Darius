@@ -160,6 +160,7 @@ message ScoreInterviewRequest {
         string answer = 3;
     }
     repeated Submission submissions = 1;
+    repeated string skills = 2;
 }
 
 message ScoreInterviewResponse {

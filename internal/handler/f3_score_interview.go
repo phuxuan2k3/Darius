@@ -89,18 +89,12 @@ F = Unacceptable
 Summary:
 
 A totalScore object showing how many of each score (A–F) were assigned.
-
 A positiveFeedback section: list the candidate’s notable strengths in bullet points.
-
 An actionableFeedback section: list areas of improvement in bullet points.
-
 A finalComment: 2–3 sentences summarizing the overall performance.
+You evaluate each skills which provided in the request.
 
 ✅ Your response must strictly follow the JSON format below:
-
-json
-Copy
-Edit
 {
   "result": [
     {
@@ -115,6 +109,12 @@ Edit
     }
     // ...
   ],
+   "skills": {
+        "Skill 1": "B",
+        "Skill 2": "C",
+        "Skill 3": "C",
+        "Skill 4": "A"
+    },
   "totalScore": {
     "A": 1,
     "B": 6,
