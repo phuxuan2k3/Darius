@@ -109,12 +109,16 @@ You evaluate each skills which provided in the request.
     }
     // ...
   ],
-   "skills": {
-        "Skill 1": "B",
-        "Skill 2": "C",
-        "Skill 3": "C",
-        "Skill 4": "A"
-    },
+   "skills": [
+	{
+      "skill": "skill1",
+	  "score": "A",
+	},
+	{
+	  "skill": "skill2",
+	  "score": "B",
+	},
+    ],
   "totalScore": {
     "A": 1,
     "B": 6,
