@@ -4,7 +4,6 @@ import (
 	"context"
 	"darius/models"
 	suggest "darius/pkg/proto/suggest"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -39,23 +38,8 @@ func sanitizeAndParseResponse(input string) (*suggest.ScoreInterviewResponse, er
 	}
 	jsonStr := input[start : end+1]
 
-	// // B2: Escape các xuống dòng bên trong chuỗi JSON
-	// lines := strings.Split(jsonStr, "\n")
-	// var escapedLines []string
-	// for _, line := range lines {
-	// 	trimmed := strings.TrimSpace(line)
-	// 	// Nếu dòng nằm trong một chuỗi JSON (tức là có dấu ":"), thì cần escape
-	// 	if strings.Contains(trimmed, ":") && strings.Count(trimmed, "\"") >= 2 {
-	// 		escapedLines = append(escapedLines, strings.ReplaceAll(line, "\n", "\\n"))
-	// 	} else {
-	// 		escapedLines = append(escapedLines, line)
-	// 	}
-	// }
-	// escapedJSON := strings.Join(escapedLines, "")
-
-	// B3: Unmarshal
 	var parsed suggest.ScoreInterviewResponse
-	err := json.Unmarshal([]byte(jsonStr), &parsed)
+	err := proto.Unmarshal([]byte(jsonStr), &parsed)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshalling escaped JSON: %v", err)
 	}
