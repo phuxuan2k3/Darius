@@ -68,68 +68,60 @@ func generateScoreInterviewPrompt(req *suggest.ScoreInterviewRequest) string {
 	submissionString := string(submissionByte)
 
 	return fmt.Sprintf(
-		`You are an expert interview evaluator. Your job is to evaluate an interview session of a candidate based on the provided Q&A data. Each submission contains a question asked during the interview and the corresponding answer from the candidate. Your evaluation should include:
+		`You are an expert interview evaluator. Your job is to evaluate an interview session of a candidate based on the provided Q&A data. Each submission contains a question asked during the interview and the corresponding answer from the candidate.  
 
-For each submission:
+Your evaluation must include the following sections and strictly follow the provided JSON structure.
 
-Give a short comment (if necessary) on the quality of the answer.
+---
 
-Assign a score from the set {A, B, C, D, F}, where:
+For each submission in the interview:
+- Assign a score from the following set:  
+  - A = Excellent  
+  - B = Good  
+  - C = Fair  
+  - D = Poor  
+  - F = Unacceptable  
+- Provide a short comment about the answer’s quality (optional — leave empty if not needed).
 
-A = Excellent
+Skill evaluation:
+- You are also given a list of skills to evaluate.
+- For **each skill provided**, you must assign a score (A–F) that reflects the candidate’s overall demonstrated ability in that skill based on all the submissions.
+- ✅ **Always include the 'skills' field** in your response, even if there's only one submission.
 
-B = Good
+Summary section must include:
+- 'totalScore': A count of how many times each score (A, B, C, D, F) was given across all submissions.
+- 'positiveFeedback': A bullet-point list of notable strengths.
+- 'actionableFeedback': A bullet-point list of areas the candidate needs to improve.
+- 'finalComment': A 2–3 sentence summary of the candidate's overall performance.
 
-C = Fair
-
-D = Poor
-
-F = Unacceptable
-
-Summary:
-
-A totalScore object showing how many of each score (A–F) were assigned.
-A positiveFeedback section: list the candidate’s notable strengths in bullet points.
-An actionableFeedback section: list areas of improvement in bullet points.
-A finalComment: 2–3 sentences summarizing the overall performance.
-You evaluate each skills which provided in the request.
-
-✅ Your response must strictly follow the JSON format below:
+✅ Your response must strictly follow this JSON structure:
 {
   "result": [
     {
       "index": 1,
       "comment": "Your comment here (optional, can be empty)",
       "score": "A"
-    },
-    {
-      "index": 2,
-      "comment": "",
-      "score": "B"
     }
-    // ...
   ],
-   "skills": [
-	{
-      "skill": "skill1",
-	  "score": "A",
-	},
-	{
-	  "skill": "skill2",
-	  "score": "B",
-	},
-    ],
+  "skills": [
+    {
+      "skill": "Accuracy",
+      "score": "A"
+    }
+  ],
   "totalScore": {
     "A": 1,
-    "B": 6,
-    "C": 2,
-    "D": 1,
+    "B": 0,
+    "C": 0,
+    "D": 0,
     "F": 0
   },
   "positiveFeedback": "- ...\n- ...",
   "actionableFeedback": "- ...\n- ...",
   "finalComment": "..."
 }
+
 Now, evaluate the following submissions:
+
 %v`, submissionString)
 }
