@@ -38,5 +38,6 @@ func (m *manager) Generate(ctx context.Context, entryPoint string, req string) (
 	}
 
 	metrics.LLMRequestCounter.WithLabelValues(entryPoint).Inc()
+	metrics.LLMTokenCounter.WithLabelValues(entryPoint).Add(float64(resp.GetUsage().GetTotalTokens()))
 	return resp.GetContent(), nil
 }

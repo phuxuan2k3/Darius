@@ -151,7 +151,7 @@ points should be a positive integer (e.g., 1 to 10) assigned to each question ba
 Ensure the final result is valid JSON and strictly follows the output structure.
 	`, req.GetTitle(), req.GetDescription(), req.GetMinutesToAnswer(), req.GetLanguage(), req.GetDifficulty(), req.GetTags(), req.GetOutlines(), req.GetNumberOfQuestions(), req.GetNumberOfOptions())
 
-	llmResponse, err := h.llmManager.Generate(ctx, models.F1, prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, models.F1_SUGGEST_QUESTIONS, prompt)
 	if err != nil {
 		return nil, err
 	}

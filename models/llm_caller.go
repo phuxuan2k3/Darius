@@ -1,7 +1,9 @@
 package models
 
 const (
-	F1 string = "f1"
-	F2 string = "f2"
-	F3 string = "f3"
+	F1_SUGGEST_OUTLINES            string = "f1_suggest_outlines"
+	F1_SUGGEST_QUESTIONS           string = "f1_suggest_questions"
+	F2_SCORE                       string = "f2_score"
+	F3_SUGGEST_INTERVIEW_QUESTIONS string = "f3_suggest_interview_questions"
+	F3_SCORE_INTERVIEW_QUESTIONS   string = "f3_score_interview_questions"
 )

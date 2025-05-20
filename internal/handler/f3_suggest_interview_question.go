@@ -21,7 +21,7 @@ func (h *handler) SuggestInterviewQuestion(ctx context.Context, req *suggest.Sug
 	listOfPreviosQuestions := convertSuggestInterviewSubmissionToString(req.GetSubmissions())
 	prompt := generateSuggestInterviewQuestionPrompt(req, listOfPreviosQuestions)
 
-	llmResponse, err := h.llmManager.Generate(ctx, models.F3, prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, models.F3_SUGGEST_INTERVIEW_QUESTIONS, prompt)
 	if err != nil {
 		return nil, err
 	}

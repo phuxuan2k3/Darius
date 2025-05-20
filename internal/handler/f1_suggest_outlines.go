@@ -37,7 +37,7 @@ Output format:
     "Third new outline idea (optional)"
   ]
 }`, req.GetTitle(), req.GetDescription(), req.GetDifficulty(), req.GetTags(), req.GetOutlines())
-	llmResponse, err := h.llmManager.Generate(ctx, models.F1, prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, models.F1_SUGGEST_OUTLINES, prompt)
 	if err != nil {
 		return nil, err
 	}

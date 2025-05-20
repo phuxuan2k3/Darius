@@ -20,7 +20,7 @@ func (h *handler) ScoreInterview(ctx context.Context, req *suggest.ScoreIntervie
 
 	prompt := generateScoreInterviewPrompt(req)
 
-	llmResponse, err := h.llmManager.Generate(ctx, models.F3, prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, models.F3_SCORE_INTERVIEW_QUESTIONS, prompt)
 	if err != nil {
 		return nil, err
 	}

@@ -41,7 +41,7 @@ func (h *scoringHandler) Score(ctx context.Context, req *ScoreRequest) {
 	}
 
 	prompt := generatePrompt(data)
-	llmResponse, err := h.llmManager.Generate(ctx, models.F2, prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, models.F2_SCORE, prompt)
 	if err != nil {
 		log.Printf("Error generating response: %v", err)
 		return
