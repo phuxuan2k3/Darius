@@ -48,7 +48,45 @@ service SuggestService {
         body: "*"
         };
     }
+
+    rpc SuggestExamQuestion(SuggestExamQuestionRequest) returns (SuggestExamQuestionResponse) {
+        option (google.api.http) = {
+        post: "/v1/suggest_exam_question"
+        body: "*"
+        };
+    }
 } 
+
+message DifficultyDistribution {
+    int32 Easy = 1;
+    int32 Medium = 2;
+    int32 Hard = 3;
+}
+
+message Topic {
+    string name = 1;
+    DifficultyDistribution difficultyDistribution = 2;
+}
+
+message SuggestExamQuestionRequest {
+    string title = 1;
+    string description = 2;
+    string language = 3; // English, Vietnamese, ...
+    string seniority = 4; // Intern, Junior, Middle, Senior, Lead, ...
+    repeated Topic topics = 5;
+    int32 creativity = 6; // Creativity level from 1 to 10
+    message Context {
+        string text = 1;
+        repeated string links = 2; // External links
+    }
+    Context context = 7;
+}
+
+message SuggestExamQuestionResponse {
+    repeated Question questions = 1;
+}
+
+
 
 message SuggestOutlinesRequest {
     string title = 1;
@@ -180,3 +218,4 @@ message ScoreInterviewResponse {
     string actionableFeedback = 5;
     string finalComment = 6;
 }
+
