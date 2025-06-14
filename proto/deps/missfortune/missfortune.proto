@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package missfortune;
+
+option go_package = "missfotune/api;missfortune";
+
+import "validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+message DifficultyDistribution {
+    int32 Intern = 1;
+    int32 Junior = 2;
+    int32 Middle = 3;
+    int32 Senior = 4;
+    int32 Lead = 5;
+    int32 Expert = 6;
+}
+
+message Topic {
+    string name = 1;
+    DifficultyDistribution difficultyDistribution = 2;
+}
+
+message SuggestExamQuestionRequest {
+    string title = 1;
+    string description = 2;
+    string language = 3; // English, Vietnamese, ...
+    string seniority = 4; // Intern, Junior, Middle, Senior, Lead, ...
+    repeated Topic topics = 5;
+    int32 creativity = 6; // Creativity level from 1 to 10
+    message Context {
+        string text = 1;
+        repeated string links = 2; // External links
+    }
+    Context context = 7;
+}
+
+message SuggestExamQuestionResponse {
+    repeated string questions = 1;
+}

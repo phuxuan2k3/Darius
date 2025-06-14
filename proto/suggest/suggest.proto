@@ -58,9 +58,12 @@ service SuggestService {
 } 
 
 message DifficultyDistribution {
-    int32 Easy = 1;
-    int32 Medium = 2;
-    int32 Hard = 3;
+    int32 Intern = 1;
+    int32 Junior = 2;
+    int32 Middle = 3;
+    int32 Senior = 4;
+    int32 Lead = 5;
+    int32 Expert = 6;
 }
 
 message Topic {

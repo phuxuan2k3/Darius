@@ -7,16 +7,16 @@ import (
 	f2_score "darius/internal/handler/f2-score"
 	databaseService "darius/internal/services/database"
 	llm_grpc "darius/internal/services/llm-grpc"
+	missfortune "darius/internal/services/missfortune"
 	llmManager "darius/managers/llm"
+	arceus "darius/pkg/proto/deps/arceus"
 	hello "darius/pkg/proto/hello"
 	suggest "darius/pkg/proto/suggest"
+	"flag"
 	"fmt"
 	"log"
 	"net"
 	"strings"
-
-	arceus "darius/pkg/proto/deps/arceus"
-	"flag"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/spf13/viper"
@@ -79,6 +79,13 @@ func startGRPC() {
 	}
 	defer f2respConn.Close()
 
+	missfortuneAddr := viper.GetString("MISSFORTUNE_ADDRESS")
+	if missfortuneAddr == "" || strings.HasPrefix(missfortuneAddr, "$") {
+		missfortuneAddr = "http://missfortune:8080"
+	}
+
+	missfortuneService := missfortune.NewService(missfortuneAddr)
+
 	db, err := db.NewDatabase()
 	if err != nil {
 		log.Printf("Failed to connect to database: %v", err)
@@ -124,7 +131,8 @@ func startGRPC() {
 
 	handler := handler.NewHandlerWithDeps(handler.Dependency{
 		// LlmService: LlmService,
-		LLMManager: llmManager,
+		LLMManager:  llmManager,
+		Missfortune: missfortuneService,
 	})
 
 	grpcServer := grpc.NewServer()

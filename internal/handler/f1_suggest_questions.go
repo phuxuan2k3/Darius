@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"darius/internal/converters"
 	llm "darius/internal/services/llm"
 	"darius/models"
 	"darius/pkg/proto/suggest"
@@ -117,40 +118,90 @@ Now, based on the user's input, generate the output in the specified format.
 }
 
 func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQuestionsRequest) (*suggest.SuggestQuestionsResponse, error) {
+	questionsContents, err := h.missfortune.GetExamQuestionContent(ctx, converters.ConvertSuggestQuestionRequestToMissFortuneRequest(ctx, req))
+	if err != nil {
+		log.Printf("[SuggestExamQuestion] error getting exam question content: %v", err)
+		return nil, fmt.Errorf("[SuggestExamQuestion] error getting exam question content: %w", err)
+	}
+
 	prompt := fmt.Sprintf(`
-You are an AI that generates multiple-choice questions based on provided metadata.
-Given the following input, generate a list of questions in strict JSON format.
--Input:
-    Title: %v;
-    Description: %v;
-    Minutes to answer: %v;
-    Language: %v;
-    Difficulty: %v;
-    Tags: %v;
-    Outlines: %v;
-    Number Of Questions: %v;
-    Number Of Options: %v;
-
-
--Output format (strictly follow this structure):
+	You are an expert question generator for standardized multiple-choice exams. Your task is to generate answer options for a list of exam questions. You will receive a list of questions (text-only), and for each question, you must generate exactly 4 answer options, clearly indicating which one is the correct answer.
+	📥 Input Format:
+You will be given an object in the following format:
 {
-    questions: {
-        text: string;
-        options: string[];
-        points: number; // positive
-        correctOption: number; // index of correct option, starting from 0
-    }[];
+  "questions": [
+    "What is the capital of France?",
+    "Which data structure uses LIFO order?",
+    ...
+  ]
 }
+  📤 Output Format:
+Return your response as a JSON object that strictly follows the Protobuf schema below:
+{
+  "questions": [
+    {
+      "text": "Question text here",
+      "options": [
+        "Option A",
+        "Option B",
+        "Option C",
+        "Option D"
+      ],
+      "points": 1,
+      "correctOption": 2
+    },
+    ...
+  ]
+}
+📌 Constraints and Rules:
+There must be exactly 4 options per question.
 
-Requirements:
-The number of questions and options must match numberOfQuestions and numberOfOptions respectively.
-All questions must relate to the provided title, description, tags, and outlines.
-The questions should be appropriate for the given difficulty level.
-All options must be plausible, but only one is correct (correctOption).
-points should be a positive integer (e.g., 1 to 10) assigned to each question based on relevance and depth.
-Ensure the final result is valid JSON and strictly follows the output structure.
-	`, req.GetTitle(), req.GetDescription(), req.GetMinutesToAnswer(), req.GetLanguage(), req.GetDifficulty(), req.GetTags(), req.GetOutlines(), req.GetNumberOfQuestions(), req.GetNumberOfOptions())
+Only one option must be correct; the other three must be reasonable but clearly incorrect.
 
+The correctOption field must be an integer from 0 to 3, representing the index of the correct option.
+
+Use a scale based on difficulty level (e.g., Easy = 1, Medium = 2, etc.) for the points field.
+
+Make sure that:
+
+The incorrect options are plausible and not obviously wrong.
+
+Options are diverse in content and style, not just variations of the same word.
+
+All options must be grammatically consistent with the question.
+
+The output must be valid JSON with no trailing commas or formatting errors.
+
+The order of questions must match the order of the input.
+
+Keep answers factually accurate, and where applicable, follow commonly accepted academic standards.
+
+📝 Example:
+Input:
+{
+  "questions": [
+    "What is the boiling point of water at sea level?"
+  ]
+}
+Output:
+{
+  "questions": [
+    {
+      "text": "What is the boiling point of water at sea level?",
+      "options": [
+        "100°C",
+        "90°C",
+        "120°C",
+        "80°C"
+      ],
+      "points": 1,
+      "correctOption": 0
+    }
+  ]
+}
+Now, generate the answer options for the following questions:
+%v
+	`, questionsContents)
 	llmResponse, err := h.llmManager.Generate(ctx, models.F1_SUGGEST_QUESTIONS, prompt)
 	if err != nil {
 		return nil, err
