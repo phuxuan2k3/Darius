@@ -17,6 +17,7 @@ import (
 
 type ScoringHandler interface {
 	Score(ctx context.Context, req *ScoreRequest)
+	ScoreV2(ctx context.Context, req *ScoreRequest)
 }
 
 type scoringHandler struct {
