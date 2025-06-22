@@ -84,7 +84,7 @@ func startGRPC() {
 		missfortuneAddr = "http://missfortune:8080"
 	}
 
-	missfortuneService := missfortune.NewService(missfortuneAddr)
+	missfortuneService := missfortune.NewService(missfortuneAddr, initMissfortuneClient())
 
 	db, err := db.NewDatabase()
 	if err != nil {
@@ -106,7 +106,7 @@ func startGRPC() {
 		for i := 0; i < maxWorker; i++ {
 			go func() {
 				for msg := range msgs {
-					f2scoringHandler.Score(context.Background(), &f2_score.ScoreRequest{
+					f2scoringHandler.ScoreV2(context.Background(), &f2_score.ScoreRequest{
 						Msg: msg,
 					})
 					msg.Ack(false)

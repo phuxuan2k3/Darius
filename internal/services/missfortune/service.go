@@ -21,12 +21,14 @@ type Service interface {
 }
 
 type service struct {
-	address string
+	address    string
+	httpClient *http.Client
 }
 
-func NewService(address string) Service {
+func NewService(address string, httpClient *http.Client) Service {
 	return &service{
-		address: address,
+		address:    address,
+		httpClient: httpClient,
 	}
 }
 

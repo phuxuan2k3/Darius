@@ -193,6 +193,20 @@ message EvaluationResponse {
   } 
 }
 
+message EvaluationRequestV2{
+  string questionText = 1;    // Nội dung câu hỏi
+  string answer = 2;        // Câu trả lời của ứng viên
+  string correctAnswer = 3;    // Câu trả lời đúng của câu hỏi
+  double points = 4;        // Điểm của câu hỏi
+  string x_user_id = 5;    // userid
+  string x_role_id = 6;    // roleid
+  string timestamp = 7;    // thời gian gửi
+}
+
+message EvaluationResponseV2 {
+  int32 score = 1;        // Điểm nhận được
+  string comment = 2;    // Nhận xét
+}
 
 message Attempt {
   uint64 id = 1;

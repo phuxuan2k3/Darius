@@ -519,6 +519,156 @@ func (x *EvaluationResponse) GetResult() []*EvaluationResponse_Result {
 	return nil
 }
 
+type EvaluationRequestV2 struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	QuestionText  string  `protobuf:"bytes,1,opt,name=questionText,proto3" json:"questionText,omitempty"`        // Nội dung câu hỏi
+	Answer        string  `protobuf:"bytes,2,opt,name=answer,proto3" json:"answer,omitempty"`                    // Câu trả lời của ứng viên
+	CorrectAnswer string  `protobuf:"bytes,3,opt,name=correctAnswer,proto3" json:"correctAnswer,omitempty"`      // Câu trả lời đúng của câu hỏi
+	Points        float64 `protobuf:"fixed64,4,opt,name=points,proto3" json:"points,omitempty"`                  // Điểm của câu hỏi
+	XUserId       string  `protobuf:"bytes,5,opt,name=x_user_id,json=xUserId,proto3" json:"x_user_id,omitempty"` // userid
+	XRoleId       string  `protobuf:"bytes,6,opt,name=x_role_id,json=xRoleId,proto3" json:"x_role_id,omitempty"` // roleid
+	Timestamp     string  `protobuf:"bytes,7,opt,name=timestamp,proto3" json:"timestamp,omitempty"`              // thời gian gửi
+}
+
+func (x *EvaluationRequestV2) Reset() {
+	*x = EvaluationRequestV2{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *EvaluationRequestV2) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EvaluationRequestV2) ProtoMessage() {}
+
+func (x *EvaluationRequestV2) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EvaluationRequestV2.ProtoReflect.Descriptor instead.
+func (*EvaluationRequestV2) Descriptor() ([]byte, []int) {
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *EvaluationRequestV2) GetQuestionText() string {
+	if x != nil {
+		return x.QuestionText
+	}
+	return ""
+}
+
+func (x *EvaluationRequestV2) GetAnswer() string {
+	if x != nil {
+		return x.Answer
+	}
+	return ""
+}
+
+func (x *EvaluationRequestV2) GetCorrectAnswer() string {
+	if x != nil {
+		return x.CorrectAnswer
+	}
+	return ""
+}
+
+func (x *EvaluationRequestV2) GetPoints() float64 {
+	if x != nil {
+		return x.Points
+	}
+	return 0
+}
+
+func (x *EvaluationRequestV2) GetXUserId() string {
+	if x != nil {
+		return x.XUserId
+	}
+	return ""
+}
+
+func (x *EvaluationRequestV2) GetXRoleId() string {
+	if x != nil {
+		return x.XRoleId
+	}
+	return ""
+}
+
+func (x *EvaluationRequestV2) GetTimestamp() string {
+	if x != nil {
+		return x.Timestamp
+	}
+	return ""
+}
+
+type EvaluationResponseV2 struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Score   int32  `protobuf:"varint,1,opt,name=score,proto3" json:"score,omitempty"`    // Điểm nhận được
+	Comment string `protobuf:"bytes,2,opt,name=comment,proto3" json:"comment,omitempty"` // Nhận xét
+}
+
+func (x *EvaluationResponseV2) Reset() {
+	*x = EvaluationResponseV2{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *EvaluationResponseV2) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EvaluationResponseV2) ProtoMessage() {}
+
+func (x *EvaluationResponseV2) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EvaluationResponseV2.ProtoReflect.Descriptor instead.
+func (*EvaluationResponseV2) Descriptor() ([]byte, []int) {
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *EvaluationResponseV2) GetScore() int32 {
+	if x != nil {
+		return x.Score
+	}
+	return 0
+}
+
+func (x *EvaluationResponseV2) GetComment() string {
+	if x != nil {
+		return x.Comment
+	}
+	return ""
+}
+
 type Attempt struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -534,7 +684,7 @@ type Attempt struct {
 func (x *Attempt) Reset() {
 	*x = Attempt{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[6]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -547,7 +697,7 @@ func (x *Attempt) String() string {
 func (*Attempt) ProtoMessage() {}
 
 func (x *Attempt) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[6]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -560,7 +710,7 @@ func (x *Attempt) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Attempt.ProtoReflect.Descriptor instead.
 func (*Attempt) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{6}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *Attempt) GetId() uint64 {
@@ -612,7 +762,7 @@ type Submission struct {
 func (x *Submission) Reset() {
 	*x = Submission{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[7]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -625,7 +775,7 @@ func (x *Submission) String() string {
 func (*Submission) ProtoMessage() {}
 
 func (x *Submission) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[7]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -638,7 +788,7 @@ func (x *Submission) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Submission.ProtoReflect.Descriptor instead.
 func (*Submission) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{7}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *Submission) GetId() uint64 {
@@ -681,7 +831,7 @@ type BaseData struct {
 func (x *BaseData) Reset() {
 	*x = BaseData{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[8]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -694,7 +844,7 @@ func (x *BaseData) String() string {
 func (*BaseData) ProtoMessage() {}
 
 func (x *BaseData) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[8]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -707,7 +857,7 @@ func (x *BaseData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BaseData.ProtoReflect.Descriptor instead.
 func (*BaseData) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{8}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *BaseData) GetCreatedAt() *timestamppb.Timestamp {
@@ -737,7 +887,7 @@ type Field struct {
 func (x *Field) Reset() {
 	*x = Field{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[9]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -750,7 +900,7 @@ func (x *Field) String() string {
 func (*Field) ProtoMessage() {}
 
 func (x *Field) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[9]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -763,7 +913,7 @@ func (x *Field) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Field.ProtoReflect.Descriptor instead.
 func (*Field) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{9}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *Field) GetId() uint64 {
@@ -805,7 +955,7 @@ type Scenario struct {
 func (x *Scenario) Reset() {
 	*x = Scenario{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[10]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -818,7 +968,7 @@ func (x *Scenario) String() string {
 func (*Scenario) ProtoMessage() {}
 
 func (x *Scenario) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[10]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -831,7 +981,7 @@ func (x *Scenario) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Scenario.ProtoReflect.Descriptor instead.
 func (*Scenario) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{10}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *Scenario) GetId() uint64 {
@@ -905,7 +1055,7 @@ type Question struct {
 func (x *Question) Reset() {
 	*x = Question{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[11]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -918,7 +1068,7 @@ func (x *Question) String() string {
 func (*Question) ProtoMessage() {}
 
 func (x *Question) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[11]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -931,7 +1081,7 @@ func (x *Question) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Question.ProtoReflect.Descriptor instead.
 func (*Question) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{11}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *Question) GetId() uint64 {
@@ -985,7 +1135,7 @@ type ListAllSubmissionRequest struct {
 func (x *ListAllSubmissionRequest) Reset() {
 	*x = ListAllSubmissionRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[12]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -998,7 +1148,7 @@ func (x *ListAllSubmissionRequest) String() string {
 func (*ListAllSubmissionRequest) ProtoMessage() {}
 
 func (x *ListAllSubmissionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[12]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1011,7 +1161,7 @@ func (x *ListAllSubmissionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAllSubmissionRequest.ProtoReflect.Descriptor instead.
 func (*ListAllSubmissionRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{12}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ListAllSubmissionRequest) GetScenarioId() uint64 {
@@ -1070,7 +1220,7 @@ type ListAllSubmissionResponse struct {
 func (x *ListAllSubmissionResponse) Reset() {
 	*x = ListAllSubmissionResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[13]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1083,7 +1233,7 @@ func (x *ListAllSubmissionResponse) String() string {
 func (*ListAllSubmissionResponse) ProtoMessage() {}
 
 func (x *ListAllSubmissionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[13]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1096,7 +1246,7 @@ func (x *ListAllSubmissionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAllSubmissionResponse.ProtoReflect.Descriptor instead.
 func (*ListAllSubmissionResponse) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{13}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ListAllSubmissionResponse) GetSubmissions() []*Submission {
@@ -1141,7 +1291,7 @@ type ListAttemptRequest struct {
 func (x *ListAttemptRequest) Reset() {
 	*x = ListAttemptRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[14]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1154,7 +1304,7 @@ func (x *ListAttemptRequest) String() string {
 func (*ListAttemptRequest) ProtoMessage() {}
 
 func (x *ListAttemptRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[14]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1167,7 +1317,7 @@ func (x *ListAttemptRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAttemptRequest.ProtoReflect.Descriptor instead.
 func (*ListAttemptRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{14}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ListAttemptRequest) GetScenarioId() uint64 {
@@ -1212,7 +1362,7 @@ type ListAttemptResponse struct {
 func (x *ListAttemptResponse) Reset() {
 	*x = ListAttemptResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[15]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1225,7 +1375,7 @@ func (x *ListAttemptResponse) String() string {
 func (*ListAttemptResponse) ProtoMessage() {}
 
 func (x *ListAttemptResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[15]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1238,7 +1388,7 @@ func (x *ListAttemptResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAttemptResponse.ProtoReflect.Descriptor instead.
 func (*ListAttemptResponse) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{15}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ListAttemptResponse) GetAttempts() []*Attempt {
@@ -1280,7 +1430,7 @@ type GetAttemptRequest struct {
 func (x *GetAttemptRequest) Reset() {
 	*x = GetAttemptRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[16]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1293,7 +1443,7 @@ func (x *GetAttemptRequest) String() string {
 func (*GetAttemptRequest) ProtoMessage() {}
 
 func (x *GetAttemptRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[16]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1306,7 +1456,7 @@ func (x *GetAttemptRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAttemptRequest.ProtoReflect.Descriptor instead.
 func (*GetAttemptRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{16}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetAttemptRequest) GetId() uint64 {
@@ -1328,7 +1478,7 @@ type SubmitAnswerRequest struct {
 func (x *SubmitAnswerRequest) Reset() {
 	*x = SubmitAnswerRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[17]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1341,7 +1491,7 @@ func (x *SubmitAnswerRequest) String() string {
 func (*SubmitAnswerRequest) ProtoMessage() {}
 
 func (x *SubmitAnswerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[17]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1354,7 +1504,7 @@ func (x *SubmitAnswerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubmitAnswerRequest.ProtoReflect.Descriptor instead.
 func (*SubmitAnswerRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{17}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *SubmitAnswerRequest) GetScenarioId() uint64 {
@@ -1382,7 +1532,7 @@ type SubmitAnswerResponse struct {
 func (x *SubmitAnswerResponse) Reset() {
 	*x = SubmitAnswerResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[18]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1395,7 +1545,7 @@ func (x *SubmitAnswerResponse) String() string {
 func (*SubmitAnswerResponse) ProtoMessage() {}
 
 func (x *SubmitAnswerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[18]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1408,7 +1558,7 @@ func (x *SubmitAnswerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubmitAnswerResponse.ProtoReflect.Descriptor instead.
 func (*SubmitAnswerResponse) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{18}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *SubmitAnswerResponse) GetAttempt() *Attempt {
@@ -1429,7 +1579,7 @@ type GetAttemptResponse struct {
 func (x *GetAttemptResponse) Reset() {
 	*x = GetAttemptResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[19]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1442,7 +1592,7 @@ func (x *GetAttemptResponse) String() string {
 func (*GetAttemptResponse) ProtoMessage() {}
 
 func (x *GetAttemptResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[19]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1455,7 +1605,7 @@ func (x *GetAttemptResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAttemptResponse.ProtoReflect.Descriptor instead.
 func (*GetAttemptResponse) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{19}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetAttemptResponse) GetAttempt() *Attempt {
@@ -1476,7 +1626,7 @@ type CreateFieldResponse struct {
 func (x *CreateFieldResponse) Reset() {
 	*x = CreateFieldResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[20]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1489,7 +1639,7 @@ func (x *CreateFieldResponse) String() string {
 func (*CreateFieldResponse) ProtoMessage() {}
 
 func (x *CreateFieldResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[20]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1502,7 +1652,7 @@ func (x *CreateFieldResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateFieldResponse.ProtoReflect.Descriptor instead.
 func (*CreateFieldResponse) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{20}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *CreateFieldResponse) GetField() *Field {
@@ -1523,7 +1673,7 @@ type CreateFieldRequest struct {
 func (x *CreateFieldRequest) Reset() {
 	*x = CreateFieldRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[21]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1536,7 +1686,7 @@ func (x *CreateFieldRequest) String() string {
 func (*CreateFieldRequest) ProtoMessage() {}
 
 func (x *CreateFieldRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[21]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1549,7 +1699,7 @@ func (x *CreateFieldRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateFieldRequest.ProtoReflect.Descriptor instead.
 func (*CreateFieldRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{21}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *CreateFieldRequest) GetName() string {
@@ -1571,7 +1721,7 @@ type UpdateFieldRequest struct {
 func (x *UpdateFieldRequest) Reset() {
 	*x = UpdateFieldRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[22]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[24]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1584,7 +1734,7 @@ func (x *UpdateFieldRequest) String() string {
 func (*UpdateFieldRequest) ProtoMessage() {}
 
 func (x *UpdateFieldRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[22]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[24]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1597,7 +1747,7 @@ func (x *UpdateFieldRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateFieldRequest.ProtoReflect.Descriptor instead.
 func (*UpdateFieldRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{22}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *UpdateFieldRequest) GetId() uint64 {
@@ -1625,7 +1775,7 @@ type DeleteFieldRequest struct {
 func (x *DeleteFieldRequest) Reset() {
 	*x = DeleteFieldRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[23]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[25]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1638,7 +1788,7 @@ func (x *DeleteFieldRequest) String() string {
 func (*DeleteFieldRequest) ProtoMessage() {}
 
 func (x *DeleteFieldRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[23]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[25]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1651,7 +1801,7 @@ func (x *DeleteFieldRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFieldRequest.ProtoReflect.Descriptor instead.
 func (*DeleteFieldRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{23}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *DeleteFieldRequest) GetIds() []uint64 {
@@ -1676,7 +1826,7 @@ type ListFieldRequest struct {
 func (x *ListFieldRequest) Reset() {
 	*x = ListFieldRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[24]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1689,7 +1839,7 @@ func (x *ListFieldRequest) String() string {
 func (*ListFieldRequest) ProtoMessage() {}
 
 func (x *ListFieldRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[24]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1702,7 +1852,7 @@ func (x *ListFieldRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFieldRequest.ProtoReflect.Descriptor instead.
 func (*ListFieldRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{24}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ListFieldRequest) GetIds() []uint64 {
@@ -1754,7 +1904,7 @@ type ListFieldResponse struct {
 func (x *ListFieldResponse) Reset() {
 	*x = ListFieldResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[25]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1767,7 +1917,7 @@ func (x *ListFieldResponse) String() string {
 func (*ListFieldResponse) ProtoMessage() {}
 
 func (x *ListFieldResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[25]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1780,7 +1930,7 @@ func (x *ListFieldResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFieldResponse.ProtoReflect.Descriptor instead.
 func (*ListFieldResponse) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{25}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ListFieldResponse) GetFields() []*Field {
@@ -1825,7 +1975,7 @@ type CreateScenarioRequest struct {
 func (x *CreateScenarioRequest) Reset() {
 	*x = CreateScenarioRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[26]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[28]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1838,7 +1988,7 @@ func (x *CreateScenarioRequest) String() string {
 func (*CreateScenarioRequest) ProtoMessage() {}
 
 func (x *CreateScenarioRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[26]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[28]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1851,7 +2001,7 @@ func (x *CreateScenarioRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateScenarioRequest.ProtoReflect.Descriptor instead.
 func (*CreateScenarioRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{26}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *CreateScenarioRequest) GetName() string {
@@ -1893,7 +2043,7 @@ type CreateScenarioResponse struct {
 func (x *CreateScenarioResponse) Reset() {
 	*x = CreateScenarioResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[27]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[29]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1906,7 +2056,7 @@ func (x *CreateScenarioResponse) String() string {
 func (*CreateScenarioResponse) ProtoMessage() {}
 
 func (x *CreateScenarioResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[27]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[29]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1919,7 +2069,7 @@ func (x *CreateScenarioResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateScenarioResponse.ProtoReflect.Descriptor instead.
 func (*CreateScenarioResponse) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{27}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *CreateScenarioResponse) GetScenario() *Scenario {
@@ -1944,7 +2094,7 @@ type UpdateScenarioRequest struct {
 func (x *UpdateScenarioRequest) Reset() {
 	*x = UpdateScenarioRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[28]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[30]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1957,7 +2107,7 @@ func (x *UpdateScenarioRequest) String() string {
 func (*UpdateScenarioRequest) ProtoMessage() {}
 
 func (x *UpdateScenarioRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[28]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[30]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1970,7 +2120,7 @@ func (x *UpdateScenarioRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateScenarioRequest.ProtoReflect.Descriptor instead.
 func (*UpdateScenarioRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{28}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *UpdateScenarioRequest) GetId() uint64 {
@@ -2021,7 +2171,7 @@ type ScenarioQuestion struct {
 func (x *ScenarioQuestion) Reset() {
 	*x = ScenarioQuestion{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[29]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[31]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2034,7 +2184,7 @@ func (x *ScenarioQuestion) String() string {
 func (*ScenarioQuestion) ProtoMessage() {}
 
 func (x *ScenarioQuestion) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[29]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[31]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2047,7 +2197,7 @@ func (x *ScenarioQuestion) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ScenarioQuestion.ProtoReflect.Descriptor instead.
 func (*ScenarioQuestion) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{29}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *ScenarioQuestion) GetCriteria() string {
@@ -2082,7 +2232,7 @@ type DeleteScenarioRequest struct {
 func (x *DeleteScenarioRequest) Reset() {
 	*x = DeleteScenarioRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[30]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[32]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2095,7 +2245,7 @@ func (x *DeleteScenarioRequest) String() string {
 func (*DeleteScenarioRequest) ProtoMessage() {}
 
 func (x *DeleteScenarioRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[30]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[32]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2108,7 +2258,7 @@ func (x *DeleteScenarioRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteScenarioRequest.ProtoReflect.Descriptor instead.
 func (*DeleteScenarioRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{30}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *DeleteScenarioRequest) GetIds() []uint64 {
@@ -2140,7 +2290,7 @@ type ListScenarioRequest struct {
 func (x *ListScenarioRequest) Reset() {
 	*x = ListScenarioRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[31]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[33]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2153,7 +2303,7 @@ func (x *ListScenarioRequest) String() string {
 func (*ListScenarioRequest) ProtoMessage() {}
 
 func (x *ListScenarioRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[31]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[33]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2166,7 +2316,7 @@ func (x *ListScenarioRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListScenarioRequest.ProtoReflect.Descriptor instead.
 func (*ListScenarioRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{31}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *ListScenarioRequest) GetBmIds() []uint64 {
@@ -2267,7 +2417,7 @@ type ListScenarioResponse struct {
 func (x *ListScenarioResponse) Reset() {
 	*x = ListScenarioResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[32]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[34]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2280,7 +2430,7 @@ func (x *ListScenarioResponse) String() string {
 func (*ListScenarioResponse) ProtoMessage() {}
 
 func (x *ListScenarioResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[32]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[34]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2293,7 +2443,7 @@ func (x *ListScenarioResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListScenarioResponse.ProtoReflect.Descriptor instead.
 func (*ListScenarioResponse) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{32}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *ListScenarioResponse) GetScenario() []*Scenario {
@@ -2335,7 +2485,7 @@ type GetScenarioRequest struct {
 func (x *GetScenarioRequest) Reset() {
 	*x = GetScenarioRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[33]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[35]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2348,7 +2498,7 @@ func (x *GetScenarioRequest) String() string {
 func (*GetScenarioRequest) ProtoMessage() {}
 
 func (x *GetScenarioRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[33]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[35]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2361,7 +2511,7 @@ func (x *GetScenarioRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetScenarioRequest.ProtoReflect.Descriptor instead.
 func (*GetScenarioRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{33}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *GetScenarioRequest) GetId() uint64 {
@@ -2382,7 +2532,7 @@ type GetScenarioResponse struct {
 func (x *GetScenarioResponse) Reset() {
 	*x = GetScenarioResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[34]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[36]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2395,7 +2545,7 @@ func (x *GetScenarioResponse) String() string {
 func (*GetScenarioResponse) ProtoMessage() {}
 
 func (x *GetScenarioResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[34]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[36]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2408,7 +2558,7 @@ func (x *GetScenarioResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetScenarioResponse.ProtoReflect.Descriptor instead.
 func (*GetScenarioResponse) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{34}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *GetScenarioResponse) GetScenario() *Scenario {
@@ -2429,7 +2579,7 @@ type FavoriteScenarioRequest struct {
 func (x *FavoriteScenarioRequest) Reset() {
 	*x = FavoriteScenarioRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[35]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[37]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2442,7 +2592,7 @@ func (x *FavoriteScenarioRequest) String() string {
 func (*FavoriteScenarioRequest) ProtoMessage() {}
 
 func (x *FavoriteScenarioRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[35]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[37]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2455,7 +2605,7 @@ func (x *FavoriteScenarioRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FavoriteScenarioRequest.ProtoReflect.Descriptor instead.
 func (*FavoriteScenarioRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{35}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *FavoriteScenarioRequest) GetId() uint64 {
@@ -2477,7 +2627,7 @@ type RatingScenarioRequest struct {
 func (x *RatingScenarioRequest) Reset() {
 	*x = RatingScenarioRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[36]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[38]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2490,7 +2640,7 @@ func (x *RatingScenarioRequest) String() string {
 func (*RatingScenarioRequest) ProtoMessage() {}
 
 func (x *RatingScenarioRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[36]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[38]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2503,7 +2653,7 @@ func (x *RatingScenarioRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RatingScenarioRequest.ProtoReflect.Descriptor instead.
 func (*RatingScenarioRequest) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{36}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *RatingScenarioRequest) GetId() uint64 {
@@ -2532,7 +2682,7 @@ type EvaluationRequest_EvalutionScenario struct {
 func (x *EvaluationRequest_EvalutionScenario) Reset() {
 	*x = EvaluationRequest_EvalutionScenario{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[37]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[39]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2545,7 +2695,7 @@ func (x *EvaluationRequest_EvalutionScenario) String() string {
 func (*EvaluationRequest_EvalutionScenario) ProtoMessage() {}
 
 func (x *EvaluationRequest_EvalutionScenario) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[37]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[39]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2589,7 +2739,7 @@ type EvaluationRequest_QuestionAnswerPair struct {
 func (x *EvaluationRequest_QuestionAnswerPair) Reset() {
 	*x = EvaluationRequest_QuestionAnswerPair{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[38]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[40]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2602,7 +2752,7 @@ func (x *EvaluationRequest_QuestionAnswerPair) String() string {
 func (*EvaluationRequest_QuestionAnswerPair) ProtoMessage() {}
 
 func (x *EvaluationRequest_QuestionAnswerPair) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[38]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[40]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2662,7 +2812,7 @@ type EvaluationResponse_Result struct {
 func (x *EvaluationResponse_Result) Reset() {
 	*x = EvaluationResponse_Result{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[39]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[41]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2675,7 +2825,7 @@ func (x *EvaluationResponse_Result) String() string {
 func (*EvaluationResponse_Result) ProtoMessage() {}
 
 func (x *EvaluationResponse_Result) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[39]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[41]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2745,7 +2895,7 @@ type SubmitAnswerRequest_SubmittedAnswer struct {
 func (x *SubmitAnswerRequest_SubmittedAnswer) Reset() {
 	*x = SubmitAnswerRequest_SubmittedAnswer{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[40]
+		mi := &file_proto_deps_ekko_ekko_proto_msgTypes[42]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2758,7 +2908,7 @@ func (x *SubmitAnswerRequest_SubmittedAnswer) String() string {
 func (*SubmitAnswerRequest_SubmittedAnswer) ProtoMessage() {}
 
 func (x *SubmitAnswerRequest_SubmittedAnswer) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[40]
+	mi := &file_proto_deps_ekko_ekko_proto_msgTypes[42]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2771,7 +2921,7 @@ func (x *SubmitAnswerRequest_SubmittedAnswer) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use SubmitAnswerRequest_SubmittedAnswer.ProtoReflect.Descriptor instead.
 func (*SubmitAnswerRequest_SubmittedAnswer) Descriptor() ([]byte, []int) {
-	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{17, 0}
+	return file_proto_deps_ekko_ekko_proto_rawDescGZIP(), []int{19, 0}
 }
 
 func (x *SubmitAnswerRequest_SubmittedAnswer) GetQuestionId() uint64 {
@@ -2867,7 +3017,26 @@ var file_proto_deps_ekko_ekko_proto_rawDesc = []byte{
 	0x6f, 0x76, 0x65, 0x72, 0x61, 0x6c, 0x6c, 0x12, 0x2e, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75,
 	0x73, 0x18, 0x06, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x16, 0x2e, 0x65, 0x6b, 0x6b, 0x6f, 0x2e, 0x53,
 	0x75, 0x62, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52,
-	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0xb6, 0x01, 0x0a, 0x07, 0x41, 0x74, 0x74, 0x65,
+	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0xe5, 0x01, 0x0a, 0x13, 0x45, 0x76, 0x61, 0x6c,
+	0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x56, 0x32, 0x12,
+	0x22, 0x0a, 0x0c, 0x71, 0x75, 0x65, 0x73, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x65, 0x78, 0x74, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x71, 0x75, 0x65, 0x73, 0x74, 0x69, 0x6f, 0x6e, 0x54,
+	0x65, 0x78, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x06, 0x61, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x12, 0x24, 0x0a, 0x0d, 0x63,
+	0x6f, 0x72, 0x72, 0x65, 0x63, 0x74, 0x41, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x0d, 0x63, 0x6f, 0x72, 0x72, 0x65, 0x63, 0x74, 0x41, 0x6e, 0x73, 0x77, 0x65,
+	0x72, 0x12, 0x16, 0x0a, 0x06, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28,
+	0x01, 0x52, 0x06, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x73, 0x12, 0x1a, 0x0a, 0x09, 0x78, 0x5f, 0x75,
+	0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x78, 0x55,
+	0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x1a, 0x0a, 0x09, 0x78, 0x5f, 0x72, 0x6f, 0x6c, 0x65, 0x5f,
+	0x69, 0x64, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x78, 0x52, 0x6f, 0x6c, 0x65, 0x49,
+	0x64, 0x12, 0x1c, 0x0a, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x18, 0x07,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x22,
+	0x46, 0x0a, 0x14, 0x45, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x56, 0x32, 0x12, 0x14, 0x0a, 0x05, 0x73, 0x63, 0x6f, 0x72, 0x65,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x73, 0x63, 0x6f, 0x72, 0x65, 0x12, 0x18, 0x0a,
+	0x07, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07,
+	0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x22, 0xb6, 0x01, 0x0a, 0x07, 0x41, 0x74, 0x74, 0x65,
 	0x6d, 0x70, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52,
 	0x02, 0x69, 0x64, 0x12, 0x1f, 0x0a, 0x0b, 0x73, 0x63, 0x65, 0x6e, 0x61, 0x72, 0x69, 0x6f, 0x5f,
 	0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0a, 0x73, 0x63, 0x65, 0x6e, 0x61, 0x72,
@@ -3283,7 +3452,7 @@ func file_proto_deps_ekko_ekko_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_deps_ekko_ekko_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_proto_deps_ekko_ekko_proto_msgTypes = make([]protoimpl.MessageInfo, 41)
+var file_proto_deps_ekko_ekko_proto_msgTypes = make([]protoimpl.MessageInfo, 43)
 var file_proto_deps_ekko_ekko_proto_goTypes = []interface{}{
 	(SortType)(0),                                // 0: ekko.SortType
 	(SubmissionStatus)(0),                        // 1: ekko.SubmissionStatus
@@ -3294,118 +3463,120 @@ var file_proto_deps_ekko_ekko_proto_goTypes = []interface{}{
 	(*Answer)(nil),                               // 6: ekko.Answer
 	(*EvaluationRequest)(nil),                    // 7: ekko.EvaluationRequest
 	(*EvaluationResponse)(nil),                   // 8: ekko.EvaluationResponse
-	(*Attempt)(nil),                              // 9: ekko.Attempt
-	(*Submission)(nil),                           // 10: ekko.Submission
-	(*BaseData)(nil),                             // 11: ekko.BaseData
-	(*Field)(nil),                                // 12: ekko.Field
-	(*Scenario)(nil),                             // 13: ekko.Scenario
-	(*Question)(nil),                             // 14: ekko.Question
-	(*ListAllSubmissionRequest)(nil),             // 15: ekko.ListAllSubmissionRequest
-	(*ListAllSubmissionResponse)(nil),            // 16: ekko.ListAllSubmissionResponse
-	(*ListAttemptRequest)(nil),                   // 17: ekko.ListAttemptRequest
-	(*ListAttemptResponse)(nil),                  // 18: ekko.ListAttemptResponse
-	(*GetAttemptRequest)(nil),                    // 19: ekko.GetAttemptRequest
-	(*SubmitAnswerRequest)(nil),                  // 20: ekko.SubmitAnswerRequest
-	(*SubmitAnswerResponse)(nil),                 // 21: ekko.SubmitAnswerResponse
-	(*GetAttemptResponse)(nil),                   // 22: ekko.GetAttemptResponse
-	(*CreateFieldResponse)(nil),                  // 23: ekko.CreateFieldResponse
-	(*CreateFieldRequest)(nil),                   // 24: ekko.CreateFieldRequest
-	(*UpdateFieldRequest)(nil),                   // 25: ekko.UpdateFieldRequest
-	(*DeleteFieldRequest)(nil),                   // 26: ekko.DeleteFieldRequest
-	(*ListFieldRequest)(nil),                     // 27: ekko.ListFieldRequest
-	(*ListFieldResponse)(nil),                    // 28: ekko.ListFieldResponse
-	(*CreateScenarioRequest)(nil),                // 29: ekko.CreateScenarioRequest
-	(*CreateScenarioResponse)(nil),               // 30: ekko.CreateScenarioResponse
-	(*UpdateScenarioRequest)(nil),                // 31: ekko.UpdateScenarioRequest
-	(*ScenarioQuestion)(nil),                     // 32: ekko.ScenarioQuestion
-	(*DeleteScenarioRequest)(nil),                // 33: ekko.DeleteScenarioRequest
-	(*ListScenarioRequest)(nil),                  // 34: ekko.ListScenarioRequest
-	(*ListScenarioResponse)(nil),                 // 35: ekko.ListScenarioResponse
-	(*GetScenarioRequest)(nil),                   // 36: ekko.GetScenarioRequest
-	(*GetScenarioResponse)(nil),                  // 37: ekko.GetScenarioResponse
-	(*FavoriteScenarioRequest)(nil),              // 38: ekko.FavoriteScenarioRequest
-	(*RatingScenarioRequest)(nil),                // 39: ekko.RatingScenarioRequest
-	(*EvaluationRequest_EvalutionScenario)(nil),  // 40: ekko.EvaluationRequest.EvalutionScenario
-	(*EvaluationRequest_QuestionAnswerPair)(nil), // 41: ekko.EvaluationRequest.QuestionAnswerPair
-	(*EvaluationResponse_Result)(nil),            // 42: ekko.EvaluationResponse.Result
-	(*SubmitAnswerRequest_SubmittedAnswer)(nil),  // 43: ekko.SubmitAnswerRequest.SubmittedAnswer
-	(*timestamppb.Timestamp)(nil),                // 44: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),                        // 45: google.protobuf.Empty
+	(*EvaluationRequestV2)(nil),                  // 9: ekko.EvaluationRequestV2
+	(*EvaluationResponseV2)(nil),                 // 10: ekko.EvaluationResponseV2
+	(*Attempt)(nil),                              // 11: ekko.Attempt
+	(*Submission)(nil),                           // 12: ekko.Submission
+	(*BaseData)(nil),                             // 13: ekko.BaseData
+	(*Field)(nil),                                // 14: ekko.Field
+	(*Scenario)(nil),                             // 15: ekko.Scenario
+	(*Question)(nil),                             // 16: ekko.Question
+	(*ListAllSubmissionRequest)(nil),             // 17: ekko.ListAllSubmissionRequest
+	(*ListAllSubmissionResponse)(nil),            // 18: ekko.ListAllSubmissionResponse
+	(*ListAttemptRequest)(nil),                   // 19: ekko.ListAttemptRequest
+	(*ListAttemptResponse)(nil),                  // 20: ekko.ListAttemptResponse
+	(*GetAttemptRequest)(nil),                    // 21: ekko.GetAttemptRequest
+	(*SubmitAnswerRequest)(nil),                  // 22: ekko.SubmitAnswerRequest
+	(*SubmitAnswerResponse)(nil),                 // 23: ekko.SubmitAnswerResponse
+	(*GetAttemptResponse)(nil),                   // 24: ekko.GetAttemptResponse
+	(*CreateFieldResponse)(nil),                  // 25: ekko.CreateFieldResponse
+	(*CreateFieldRequest)(nil),                   // 26: ekko.CreateFieldRequest
+	(*UpdateFieldRequest)(nil),                   // 27: ekko.UpdateFieldRequest
+	(*DeleteFieldRequest)(nil),                   // 28: ekko.DeleteFieldRequest
+	(*ListFieldRequest)(nil),                     // 29: ekko.ListFieldRequest
+	(*ListFieldResponse)(nil),                    // 30: ekko.ListFieldResponse
+	(*CreateScenarioRequest)(nil),                // 31: ekko.CreateScenarioRequest
+	(*CreateScenarioResponse)(nil),               // 32: ekko.CreateScenarioResponse
+	(*UpdateScenarioRequest)(nil),                // 33: ekko.UpdateScenarioRequest
+	(*ScenarioQuestion)(nil),                     // 34: ekko.ScenarioQuestion
+	(*DeleteScenarioRequest)(nil),                // 35: ekko.DeleteScenarioRequest
+	(*ListScenarioRequest)(nil),                  // 36: ekko.ListScenarioRequest
+	(*ListScenarioResponse)(nil),                 // 37: ekko.ListScenarioResponse
+	(*GetScenarioRequest)(nil),                   // 38: ekko.GetScenarioRequest
+	(*GetScenarioResponse)(nil),                  // 39: ekko.GetScenarioResponse
+	(*FavoriteScenarioRequest)(nil),              // 40: ekko.FavoriteScenarioRequest
+	(*RatingScenarioRequest)(nil),                // 41: ekko.RatingScenarioRequest
+	(*EvaluationRequest_EvalutionScenario)(nil),  // 42: ekko.EvaluationRequest.EvalutionScenario
+	(*EvaluationRequest_QuestionAnswerPair)(nil), // 43: ekko.EvaluationRequest.QuestionAnswerPair
+	(*EvaluationResponse_Result)(nil),            // 44: ekko.EvaluationResponse.Result
+	(*SubmitAnswerRequest_SubmittedAnswer)(nil),  // 45: ekko.SubmitAnswerRequest.SubmittedAnswer
+	(*timestamppb.Timestamp)(nil),                // 46: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),                        // 47: google.protobuf.Empty
 }
 var file_proto_deps_ekko_ekko_proto_depIdxs = []int32{
 	0,  // 0: ekko.SortMethod.type:type_name -> ekko.SortType
 	1,  // 1: ekko.Answer.status:type_name -> ekko.SubmissionStatus
-	11, // 2: ekko.Answer.base_data:type_name -> ekko.BaseData
-	40, // 3: ekko.EvaluationRequest.scenario:type_name -> ekko.EvaluationRequest.EvalutionScenario
-	41, // 4: ekko.EvaluationRequest.data:type_name -> ekko.EvaluationRequest.QuestionAnswerPair
-	42, // 5: ekko.EvaluationResponse.result:type_name -> ekko.EvaluationResponse.Result
+	13, // 2: ekko.Answer.base_data:type_name -> ekko.BaseData
+	42, // 3: ekko.EvaluationRequest.scenario:type_name -> ekko.EvaluationRequest.EvalutionScenario
+	43, // 4: ekko.EvaluationRequest.data:type_name -> ekko.EvaluationRequest.QuestionAnswerPair
+	44, // 5: ekko.EvaluationResponse.result:type_name -> ekko.EvaluationResponse.Result
 	6,  // 6: ekko.Attempt.answers:type_name -> ekko.Answer
-	11, // 7: ekko.Attempt.base_data:type_name -> ekko.BaseData
-	9,  // 8: ekko.Submission.attempts:type_name -> ekko.Attempt
-	44, // 9: ekko.BaseData.created_at:type_name -> google.protobuf.Timestamp
-	44, // 10: ekko.BaseData.updated_at:type_name -> google.protobuf.Timestamp
-	11, // 11: ekko.Field.base_data:type_name -> ekko.BaseData
-	11, // 12: ekko.Scenario.base_data:type_name -> ekko.BaseData
-	12, // 13: ekko.Scenario.fields:type_name -> ekko.Field
-	14, // 14: ekko.Scenario.questions:type_name -> ekko.Question
-	11, // 15: ekko.Question.base_data:type_name -> ekko.BaseData
+	13, // 7: ekko.Attempt.base_data:type_name -> ekko.BaseData
+	11, // 8: ekko.Submission.attempts:type_name -> ekko.Attempt
+	46, // 9: ekko.BaseData.created_at:type_name -> google.protobuf.Timestamp
+	46, // 10: ekko.BaseData.updated_at:type_name -> google.protobuf.Timestamp
+	13, // 11: ekko.Field.base_data:type_name -> ekko.BaseData
+	13, // 12: ekko.Scenario.base_data:type_name -> ekko.BaseData
+	14, // 13: ekko.Scenario.fields:type_name -> ekko.Field
+	16, // 14: ekko.Scenario.questions:type_name -> ekko.Question
+	13, // 15: ekko.Question.base_data:type_name -> ekko.BaseData
 	3,  // 16: ekko.ListAllSubmissionRequest.sort_method:type_name -> ekko.SortMethod
-	44, // 17: ekko.ListAllSubmissionRequest.from:type_name -> google.protobuf.Timestamp
-	44, // 18: ekko.ListAllSubmissionRequest.to:type_name -> google.protobuf.Timestamp
-	10, // 19: ekko.ListAllSubmissionResponse.submissions:type_name -> ekko.Submission
-	15, // 20: ekko.ListAllSubmissionResponse.request:type_name -> ekko.ListAllSubmissionRequest
+	46, // 17: ekko.ListAllSubmissionRequest.from:type_name -> google.protobuf.Timestamp
+	46, // 18: ekko.ListAllSubmissionRequest.to:type_name -> google.protobuf.Timestamp
+	12, // 19: ekko.ListAllSubmissionResponse.submissions:type_name -> ekko.Submission
+	17, // 20: ekko.ListAllSubmissionResponse.request:type_name -> ekko.ListAllSubmissionRequest
 	3,  // 21: ekko.ListAttemptRequest.sort_method:type_name -> ekko.SortMethod
-	9,  // 22: ekko.ListAttemptResponse.attempts:type_name -> ekko.Attempt
-	17, // 23: ekko.ListAttemptResponse.request:type_name -> ekko.ListAttemptRequest
-	43, // 24: ekko.SubmitAnswerRequest.answers:type_name -> ekko.SubmitAnswerRequest.SubmittedAnswer
-	9,  // 25: ekko.SubmitAnswerResponse.attempt:type_name -> ekko.Attempt
-	9,  // 26: ekko.GetAttemptResponse.attempt:type_name -> ekko.Attempt
-	12, // 27: ekko.CreateFieldResponse.field:type_name -> ekko.Field
+	11, // 22: ekko.ListAttemptResponse.attempts:type_name -> ekko.Attempt
+	19, // 23: ekko.ListAttemptResponse.request:type_name -> ekko.ListAttemptRequest
+	45, // 24: ekko.SubmitAnswerRequest.answers:type_name -> ekko.SubmitAnswerRequest.SubmittedAnswer
+	11, // 25: ekko.SubmitAnswerResponse.attempt:type_name -> ekko.Attempt
+	11, // 26: ekko.GetAttemptResponse.attempt:type_name -> ekko.Attempt
+	14, // 27: ekko.CreateFieldResponse.field:type_name -> ekko.Field
 	3,  // 28: ekko.ListFieldRequest.sort_methods:type_name -> ekko.SortMethod
-	12, // 29: ekko.ListFieldResponse.fields:type_name -> ekko.Field
-	27, // 30: ekko.ListFieldResponse.request:type_name -> ekko.ListFieldRequest
-	32, // 31: ekko.CreateScenarioRequest.questions:type_name -> ekko.ScenarioQuestion
-	13, // 32: ekko.CreateScenarioResponse.scenario:type_name -> ekko.Scenario
-	32, // 33: ekko.UpdateScenarioRequest.questions:type_name -> ekko.ScenarioQuestion
+	14, // 29: ekko.ListFieldResponse.fields:type_name -> ekko.Field
+	29, // 30: ekko.ListFieldResponse.request:type_name -> ekko.ListFieldRequest
+	34, // 31: ekko.CreateScenarioRequest.questions:type_name -> ekko.ScenarioQuestion
+	15, // 32: ekko.CreateScenarioResponse.scenario:type_name -> ekko.Scenario
+	34, // 33: ekko.UpdateScenarioRequest.questions:type_name -> ekko.ScenarioQuestion
 	3,  // 34: ekko.ListScenarioRequest.sort_methods:type_name -> ekko.SortMethod
-	44, // 35: ekko.ListScenarioRequest.from:type_name -> google.protobuf.Timestamp
-	44, // 36: ekko.ListScenarioRequest.to:type_name -> google.protobuf.Timestamp
-	13, // 37: ekko.ListScenarioResponse.scenario:type_name -> ekko.Scenario
-	34, // 38: ekko.ListScenarioResponse.request:type_name -> ekko.ListScenarioRequest
-	13, // 39: ekko.GetScenarioResponse.scenario:type_name -> ekko.Scenario
+	46, // 35: ekko.ListScenarioRequest.from:type_name -> google.protobuf.Timestamp
+	46, // 36: ekko.ListScenarioRequest.to:type_name -> google.protobuf.Timestamp
+	15, // 37: ekko.ListScenarioResponse.scenario:type_name -> ekko.Scenario
+	36, // 38: ekko.ListScenarioResponse.request:type_name -> ekko.ListScenarioRequest
+	15, // 39: ekko.GetScenarioResponse.scenario:type_name -> ekko.Scenario
 	1,  // 40: ekko.EvaluationResponse.Result.status:type_name -> ekko.SubmissionStatus
-	24, // 41: ekko.Ekko.CreateField:input_type -> ekko.CreateFieldRequest
-	25, // 42: ekko.Ekko.UpdateField:input_type -> ekko.UpdateFieldRequest
-	26, // 43: ekko.Ekko.DeleteField:input_type -> ekko.DeleteFieldRequest
-	29, // 44: ekko.Ekko.CreateScenario:input_type -> ekko.CreateScenarioRequest
-	31, // 45: ekko.Ekko.UpdateScenario:input_type -> ekko.UpdateScenarioRequest
-	33, // 46: ekko.Ekko.DeleteScenario:input_type -> ekko.DeleteScenarioRequest
-	34, // 47: ekko.Ekko.ListScenario:input_type -> ekko.ListScenarioRequest
-	38, // 48: ekko.Ekko.FavoriteScenario:input_type -> ekko.FavoriteScenarioRequest
-	39, // 49: ekko.Ekko.RatingScenario:input_type -> ekko.RatingScenarioRequest
-	17, // 50: ekko.Ekko.ListAttempt:input_type -> ekko.ListAttemptRequest
-	19, // 51: ekko.Ekko.GetAttempt:input_type -> ekko.GetAttemptRequest
-	20, // 52: ekko.Ekko.SubmitAnswer:input_type -> ekko.SubmitAnswerRequest
-	15, // 53: ekko.Ekko.ListAllSubmission:input_type -> ekko.ListAllSubmissionRequest
-	27, // 54: ekko.Chronobreak.ListField:input_type -> ekko.ListFieldRequest
-	34, // 55: ekko.Chronobreak.ListScenario:input_type -> ekko.ListScenarioRequest
-	36, // 56: ekko.Chronobreak.GetScenario:input_type -> ekko.GetScenarioRequest
-	23, // 57: ekko.Ekko.CreateField:output_type -> ekko.CreateFieldResponse
-	45, // 58: ekko.Ekko.UpdateField:output_type -> google.protobuf.Empty
-	45, // 59: ekko.Ekko.DeleteField:output_type -> google.protobuf.Empty
-	30, // 60: ekko.Ekko.CreateScenario:output_type -> ekko.CreateScenarioResponse
-	45, // 61: ekko.Ekko.UpdateScenario:output_type -> google.protobuf.Empty
-	45, // 62: ekko.Ekko.DeleteScenario:output_type -> google.protobuf.Empty
-	35, // 63: ekko.Ekko.ListScenario:output_type -> ekko.ListScenarioResponse
-	45, // 64: ekko.Ekko.FavoriteScenario:output_type -> google.protobuf.Empty
-	45, // 65: ekko.Ekko.RatingScenario:output_type -> google.protobuf.Empty
-	18, // 66: ekko.Ekko.ListAttempt:output_type -> ekko.ListAttemptResponse
-	22, // 67: ekko.Ekko.GetAttempt:output_type -> ekko.GetAttemptResponse
-	21, // 68: ekko.Ekko.SubmitAnswer:output_type -> ekko.SubmitAnswerResponse
-	16, // 69: ekko.Ekko.ListAllSubmission:output_type -> ekko.ListAllSubmissionResponse
-	28, // 70: ekko.Chronobreak.ListField:output_type -> ekko.ListFieldResponse
-	35, // 71: ekko.Chronobreak.ListScenario:output_type -> ekko.ListScenarioResponse
-	37, // 72: ekko.Chronobreak.GetScenario:output_type -> ekko.GetScenarioResponse
+	26, // 41: ekko.Ekko.CreateField:input_type -> ekko.CreateFieldRequest
+	27, // 42: ekko.Ekko.UpdateField:input_type -> ekko.UpdateFieldRequest
+	28, // 43: ekko.Ekko.DeleteField:input_type -> ekko.DeleteFieldRequest
+	31, // 44: ekko.Ekko.CreateScenario:input_type -> ekko.CreateScenarioRequest
+	33, // 45: ekko.Ekko.UpdateScenario:input_type -> ekko.UpdateScenarioRequest
+	35, // 46: ekko.Ekko.DeleteScenario:input_type -> ekko.DeleteScenarioRequest
+	36, // 47: ekko.Ekko.ListScenario:input_type -> ekko.ListScenarioRequest
+	40, // 48: ekko.Ekko.FavoriteScenario:input_type -> ekko.FavoriteScenarioRequest
+	41, // 49: ekko.Ekko.RatingScenario:input_type -> ekko.RatingScenarioRequest
+	19, // 50: ekko.Ekko.ListAttempt:input_type -> ekko.ListAttemptRequest
+	21, // 51: ekko.Ekko.GetAttempt:input_type -> ekko.GetAttemptRequest
+	22, // 52: ekko.Ekko.SubmitAnswer:input_type -> ekko.SubmitAnswerRequest
+	17, // 53: ekko.Ekko.ListAllSubmission:input_type -> ekko.ListAllSubmissionRequest
+	29, // 54: ekko.Chronobreak.ListField:input_type -> ekko.ListFieldRequest
+	36, // 55: ekko.Chronobreak.ListScenario:input_type -> ekko.ListScenarioRequest
+	38, // 56: ekko.Chronobreak.GetScenario:input_type -> ekko.GetScenarioRequest
+	25, // 57: ekko.Ekko.CreateField:output_type -> ekko.CreateFieldResponse
+	47, // 58: ekko.Ekko.UpdateField:output_type -> google.protobuf.Empty
+	47, // 59: ekko.Ekko.DeleteField:output_type -> google.protobuf.Empty
+	32, // 60: ekko.Ekko.CreateScenario:output_type -> ekko.CreateScenarioResponse
+	47, // 61: ekko.Ekko.UpdateScenario:output_type -> google.protobuf.Empty
+	47, // 62: ekko.Ekko.DeleteScenario:output_type -> google.protobuf.Empty
+	37, // 63: ekko.Ekko.ListScenario:output_type -> ekko.ListScenarioResponse
+	47, // 64: ekko.Ekko.FavoriteScenario:output_type -> google.protobuf.Empty
+	47, // 65: ekko.Ekko.RatingScenario:output_type -> google.protobuf.Empty
+	20, // 66: ekko.Ekko.ListAttempt:output_type -> ekko.ListAttemptResponse
+	24, // 67: ekko.Ekko.GetAttempt:output_type -> ekko.GetAttemptResponse
+	23, // 68: ekko.Ekko.SubmitAnswer:output_type -> ekko.SubmitAnswerResponse
+	18, // 69: ekko.Ekko.ListAllSubmission:output_type -> ekko.ListAllSubmissionResponse
+	30, // 70: ekko.Chronobreak.ListField:output_type -> ekko.ListFieldResponse
+	37, // 71: ekko.Chronobreak.ListScenario:output_type -> ekko.ListScenarioResponse
+	39, // 72: ekko.Chronobreak.GetScenario:output_type -> ekko.GetScenarioResponse
 	57, // [57:73] is the sub-list for method output_type
 	41, // [41:57] is the sub-list for method input_type
 	41, // [41:41] is the sub-list for extension type_name
@@ -3492,7 +3663,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Attempt); i {
+			switch v := v.(*EvaluationRequestV2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3504,7 +3675,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Submission); i {
+			switch v := v.(*EvaluationResponseV2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3516,7 +3687,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BaseData); i {
+			switch v := v.(*Attempt); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3528,7 +3699,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Field); i {
+			switch v := v.(*Submission); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3540,7 +3711,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Scenario); i {
+			switch v := v.(*BaseData); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3552,7 +3723,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Question); i {
+			switch v := v.(*Field); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3564,7 +3735,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListAllSubmissionRequest); i {
+			switch v := v.(*Scenario); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3576,7 +3747,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListAllSubmissionResponse); i {
+			switch v := v.(*Question); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3588,7 +3759,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListAttemptRequest); i {
+			switch v := v.(*ListAllSubmissionRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3600,7 +3771,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListAttemptResponse); i {
+			switch v := v.(*ListAllSubmissionResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3612,7 +3783,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetAttemptRequest); i {
+			switch v := v.(*ListAttemptRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3624,7 +3795,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SubmitAnswerRequest); i {
+			switch v := v.(*ListAttemptResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3636,7 +3807,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SubmitAnswerResponse); i {
+			switch v := v.(*GetAttemptRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3648,7 +3819,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetAttemptResponse); i {
+			switch v := v.(*SubmitAnswerRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3660,7 +3831,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateFieldResponse); i {
+			switch v := v.(*SubmitAnswerResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3672,7 +3843,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateFieldRequest); i {
+			switch v := v.(*GetAttemptResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3684,7 +3855,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateFieldRequest); i {
+			switch v := v.(*CreateFieldResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3696,7 +3867,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteFieldRequest); i {
+			switch v := v.(*CreateFieldRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3708,7 +3879,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListFieldRequest); i {
+			switch v := v.(*UpdateFieldRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3720,7 +3891,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListFieldResponse); i {
+			switch v := v.(*DeleteFieldRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3732,7 +3903,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateScenarioRequest); i {
+			switch v := v.(*ListFieldRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3744,7 +3915,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateScenarioResponse); i {
+			switch v := v.(*ListFieldResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3756,7 +3927,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateScenarioRequest); i {
+			switch v := v.(*CreateScenarioRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3768,7 +3939,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ScenarioQuestion); i {
+			switch v := v.(*CreateScenarioResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3780,7 +3951,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteScenarioRequest); i {
+			switch v := v.(*UpdateScenarioRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3792,7 +3963,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListScenarioRequest); i {
+			switch v := v.(*ScenarioQuestion); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3804,7 +3975,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[32].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListScenarioResponse); i {
+			switch v := v.(*DeleteScenarioRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3816,7 +3987,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[33].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetScenarioRequest); i {
+			switch v := v.(*ListScenarioRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3828,7 +3999,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetScenarioResponse); i {
+			switch v := v.(*ListScenarioResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3840,7 +4011,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*FavoriteScenarioRequest); i {
+			switch v := v.(*GetScenarioRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3852,7 +4023,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RatingScenarioRequest); i {
+			switch v := v.(*GetScenarioResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3864,7 +4035,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[37].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EvaluationRequest_EvalutionScenario); i {
+			switch v := v.(*FavoriteScenarioRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3876,7 +4047,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[38].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EvaluationRequest_QuestionAnswerPair); i {
+			switch v := v.(*RatingScenarioRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3888,7 +4059,7 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[39].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EvaluationResponse_Result); i {
+			switch v := v.(*EvaluationRequest_EvalutionScenario); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3900,6 +4071,30 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 		file_proto_deps_ekko_ekko_proto_msgTypes[40].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*EvaluationRequest_QuestionAnswerPair); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_deps_ekko_ekko_proto_msgTypes[41].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*EvaluationResponse_Result); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_deps_ekko_ekko_proto_msgTypes[42].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SubmitAnswerRequest_SubmittedAnswer); i {
 			case 0:
 				return &v.state
@@ -3912,15 +4107,15 @@ func file_proto_deps_ekko_ekko_proto_init() {
 			}
 		}
 	}
-	file_proto_deps_ekko_ekko_proto_msgTypes[24].OneofWrappers = []interface{}{}
-	file_proto_deps_ekko_ekko_proto_msgTypes[31].OneofWrappers = []interface{}{}
+	file_proto_deps_ekko_ekko_proto_msgTypes[26].OneofWrappers = []interface{}{}
+	file_proto_deps_ekko_ekko_proto_msgTypes[33].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_proto_deps_ekko_ekko_proto_rawDesc,
 			NumEnums:      3,
-			NumMessages:   41,
+			NumMessages:   43,
 			NumExtensions: 0,
 			NumServices:   2,
 		},
