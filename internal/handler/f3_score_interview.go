@@ -2,9 +2,9 @@ package handler
 
 import (
 	"context"
+	"darius/internal/errors"
 	"darius/models"
 	suggest "darius/pkg/proto/suggest"
-	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -15,14 +15,14 @@ import (
 func (h *handler) ScoreInterview(ctx context.Context, req *suggest.ScoreInterviewRequest) (*suggest.ScoreInterviewResponse, error) {
 	if len(req.GetSubmissions()) == 0 {
 		log.Println("[ScoreInterview] submissions is nil")
-		return nil, errors.New(" submissions is nil")
+		return nil, errors.Error(errors.ErrInvalidInput)
 	}
 
 	prompt := generateScoreInterviewPrompt(req)
 
 	llmResponse, err := h.llmManager.Generate(ctx, models.F3_SCORE_INTERVIEW_QUESTIONS, prompt)
 	if err != nil {
-		return nil, err
+		return nil, errors.Error(errors.ErrNetworkConnection)
 	}
 	log.Println("[ScoreInterview] LLM response:", llmResponse)
 
@@ -34,7 +34,7 @@ func sanitizeAndParseResponse(input string) (*suggest.ScoreInterviewResponse, er
 	start := strings.Index(input, "{")
 	end := strings.LastIndex(input, "}")
 	if start == -1 || end == -1 || start > end {
-		return nil, errors.New("no JSON object found in input")
+		return nil, errors.Error(errors.ErrJSONParsing)
 	}
 	jsonStr := input[start : end+1]
 

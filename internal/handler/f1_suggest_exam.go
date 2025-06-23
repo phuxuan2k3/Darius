@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"darius/internal/errors"
 	"darius/models"
 	"darius/pkg/proto/suggest"
 	"encoding/json"
@@ -9,7 +10,7 @@ import (
 	"log"
 )
 
-func (h *handler) SuggestExamQuestion(ctx context.Context, req *suggest.SuggestExamQuestionRequest) (*suggest.SuggestExamQuestionResponse, error) {
+func (h *handler) SuggestExamQuestionLegacy(ctx context.Context, req *suggest.SuggestExamQuestionRequest) (*suggest.SuggestExamQuestionResponse, error) {
 	prompt := fmt.Sprintf(`
 	You are an expert exam question designer. Generate high-quality multiple-choice questions (MCQs) based on the structured input below. The output must strictly follow the specified format and constraints.
 
@@ -56,18 +57,18 @@ Respond with a JSON object containing an array of question objects:
 
 	llmResponse, err := h.llmManager.Generate(ctx, models.F1_SUGGEST_EXAM, prompt)
 	if err != nil {
-		return nil, err
+		return nil, errors.Error(errors.ErrNetworkConnection)
 	}
 	log.Println("[SuggestExamQuestion] LLM response:", llmResponse)
 	parsedResponse, err := sanitizeJSON(llmResponse)
 	if err != nil {
-		return nil, fmt.Errorf("[SuggestExamQuestion] error parsing response: %v", err)
+		return nil, errors.Error(errors.ErrJSONParsing)
 	}
 	// Convert the parsed response to the expected format
 	var exam = &suggest.SuggestExamQuestionResponse{}
 	err = json.Unmarshal([]byte(parsedResponse), &exam)
 	if err != nil {
-		return nil, fmt.Errorf("[SuggestExamQuestion] error unmarshalling outlines: %v", err)
+		return nil, errors.Error(errors.ErrJSONUnmarshalling)
 	}
 
 	return exam, nil

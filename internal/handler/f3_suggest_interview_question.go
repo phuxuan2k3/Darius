@@ -2,10 +2,10 @@ package handler
 
 import (
 	"context"
+	"darius/internal/errors"
 	"darius/models"
 	"darius/pkg/proto/suggest"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"regexp"
@@ -15,7 +15,7 @@ import (
 func (h *handler) SuggestInterviewQuestion(ctx context.Context, req *suggest.SuggestInterviewQuestionRequest) (*suggest.SuggestInterviewQuestionResponse, error) {
 	if req.GetContext() == nil || req.GetSubmissions() == nil {
 		log.Println("[SuggestInterviewQuestion] context or submissions is nil")
-		return nil, errors.New("context or submissions is nil")
+		return nil, errors.Error(errors.ErrInvalidInput)
 	}
 
 	listOfPreviosQuestions := convertSuggestInterviewSubmissionToString(req.GetSubmissions())
@@ -23,7 +23,7 @@ func (h *handler) SuggestInterviewQuestion(ctx context.Context, req *suggest.Sug
 
 	llmResponse, err := h.llmManager.Generate(ctx, models.F3_SUGGEST_INTERVIEW_QUESTIONS, prompt)
 	if err != nil {
-		return nil, err
+		return nil, errors.Error(errors.ErrNetworkConnection)
 	}
 	log.Println("[SuggestInterviewQuestion] LLM response:", llmResponse)
 
@@ -36,14 +36,14 @@ func convertToInterviewQuestionResponse(llmResponse string) (*suggest.SuggestInt
 	jsonStr, err := extractAndSanitizeJSON(input)
 	if err != nil {
 		log.Println("Lỗi:", err)
-		return nil, err
+		return nil, errors.Error(errors.ErrJSONParsing)
 	}
 
 	// Parse JSON
 	questionListResp, err := parseInterviewQuestions(jsonStr)
 	if err != nil {
 		log.Println("Lỗi:", err)
-		return nil, err
+		return nil, errors.Error(errors.ErrJSONUnmarshalling)
 	}
 
 	return questionListResp, nil
@@ -58,12 +58,12 @@ func extractAndSanitizeJSON(input string) (string, error) {
 	re := regexp.MustCompile(`(?s)(\{.*?\}|\[.*?\])`)
 	match := re.FindString(normalized)
 	if match == "" {
-		return "", fmt.Errorf("no valid JSON found in input")
+		return "", errors.Error(errors.ErrJSONParsing)
 	}
 
 	// Bước 3: Kiểm tra tính hợp lệ
 	if !json.Valid([]byte(match)) {
-		return "", fmt.Errorf("invalid JSON after sanitization")
+		return "", errors.Error(errors.ErrJSONParsing)
 	}
 
 	return match, nil
@@ -73,7 +73,7 @@ func parseInterviewQuestions(jsonStr string) (*suggest.SuggestInterviewQuestionR
 	var questions *suggest.SuggestInterviewQuestionResponse
 	err := json.Unmarshal([]byte(jsonStr), &questions)
 	if err != nil {
-		return nil, fmt.Errorf("lỗi giải mã JSON: %v", err)
+		return nil, errors.Error(errors.ErrJSONUnmarshalling)
 	}
 	return questions, nil
 }

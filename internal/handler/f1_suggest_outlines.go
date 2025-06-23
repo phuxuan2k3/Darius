@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"darius/internal/errors"
 	"darius/models"
 	"darius/pkg/proto/suggest"
 	"encoding/json"
@@ -39,18 +40,18 @@ Output format:
 }`, req.GetTitle(), req.GetDescription(), req.GetDifficulty(), req.GetTags(), req.GetOutlines())
 	llmResponse, err := h.llmManager.Generate(ctx, models.F1_SUGGEST_OUTLINES, prompt)
 	if err != nil {
-		return nil, err
+		return nil, errors.Error(errors.ErrNetworkConnection)
 	}
 	log.Println("[SuggestOutlines] LLM response:", llmResponse)
 	parsedResponse, err := sanitizeJSON(llmResponse)
 	if err != nil {
-		return nil, fmt.Errorf("error parsing response: %v", err)
+		return nil, errors.Error(errors.ErrJSONParsing)
 	}
 	// Convert the parsed response to the expected format
 	var outlines = &suggest.SuggestOutlinesResponse{}
 	err = json.Unmarshal([]byte(parsedResponse), &outlines)
 	if err != nil {
-		return nil, fmt.Errorf("error unmarshalling outlines: %v", err)
+		return nil, errors.Error(errors.ErrJSONUnmarshalling)
 	}
 
 	return outlines, nil

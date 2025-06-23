@@ -3,11 +3,11 @@ package handler
 import (
 	"context"
 	"darius/internal/converters"
+	"darius/internal/errors"
 	llm "darius/internal/services/llm"
 	"darius/models"
 	"darius/pkg/proto/suggest"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"regexp"
@@ -119,12 +119,46 @@ Now, based on the user's input, generate the output in the specified format.
 
 func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQuestionsRequest) (*suggest.SuggestQuestionsResponse, error) {
 	questionsContents, err := h.missfortune.GetExamQuestionContent(ctx, converters.ConvertSuggestQuestionRequestToMissFortuneRequest(ctx, req))
+	prompt := ""
 	if err != nil {
 		log.Printf("[SuggestExamQuestion] error getting exam question content: %v", err)
-		return nil, fmt.Errorf("[SuggestExamQuestion] error getting exam question content: %w", err)
-	}
 
-	prompt := fmt.Sprintf(`
+		prompt = fmt.Sprintf(`
+		You are an AI that generates multiple-choice questions based on provided metadata.
+		Given the following input, generate a list of questions in strict JSON format.
+		-Input:
+			Title: %v;
+			Description: %v;
+			Minutes to answer: %v;
+			Language: %v;
+			Difficulty: %v;
+			Tags: %v;
+			Outlines: %v;
+			Number Of Questions: %v;
+			Number Of Options: %v;
+		
+		
+		-Output format (strictly follow this structure):
+		{
+			questions: {
+				text: string;
+				options: string[];
+				points: number; // positive
+				correctOption: number; // index of correct option, starting from 0
+			}[];
+		}
+		
+		Requirements:
+		The number of questions and options must match numberOfQuestions and numberOfOptions respectively.
+		All questions must relate to the provided title, description, tags, and outlines.
+		The questions should be appropriate for the given difficulty level.
+		All options must be plausible, but only one is correct (correctOption).
+		points should be a positive integer (e.g., 1 to 10) assigned to each question based on relevance and depth.
+		Ensure the final result is valid JSON and strictly follows the output structure.
+			`, req.GetTitle(), req.GetDescription(), req.GetMinutesToAnswer(), req.GetLanguage(), req.GetDifficulty(), req.GetTags(), req.GetOutlines(), req.GetNumberOfQuestions(), req.GetNumberOfOptions())
+	} else {
+
+		prompt = fmt.Sprintf(`
 	You are an expert question generator for standardized multiple-choice exams. Your task is to generate answer options for a list of exam questions. You will receive a list of questions (text-only), and for each question, you must generate exactly 4 answer options, clearly indicating which one is the correct answer.
 	📥 Input Format:
 You will be given an object in the following format:
@@ -202,9 +236,10 @@ Output:
 Now, generate the answer options for the following questions:
 %v
 	`, questionsContents)
+	}
 	llmResponse, err := h.llmManager.Generate(ctx, models.F1_SUGGEST_QUESTIONS, prompt)
 	if err != nil {
-		return nil, err
+		return nil, errors.Error(errors.ErrNetworkConnection)
 	}
 	log.Println("[SuggestQuestions] LLM response:", llmResponse)
 
@@ -213,14 +248,14 @@ Now, generate the answer options for the following questions:
 	jsonStr, err := extractJSONQuestions(input)
 	if err != nil {
 		fmt.Println("Lỗi:", err)
-		return nil, err
+		return nil, errors.Error(errors.ErrJSONParsing)
 	}
 
 	// Parse JSON
 	questionListResp, err := parseQuestions(jsonStr)
 	if err != nil {
 		fmt.Println("Lỗi:", err)
-		return nil, err
+		return nil, errors.Error(errors.ErrJSONUnmarshalling)
 	}
 
 	return questionListResp, nil
@@ -230,7 +265,7 @@ func extractJSONQuestions(input string) (string, error) {
 	start := strings.Index(input, "{")
 	end := strings.LastIndex(input, "}")
 	if start == -1 || end == -1 || start > end {
-		return "", errors.New("no JSON object found in input")
+		return "", errors.Error(errors.ErrJSONParsing)
 	}
 	jsonStr := input[start : end+1]
 
@@ -241,7 +276,7 @@ func parseQuestions(jsonStr string) (*suggest.SuggestQuestionsResponse, error) {
 	var questions *suggest.SuggestQuestionsResponse
 	err := json.Unmarshal([]byte(jsonStr), &questions)
 	if err != nil {
-		return nil, fmt.Errorf("lỗi giải mã JSON: %v", err)
+		return nil, errors.Error(errors.ErrJSONUnmarshalling)
 	}
 	return questions, nil
 }
@@ -286,5 +321,5 @@ func sanitizeJSON(jsonStr string) (string, error) {
 	}
 
 	fmt.Println("sanitizeJSON: Chuỗi JSON chứa ký tự không thể vệ sinh")
-	return "", fmt.Errorf("chuỗi json chứa ký tự không thể vệ sinh")
+	return "", errors.Error(errors.ErrJSONParsing)
 }
