@@ -2,8 +2,8 @@ package handler
 
 import (
 	"context"
+	"darius/internal/constants"
 	"darius/internal/errors"
-	"darius/models"
 	"darius/pkg/proto/suggest"
 	"encoding/json"
 	"fmt"
@@ -55,7 +55,7 @@ Respond with a JSON object containing an array of question objects:
 }
 	`, req.GetTitle(), req.GetDescription(), req.GetLanguage(), req.GetSeniority(), req.GetCreativity(), req.GetTopics(), req.GetContext().GetText(), req.GetContext().GetLinks())
 
-	llmResponse, err := h.llmManager.Generate(ctx, models.F1_SUGGEST_EXAM, prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_EXAM, prompt)
 	if err != nil {
 		return nil, errors.Error(errors.ErrNetworkConnection)
 	}

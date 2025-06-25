@@ -1,4 +1,4 @@
-package models
+package constants
 
 const (
 	F1_SUGGEST_OUTLINES            string = "f1_suggest_outlines"

@@ -2,10 +2,10 @@ package handler
 
 import (
 	"context"
+	"darius/internal/constants"
 	"darius/internal/converters"
 	"darius/internal/errors"
 	llm "darius/internal/services/llm"
-	"darius/models"
 	"darius/pkg/proto/suggest"
 	"encoding/json"
 	"fmt"
@@ -118,6 +118,11 @@ Now, based on the user's input, generate the output in the specified format.
 }
 
 func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQuestionsRequest) (*suggest.SuggestQuestionsResponse, error) {
+	chargeCode, err := h.checkCanCall(ctx, constants.F1_SUGGEST_QUESTIONS)
+	if err != nil {
+		return nil, err
+	}
+
 	questionsContents, err := h.missfortune.GetExamQuestionContent(ctx, converters.ConvertSuggestQuestionRequestToMissFortuneRequest(ctx, req))
 	prompt := ""
 	if err != nil {
@@ -237,7 +242,7 @@ Now, generate the answer options for the following questions:
 %v
 	`, questionsContents)
 	}
-	llmResponse, err := h.llmManager.Generate(ctx, models.F1_SUGGEST_QUESTIONS, prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_QUESTIONS, prompt)
 	if err != nil {
 		return nil, errors.Error(errors.ErrNetworkConnection)
 	}
@@ -256,6 +261,11 @@ Now, generate the answer options for the following questions:
 	if err != nil {
 		fmt.Println("Lỗi:", err)
 		return nil, errors.Error(errors.ErrJSONUnmarshalling)
+	}
+
+	if !h.bulbasaur.ChargeCallingLLM(ctx, chargeCode) {
+		log.Printf("[SuggestExamQuestion] Charge Code %s failed to charge for LLM call", chargeCode)
+		return nil, errors.Error(errors.ErrChargingFailed)
 	}
 
 	return questionListResp, nil

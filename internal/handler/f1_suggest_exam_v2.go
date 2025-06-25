@@ -2,16 +2,23 @@ package handler
 
 import (
 	"context"
+	ctxdata "darius/ctx"
+	"darius/internal/constants"
 	"darius/internal/converters"
 	"darius/internal/errors"
-	"darius/models"
 	"darius/pkg/proto/suggest"
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 )
 
 func (h *handler) SuggestExamQuestion(ctx context.Context, req *suggest.SuggestExamQuestionRequest) (*suggest.SuggestExamQuestionResponse, error) {
+	chargeCode, err := h.checkCanCall(ctx, constants.F1_SUGGEST_EXAM)
+	if err != nil {
+		return nil, err
+	}
+
 	questionsContents, err := h.missfortune.GetExamQuestionContent(ctx, converters.ConvertExamRequestToMissfortuneRequest(ctx, req))
 	if err != nil {
 		log.Printf("[SuggestExamQuestion] error getting exam question content: %v", err)
@@ -97,7 +104,7 @@ Now, generate the answer options for the following questions:
 %v
 	`, questionsContents)
 
-	llmResponse, err := h.llmManager.Generate(ctx, models.F1_SUGGEST_EXAM, prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_EXAM, prompt)
 	if err != nil {
 		return nil, errors.Error(errors.ErrNetworkConnection)
 	}
@@ -113,5 +120,27 @@ Now, generate the answer options for the following questions:
 		return nil, errors.Error(errors.ErrJSONUnmarshalling)
 	}
 
+	// Charge the user for the LLM call
+	if !h.bulbasaur.ChargeCallingLLM(ctx, chargeCode) {
+		log.Printf("[SuggestExamQuestion] Charge Code %s failed to charge for LLM call", chargeCode)
+		return nil, errors.Error(errors.ErrChargingFailed)
+	}
+
 	return exam, nil
+}
+
+func (h *handler) checkCanCall(ctx context.Context, llmCaller string) (string, error) {
+	amount, desc := constants.GetLLMCallAmount(llmCaller)
+	uidStr, _ := ctxdata.GetUserIdFromContext(ctx)
+	uid, err := strconv.ParseUint(uidStr, 10, 64)
+	if err != nil {
+		log.Printf("[SuggestExamQuestion] error parsing user ID: %v", err)
+		return "", errors.Error(errors.ErrInvalidInput)
+	}
+	ok, chargeCode := h.bulbasaur.CheckCallingLLM(ctx, uid, amount, desc)
+	if !ok {
+		log.Printf("[SuggestExamQuestion] user %d does not have enough credits to call LLM", uid)
+		return "", errors.Error(errors.ErrNotEnoughCredits)
+	}
+	return chargeCode, nil
 }

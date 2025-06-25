@@ -2,8 +2,8 @@ package handler
 
 import (
 	"context"
+	"darius/internal/constants"
 	"darius/internal/errors"
-	"darius/models"
 	"darius/pkg/proto/suggest"
 	"encoding/json"
 	"fmt"
@@ -21,7 +21,7 @@ func (h *handler) SuggestInterviewQuestion(ctx context.Context, req *suggest.Sug
 	listOfPreviosQuestions := convertSuggestInterviewSubmissionToString(req.GetSubmissions())
 	prompt := generateSuggestInterviewQuestionPrompt(req, listOfPreviosQuestions)
 
-	llmResponse, err := h.llmManager.Generate(ctx, models.F3_SUGGEST_INTERVIEW_QUESTIONS, prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, constants.F3_SUGGEST_INTERVIEW_QUESTIONS, prompt)
 	if err != nil {
 		return nil, errors.Error(errors.ErrNetworkConnection)
 	}

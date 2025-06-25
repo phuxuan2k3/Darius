@@ -2,8 +2,8 @@ package handler
 
 import (
 	"context"
+	"darius/internal/constants"
 	"darius/internal/errors"
-	"darius/models"
 	"darius/pkg/proto/suggest"
 	"encoding/json"
 	"fmt"
@@ -38,7 +38,7 @@ Output format:
     "Third new outline idea (optional)"
   ]
 }`, req.GetTitle(), req.GetDescription(), req.GetDifficulty(), req.GetTags(), req.GetOutlines())
-	llmResponse, err := h.llmManager.Generate(ctx, models.F1_SUGGEST_OUTLINES, prompt)
+	llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_OUTLINES, prompt)
 	if err != nil {
 		return nil, errors.Error(errors.ErrNetworkConnection)
 	}

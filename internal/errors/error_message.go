@@ -10,6 +10,8 @@ const (
 	ErrLLMGeneration      = "Error generating response from LLM"
 	ErrNetworkConnection  = "Network connection error"
 	ErrGeneral            = "An unexpected error occurred"
+	ErrNotEnoughCredits   = "Not enough credits to perform this operation"
+	ErrChargingFailed     = "Charging failed, please try again later"
 )
 
 func Error(err string) error {
@@ -26,6 +28,10 @@ func Error(err string) error {
 		return fmt.Errorf(ErrNetworkConnection)
 	case ErrJSONUnmarshalling:
 		return fmt.Errorf(ErrJSONUnmarshalling)
+	case ErrNotEnoughCredits:
+		return fmt.Errorf(ErrNotEnoughCredits)
+	case ErrChargingFailed:
+		return fmt.Errorf(ErrChargingFailed)
 	default:
 		return fmt.Errorf(ErrGeneral)
 	}

@@ -5,11 +5,13 @@ import (
 	"darius/cmd/db"
 	"darius/internal/handler"
 	f2_score "darius/internal/handler/f2-score"
+	bulbasaurService "darius/internal/services/bulbasaur"
 	databaseService "darius/internal/services/database"
 	llm_grpc "darius/internal/services/llm-grpc"
 	missfortune "darius/internal/services/missfortune"
 	llmManager "darius/managers/llm"
 	arceus "darius/pkg/proto/deps/arceus"
+	"darius/pkg/proto/deps/bulbasaur"
 	hello "darius/pkg/proto/hello"
 	suggest "darius/pkg/proto/suggest"
 	"flag"
@@ -18,11 +20,35 @@ import (
 	"net"
 	"strings"
 
+	ctxdata "darius/ctx"
+
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
 )
+
+func AuthInterceptor(
+	ctx context.Context,
+	req interface{},
+	_ *grpc.UnaryServerInfo,
+	handler grpc.UnaryHandler,
+) (interface{}, error) {
+
+	userId, err := ctxdata.GetUserIdFromContext(ctx)
+	if err != nil {
+		log.Printf("Error getting user ID from context: %v", err)
+		return nil, status.Error(codes.Internal, "failed to get user ID from context")
+	}
+
+	if userId == "" {
+		return nil, status.Error(codes.Unauthenticated, "user ID is required")
+	}
+
+	return handler(ctx, req)
+}
 
 func startGRPC() {
 	//server gateway
@@ -57,9 +83,31 @@ func startGRPC() {
 	}
 	defer conn.Close()
 
+	bulbasaurHost := viper.GetString("BULBASAUR_HOST")
+	log.Print("bulbasaurHost before hardcode: ", bulbasaurHost)
+	if bulbasaurHost == "" || strings.HasPrefix(bulbasaurHost, "$") {
+		bulbasaurHost = "bubasaur"
+	}
+	bulbasaurPort := viper.GetString("BULBASAUR_PORT")
+	log.Print("bulbasaurPort before hardcode: ", bulbasaurPort)
+
+	if bulbasaurPort == "" || strings.HasPrefix(bulbasaurPort, "$") {
+		bulbasaurPort = "8080"
+	}
+
+	bulbasaurAddr := flag.String("addr", bulbasaurHost+":"+bulbasaurPort, "the address to connect to")
+	bulbasaurConn, err := grpc.NewClient(*bulbasaurAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Printf("did not connect: %v", err)
+	}
+	defer bulbasaurConn.Close()
+
 	arceusClient := arceus.NewArceusClient(conn)
 	log.Printf("Connected to LLM gRPC server at %s", *addr)
 	llmGRPCService := llm_grpc.NewService(arceusClient, llmGRPCModel)
+
+	bulbasaurClient := bulbasaur.NewVenusaurClient(bulbasaurConn)
+	bulbasaurService := bulbasaurService.NewService(bulbasaurClient)
 
 	// message queue
 	f2scoreReqQueueAddr := viper.GetString("F2_SCORE_REQ_QUEUE_ADDRESS")
@@ -133,9 +181,12 @@ func startGRPC() {
 		// LlmService: LlmService,
 		LLMManager:  llmManager,
 		Missfortune: missfortuneService,
+		Bulbasaur:   bulbasaurService,
 	})
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(AuthInterceptor),
+	)
 	hello.RegisterHelloServiceServer(grpcServer, handler)
 	suggest.RegisterSuggestServiceServer(grpcServer, handler)
 

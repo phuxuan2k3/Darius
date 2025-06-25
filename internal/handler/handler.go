@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"darius/internal/services/bulbasaur"
 	llm "darius/internal/services/llm"
 	"darius/internal/services/missfortune"
 	llmManager "darius/managers/llm"
@@ -12,6 +13,7 @@ type Dependency struct {
 	LlmService  llm.LLM
 	LLMManager  llmManager.Manager
 	Missfortune missfortune.Service
+	Bulbasaur   bulbasaur.Service
 }
 
 type handler struct {
@@ -21,6 +23,7 @@ type handler struct {
 	llmService  llm.LLM
 	llmManager  llmManager.Manager
 	missfortune missfortune.Service
+	bulbasaur   bulbasaur.Service
 }
 
 func NewHandlerWithDeps(deps Dependency) *handler {
@@ -28,5 +31,6 @@ func NewHandlerWithDeps(deps Dependency) *handler {
 		llmService:  deps.LlmService,
 		llmManager:  deps.LLMManager,
 		missfortune: deps.Missfortune,
+		bulbasaur:   deps.Bulbasaur,
 	}
 }
