@@ -95,8 +95,8 @@ func startGRPC() {
 		bulbasaurPort = "8080"
 	}
 
-	bulbasaurAddr := flag.String("addr", bulbasaurHost+":"+bulbasaurPort, "the address to connect to")
-	bulbasaurConn, err := grpc.NewClient(*bulbasaurAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	bulbasaurAddr := bulbasaurHost + ":" + bulbasaurPort
+	bulbasaurConn, err := grpc.NewClient(bulbasaurAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Printf("did not connect: %v", err)
 	}
