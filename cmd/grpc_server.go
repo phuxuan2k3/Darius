@@ -27,6 +27,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
@@ -36,6 +37,8 @@ func AuthInterceptor(
 	_ *grpc.UnaryServerInfo,
 	handler grpc.UnaryHandler,
 ) (interface{}, error) {
+	md, _ := metadata.FromIncomingContext(ctx)
+	log.Printf("[AuthInterceptor] gRPC Metadata: %v", md)
 
 	userId, err := ctxdata.GetUserIdFromContext(ctx)
 	if err != nil {
