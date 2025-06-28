@@ -5,6 +5,7 @@ package suggest;
 option go_package = "myproject/pkg/suggest";
 
 import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
 
 service SuggestService {
     rpc SuggestCriteria (SuggestCriteriaRequest) returns (SuggestCriteriaResponse) {
@@ -55,8 +56,55 @@ service SuggestService {
         body: "*"
         };
     }
+
+    rpc SuggestExamQuestionV2(SuggestExamQuestionRequest) returns (SuggestExamQuestionResponseV2) {
+        option (google.api.http) = {
+        post: "/v2/suggest_exam_question"
+        body: "*"
+        };
+    }
 } 
 
+// id: number;
+// testId: string;
+// text: string;
+// points: number;
+// type: "MCQ" | "LONG_ANSWER";
+// detail: QuestionDetailCommonSchema;
+message SuggestExamQuestionResponseV2 {
+    message Quetion{
+    int32 id = 1; // Unique identifier for the question
+    string testId = 2; // Identifier for the test this question belongs to
+    string text = 3; // The question text
+    int32 points = 4; // Points assigned to the question
+    string type = 5; // Type of question: "MCQ" for multiple choice, "LONG_ANSWER" for long answer
+
+    message Detail {
+        oneof detail_type {
+            McqDetailCommonSchema mcq = 1;
+            LongAnswerDetailCommonSchema longAnswer = 2;
+        }
+    }
+
+    message McqDetailCommonSchema{
+        string type = 1; // Type of question, e.g., "MCQ"
+        repeated string options = 2; // List of options for the MCQ
+        int32 correctOption = 3; // Index of the correct option, null if not applicable
+    }
+
+ 
+    message LongAnswerDetailCommonSchema{
+        string type = 1; // Type of question, e.g., "LONG_ANSWER"
+        repeated string imageLinks = 2; // Optional links to images related to the question
+        string extraText = 3; // Optional additional text for context
+        string correctAnswer = 4; // The correct answer for long answer questions
+    }
+
+    google.protobuf.Any detail = 6; // Flexible detail field that can contain either MCQ or Long Answer}
+    }
+
+    repeated Quetion questions = 1; // List of questions in the response
+}
 message DifficultyDistribution {
     int32 Intern = 1;
     int32 Junior = 2;

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	ctxdata "darius/ctx"
 	"darius/internal/constants"
 	"darius/internal/converters"
 	"darius/internal/errors"
@@ -10,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"strconv"
 )
 
 func (h *handler) SuggestExamQuestion(ctx context.Context, req *suggest.SuggestExamQuestionRequest) (*suggest.SuggestExamQuestionResponse, error) {
@@ -129,18 +127,18 @@ Now, generate the answer options for the following questions:
 	return exam, nil
 }
 
-func (h *handler) checkCanCall(ctx context.Context, llmCaller string) (string, error) {
-	amount, desc := constants.GetLLMCallAmount(llmCaller)
-	uidStr, _ := ctxdata.GetUserIdFromContext(ctx)
-	uid, err := strconv.ParseUint(uidStr, 10, 64)
-	if err != nil {
-		log.Printf("[SuggestExamQuestion] error parsing user ID: %v", err)
-		return "", errors.Error(errors.ErrInvalidInput)
-	}
-	ok, chargeCode := h.bulbasaur.CheckCallingLLM(ctx, uid, amount, desc)
-	if !ok {
-		log.Printf("[SuggestExamQuestion] user %d does not have enough credits to call LLM", uid)
-		return "", errors.Error(errors.ErrNotEnoughCredits)
-	}
-	return chargeCode, nil
-}
+// func (h *handler) checkCanCall(ctx context.Context, llmCaller string) (string, error) {
+// 	amount, desc := constants.GetLLMCallAmount(llmCaller)
+// 	uidStr, _ := ctxdata.GetUserIdFromContext(ctx)
+// 	uid, err := strconv.ParseUint(uidStr, 10, 64)
+// 	if err != nil {
+// 		log.Printf("[SuggestExamQuestion] error parsing user ID: %v", err)
+// 		return "", errors.Error(errors.ErrInvalidInput)
+// 	}
+// 	ok, chargeCode := h.bulbasaur.CheckCallingLLM(ctx, uid, amount, desc)
+// 	if !ok {
+// 		log.Printf("[SuggestExamQuestion] user %d does not have enough credits to call LLM", uid)
+// 		return "", errors.Error(errors.ErrNotEnoughCredits)
+// 	}
+// 	return chargeCode, nil
+// }
