@@ -33,5 +33,7 @@ func (s *service) Generate(ctx context.Context, text string) (resp *arceus.Gener
 		return &arceus.GenerateTextResponse{}, err
 	}
 
+	log.Printf("[Generate] LLM request: %s, LLM response %s", text, res.GetContent())
+
 	return res, err
 }

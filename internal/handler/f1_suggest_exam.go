@@ -7,7 +7,6 @@ import (
 	"darius/pkg/proto/suggest"
 	"encoding/json"
 	"fmt"
-	"log"
 )
 
 func (h *handler) SuggestExamQuestionLegacy(ctx context.Context, req *suggest.SuggestExamQuestionRequest) (*suggest.SuggestExamQuestionResponse, error) {
@@ -59,7 +58,6 @@ Respond with a JSON object containing an array of question objects:
 	if err != nil {
 		return nil, errors.Error(errors.ErrNetworkConnection)
 	}
-	log.Println("[SuggestExamQuestion] LLM response:", llmResponse)
 	parsedResponse, err := sanitizeJSON(llmResponse)
 	if err != nil {
 		return nil, errors.Error(errors.ErrJSONParsing)

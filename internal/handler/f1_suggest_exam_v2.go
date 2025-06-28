@@ -106,7 +106,6 @@ Now, generate the answer options for the following questions:
 	if err != nil {
 		return nil, errors.Error(errors.ErrNetworkConnection)
 	}
-	log.Println("[SuggestExamQuestion] LLM response:", llmResponse)
 	parsedResponse, err := sanitizeJSON(llmResponse)
 	if err != nil {
 		return nil, errors.Error(errors.ErrJSONParsing)

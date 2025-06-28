@@ -246,7 +246,6 @@ Now, generate the answer options for the following questions:
 	if err != nil {
 		return nil, errors.Error(errors.ErrNetworkConnection)
 	}
-	log.Println("[SuggestQuestions] LLM response:", llmResponse)
 
 	input := llmResponse
 

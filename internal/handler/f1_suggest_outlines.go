@@ -7,7 +7,6 @@ import (
 	"darius/pkg/proto/suggest"
 	"encoding/json"
 	"fmt"
-	"log"
 )
 
 func (h *handler) SuggestOutlines(ctx context.Context, req *suggest.SuggestOutlinesRequest) (*suggest.SuggestOutlinesResponse, error) {
@@ -42,7 +41,6 @@ Output format:
 	if err != nil {
 		return nil, errors.Error(errors.ErrNetworkConnection)
 	}
-	log.Println("[SuggestOutlines] LLM response:", llmResponse)
 	parsedResponse, err := sanitizeJSON(llmResponse)
 	if err != nil {
 		return nil, errors.Error(errors.ErrJSONParsing)

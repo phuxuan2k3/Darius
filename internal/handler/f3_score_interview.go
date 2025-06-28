@@ -24,7 +24,6 @@ func (h *handler) ScoreInterview(ctx context.Context, req *suggest.ScoreIntervie
 	if err != nil {
 		return nil, errors.Error(errors.ErrNetworkConnection)
 	}
-	log.Println("[ScoreInterview] LLM response:", llmResponse)
 
 	return sanitizeAndParseResponse(llmResponse)
 }

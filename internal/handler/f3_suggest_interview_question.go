@@ -25,7 +25,6 @@ func (h *handler) SuggestInterviewQuestion(ctx context.Context, req *suggest.Sug
 	if err != nil {
 		return nil, errors.Error(errors.ErrNetworkConnection)
 	}
-	log.Println("[SuggestInterviewQuestion] LLM response:", llmResponse)
 
 	return convertToInterviewQuestionResponse(llmResponse)
 }

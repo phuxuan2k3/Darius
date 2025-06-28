@@ -28,7 +28,6 @@ func (h *scoringHandler) ScoreV2(ctx context.Context, req *ScoreRequest) {
 		log.Printf("Error generating response: %v", err)
 		return
 	}
-	log.Printf("LLM response: %s", llmResponse)
 
 	parsedResponse, err := sanitizeAndParseResponseV2(llmResponse)
 	if err != nil {
