@@ -94,7 +94,6 @@ Now, generate the questions based on the following input.
 %v
 	`, req)
 
-	log.Printf("[SuggestExamQuestion] Prompt: %s", prompt)
 	llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_EXAM, prompt)
 	if err != nil {
 		return nil, errors.Error(errors.ErrNetworkConnection)

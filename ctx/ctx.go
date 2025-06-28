@@ -2,7 +2,6 @@ package ctx
 
 import (
 	"context"
-	"log"
 
 	"google.golang.org/grpc/metadata"
 )
@@ -12,8 +11,6 @@ func GetUserIdFromContext(ctx context.Context) (string, error) {
 	if !ok {
 		return "", nil
 	}
-
-	log.Printf("[GetUserIdFromContext] Metadata: %v", md)
 
 	userID := md.Get("x-user-id")
 
