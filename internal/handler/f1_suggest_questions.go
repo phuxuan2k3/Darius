@@ -117,7 +117,7 @@ Now, based on the user's input, generate the output in the specified format.
 	}, nil
 }
 
-func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQuestionsRequest) (*suggest.SuggestQuestionsResponse, error) {
+func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQuestionsRequest) (*suggest.SuggestExamQuestionResponseV2, error) {
 	chargeCode, err := h.checkCanCall(ctx, constants.F1_SUGGEST_QUESTIONS)
 	if err != nil {
 		return nil, err
@@ -281,8 +281,8 @@ func extractJSONQuestions(input string) (string, error) {
 	return jsonStr, nil
 }
 
-func parseQuestions(jsonStr string) (*suggest.SuggestQuestionsResponse, error) {
-	var questions *suggest.SuggestQuestionsResponse
+func parseQuestions(jsonStr string) (*suggest.SuggestExamQuestionResponseV2, error) {
+	var questions *suggest.SuggestExamQuestionResponseV2
 	err := json.Unmarshal([]byte(jsonStr), &questions)
 	if err != nil {
 		return nil, errors.Error(errors.ErrJSONUnmarshalling)

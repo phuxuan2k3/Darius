@@ -22,7 +22,7 @@ service SuggestService {
         };
     }
 
-    rpc SuggestQuestions (SuggestQuestionsRequest) returns (SuggestQuestionsResponse) {
+    rpc SuggestQuestions (SuggestQuestionsRequest) returns (SuggestExamQuestionResponseV2) {
         option (google.api.http) = {
         post: "/v1/suggest_questions"
         body: "*"

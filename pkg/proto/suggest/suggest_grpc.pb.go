@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type SuggestServiceClient interface {
 	SuggestCriteria(ctx context.Context, in *SuggestCriteriaRequest, opts ...grpc.CallOption) (*SuggestCriteriaResponse, error)
 	SuggestOptions(ctx context.Context, in *SuggestOptionsRequest, opts ...grpc.CallOption) (*SuggestOptionsResponse, error)
-	SuggestQuestions(ctx context.Context, in *SuggestQuestionsRequest, opts ...grpc.CallOption) (*SuggestQuestionsResponse, error)
+	SuggestQuestions(ctx context.Context, in *SuggestQuestionsRequest, opts ...grpc.CallOption) (*SuggestExamQuestionResponseV2, error)
 	SuggestInterviewQuestion(ctx context.Context, in *SuggestInterviewQuestionRequest, opts ...grpc.CallOption) (*SuggestInterviewQuestionResponse, error)
 	ScoreInterview(ctx context.Context, in *ScoreInterviewRequest, opts ...grpc.CallOption) (*ScoreInterviewResponse, error)
 	SuggestOutlines(ctx context.Context, in *SuggestOutlinesRequest, opts ...grpc.CallOption) (*SuggestOutlinesResponse, error)
@@ -58,8 +58,8 @@ func (c *suggestServiceClient) SuggestOptions(ctx context.Context, in *SuggestOp
 	return out, nil
 }
 
-func (c *suggestServiceClient) SuggestQuestions(ctx context.Context, in *SuggestQuestionsRequest, opts ...grpc.CallOption) (*SuggestQuestionsResponse, error) {
-	out := new(SuggestQuestionsResponse)
+func (c *suggestServiceClient) SuggestQuestions(ctx context.Context, in *SuggestQuestionsRequest, opts ...grpc.CallOption) (*SuggestExamQuestionResponseV2, error) {
+	out := new(SuggestExamQuestionResponseV2)
 	err := c.cc.Invoke(ctx, "/suggest.SuggestService/SuggestQuestions", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -118,7 +118,7 @@ func (c *suggestServiceClient) SuggestExamQuestionV2(ctx context.Context, in *Su
 type SuggestServiceServer interface {
 	SuggestCriteria(context.Context, *SuggestCriteriaRequest) (*SuggestCriteriaResponse, error)
 	SuggestOptions(context.Context, *SuggestOptionsRequest) (*SuggestOptionsResponse, error)
-	SuggestQuestions(context.Context, *SuggestQuestionsRequest) (*SuggestQuestionsResponse, error)
+	SuggestQuestions(context.Context, *SuggestQuestionsRequest) (*SuggestExamQuestionResponseV2, error)
 	SuggestInterviewQuestion(context.Context, *SuggestInterviewQuestionRequest) (*SuggestInterviewQuestionResponse, error)
 	ScoreInterview(context.Context, *ScoreInterviewRequest) (*ScoreInterviewResponse, error)
 	SuggestOutlines(context.Context, *SuggestOutlinesRequest) (*SuggestOutlinesResponse, error)
@@ -137,7 +137,7 @@ func (UnimplementedSuggestServiceServer) SuggestCriteria(context.Context, *Sugge
 func (UnimplementedSuggestServiceServer) SuggestOptions(context.Context, *SuggestOptionsRequest) (*SuggestOptionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SuggestOptions not implemented")
 }
-func (UnimplementedSuggestServiceServer) SuggestQuestions(context.Context, *SuggestQuestionsRequest) (*SuggestQuestionsResponse, error) {
+func (UnimplementedSuggestServiceServer) SuggestQuestions(context.Context, *SuggestQuestionsRequest) (*SuggestExamQuestionResponseV2, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SuggestQuestions not implemented")
 }
 func (UnimplementedSuggestServiceServer) SuggestInterviewQuestion(context.Context, *SuggestInterviewQuestionRequest) (*SuggestInterviewQuestionResponse, error) {
