@@ -50,61 +50,74 @@ func generateScoreInterviewPrompt(req *suggest.ScoreInterviewRequest) string {
 	submissionByte, _ := proto.Marshal(req)
 	submissionString := string(submissionByte)
 
-	return fmt.Sprintf(
-		`You are an expert interview evaluator. Your job is to evaluate an interview session of a candidate based on the provided Q&A data. Each submission contains a question asked during the interview and the corresponding answer from the candidate.  
+	return fmt.Sprintf(`
+		You are an expert interview evaluator. Your job is to evaluate an interview session of a candidate based on the provided Q&A data. Each submission contains a question asked during the interview and the corresponding answer from the candidate.  
 
-Your evaluation must include the following sections and strictly follow the provided JSON structure.
-
----
-
-For each submission in the interview:
-- Assign a score from the following set:  
-  - A = Excellent  
-  - B = Good  
-  - C = Fair  
-  - D = Poor  
-  - F = Unacceptable  
-- Provide a short comment about the answer’s quality (optional — leave empty if not needed).
-
-Skill evaluation:
-- You are also given a list of skills to evaluate.
-- For **each skill provided**, you must assign a score (A–F) that reflects the candidate’s overall demonstrated ability in that skill based on all the submissions.
-- ✅ **Always include the 'skills' field** in your response, even if there's only one submission.
-
-Summary section must include:
-- 'totalScore': A count of how many times each score (A, B, C, D, F) was given across all submissions.
-- 'positiveFeedback': A bullet-point list of notable strengths.
-- 'actionableFeedback': A bullet-point list of areas the candidate needs to improve.
-- 'finalComment': A 2–3 sentence summary of the candidate's overall performance.
-
-✅ Your response must strictly follow this JSON structure:
-{
-  "result": [
-    {
-      "index": 1,
-      "comment": "Your comment here (optional, can be empty)",
-      "score": "A"
-    }
-  ],
-  "skills": [
-    {
-      "skill": "Accuracy",
-      "score": "A"
-    }
-  ],
-  "totalScore": {
-    "A": 1,
-    "B": 0,
-    "C": 0,
-    "D": 0,
-    "F": 0
-  },
-  "positiveFeedback": "- ...\n- ...",
-  "actionableFeedback": "- ...\n- ...",
-  "finalComment": "..."
-}
-
-Now, evaluate the following submissions:
-
+		Your evaluation must include the following sections and strictly follow the provided JSON structure.
+		
+		---
+		
+		Step 1: Primary Evaluation  
+		For each submission in the interview:
+		- Assign a score from the following set:  
+		  - A = Excellent  
+		  - B = Good  
+		  - C = Fair  
+		  - D = Poor  
+		  - F = Unacceptable  
+		- Provide a short comment about the answer’s quality (optional — leave empty if not needed).
+		
+		Skill evaluation:
+		- You are also given a list of skills to evaluate.
+		- For **each skill provided**, you must assign a score (A–F) that reflects the candidate’s overall demonstrated ability in that skill based on all the submissions.
+		- Always include the 'skills' field in your response.
+		
+		Summary section must include:
+		- 'totalScore': A count of how many times each score (A, B, C, D, F) was given across all submissions.
+		- 'positiveFeedback': A bullet-point list of notable strengths.
+		- 'actionableFeedback': A bullet-point list of areas the candidate needs to improve.
+		- 'finalComment': A 2–3 sentence summary of the candidate's overall performance.
+		
+		---
+		
+		Step 2: Self-Evaluation  
+		Now reflect on your own evaluation from Step 1.
+		
+		- Review the scores and comments you just provided.
+		- Ask yourself:  
+		  - Are there any inconsistencies or overly generous/harsh scores?  
+		  - Are the comments clear, helpful, and aligned with the score given?  
+		  - Are all skills appropriately scored based on the evidence?
+		- Revise the scores or comments **only if needed
+		
+		---
+		
+		✅ Final Output Format (must strictly match this structure):
+		
+		{
+		  "result": [
+			{
+			  "index": 1,
+			  "comment": "Your comment here",
+			  "score": "A"
+			}
+		  ],
+		  "skills": [
+			{
+			  "skill": "Accuracy",
+			  "score": "A"
+			}
+		  ],
+		  "totalScore": {
+			"A": 1,
+			"B": 0,
+			"C": 0,
+			"D": 0,
+			"F": 0
+		  },
+		  "positiveFeedback": "- ...\n- ...",
+		  "actionableFeedback": "- ...\n- ...",
+		  "finalComment": "..."
+		}
 %v`, submissionString)
 }

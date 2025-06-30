@@ -2,8 +2,8 @@ package managers
 
 import (
 	"context"
-	databaseService "darius/internal/services/database"
 	llm_grpc "darius/internal/services/llm-grpc"
+	databaseService "darius/internal/services/repo"
 	"darius/metrics"
 	"log"
 )

@@ -60,6 +60,38 @@ Return a **valid JSON object** with an array of questions. Each question must st
 	...
   ]
 }
+
+Example: 
+{
+  "questions": [
+    {
+      "id": 1,
+      "testId": "test123",
+      "text": "What is the capital of France?",
+      "points": 5,
+      "type": "MCQ",
+      "detail": {
+        "type": "MCQ",
+        "options": ["London", "Paris", "Berlin", "Rome"],
+        "correctOption": 1
+      }
+    },
+    {
+      "id": 2,
+      "testId": "test123",
+      "text": "Explain the concept of recursion.",
+      "points": 10,
+      "type": "LONG_ANSWER",
+      "detail": {
+        "type": "LONG_ANSWER",
+        "imageLinks": [],
+        "extraText": "Include both the definition and one real-world example.",
+        "correctAnswer": "Recursion is a programming concept where a function calls itself..."
+      }
+    }
+  ]
+}
+
 📌 Constraints and Rules:
 
 Each question must include: id, testId, text, points, type, and detail.

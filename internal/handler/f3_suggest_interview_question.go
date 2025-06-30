@@ -79,26 +79,50 @@ func parseInterviewQuestions(jsonStr string) (*suggest.SuggestInterviewQuestionR
 
 func generateSuggestInterviewQuestionPrompt(req *suggest.SuggestInterviewQuestionRequest, listOfPreviosQuestions string) string {
 	return fmt.Sprintf(`
-	You are an expert in creating interview questions. Your task is to generate the next two (only 2) interview questions based on the provided interview information and guidelines. Follow these steps:
-	1. Provided Input:
-	   - General Information:
-		Field: %v,
-		Position: %v,
-		Language: %v,
-		Skills: %v,
+You are an expert in creating high-quality, contextually appropriate interview questions. Your task is to generate the next **two interview questions** based on the provided interview information and previous questions. To ensure the generated questions are aligned and meaningful, follow a chain-of-thought reasoning process.
 
-		Max Question: %v,
-		List of previous questions: %v,
-	2. Your Task:
-	   - Review the general information about the test to understand its context, purpose, and constraints.
-	   - Generate the next two (2) questions for the interview that align with the interview's context, feild, language, position, difficulty level, and format.
-	   - Ensure the questions are clear, precise, and meaningful.
-	   - Provide the output in the specified JSON format.
-	3. Output Format:
-		   {
-		"questions": ["The next question content here"],
-		}
-	Now, based on the input, generate the output in the specified format
+---
+
+🧠 Chain of Thought Reasoning Instructions:
+1. **Understand the Context**: Carefully examine the interview’s field, role, language, and skill focus to determine the purpose and tone of the interview.
+2. **Analyze Past Questions**: Review the list of previous questions to avoid repetition and ensure progressive difficulty and topic coverage.
+3. **Skill Matching**: Ensure the generated questions evaluate relevant skills from the provided skill set.
+4. **Question Quality**: Ensure each question is clear, concise, and suitable for the role and level.
+5. **Language**: The questions must be written in the specified language.
+6. **Limits**: Only generate two new questions. Do not repeat or modify old ones.
+
+---
+
+📥 Provided Input:
+- Field: %v  
+- Position: %v  
+- Language: %v  
+- Skills: %v  
+- Max Questions Allowed: %v  
+- Previous Questions: %v  
+
+---
+
+📤 Output Format:
+Return only a **valid JSON object** as specified below. Do not include explanations or formatting outside this JSON.
+
+{
+  "questions": [
+    "First generated question here",
+    "Second generated question here"
+  ]
+}
+⚠️ Constraints:
+
+Do not include questions that are vague, overly generic, or redundant.
+
+Avoid overlapping with previous questions.
+
+Ensure diversity in format, phrasing, and focus across the two questions.
+
+The output must be strictly valid JSON — no markdown, no comments, no explanations.
+
+Now, generate the next two questions based on the input above.
 	
 		`, req.GetContext().GetPosition(), req.GetContext().GetExperience(), req.GetContext().GetLanguage(), req.GetContext().GetSkills(), req.GetContext().GetMaxQuestions(), listOfPreviosQuestions)
 }
