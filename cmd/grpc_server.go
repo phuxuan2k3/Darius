@@ -85,7 +85,7 @@ func startGRPC() {
 	bulbasaurHost := viper.GetString("BULBASAUR_HOST")
 	log.Print("bulbasaurHost before hardcode: ", bulbasaurHost)
 	if bulbasaurHost == "" || strings.HasPrefix(bulbasaurHost, "$") {
-		bulbasaurHost = "bubasaur"
+		bulbasaurHost = "bulbasaur"
 	}
 	bulbasaurPort := viper.GetString("BULBASAUR_PORT")
 	log.Print("bulbasaurPort before hardcode: ", bulbasaurPort)

@@ -27,6 +27,24 @@ func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.Sugges
 	prompt := fmt.Sprintf(`
 You are an expert exam question designer. Your task is to generate a diverse set of high-quality exam questions based on the structured input below. Each question must be either a multiple-choice question (MCQ) or a long-answer (essay-style) question.
 
+Before generating, follow this step-by-step reasoning to ensure quality and uniqueness:
+
+🧠 Step-by-Step Reasoning:
+1. First, generate a conceptual list of question ideas covering different aspects of the provided topics.
+2. Check and confirm that each idea is distinct in content and intent (i.e., no duplicate or near-duplicate questions).
+3. For each MCQ:
+   - Generate 4 answer options that are factually distinct and grammatically consistent.
+   - Ensure that no two options are semantically or syntactically identical or too similar.
+   - The incorrect options must be plausible and non-trivial.
+4. For long-answer questions:
+   - Ensure the question targets higher-order thinking (e.g., analysis, explanation, comparison).
+   - Provide a clear expected answer and optional visual/image links if applicable.
+
+🔁 Self-Verification (Post-Generation Check):
+- Verify that **no question text** is repeated.
+- Verify that **within each MCQ**, no two options are the same or nearly the same.
+- Verify that the output strictly matches the structure described below and is valid JSON.
+
 📤 Output Format
 Return a **valid JSON object** with an array of questions. Each question must strictly follow the schema below:
 
@@ -57,72 +75,27 @@ Return a **valid JSON object** with an array of questions. Each question must st
         "correctAnswer": "The ideal answer should explain..."
       }
     },
-	...
-  ]
-}
-
-Example: 
-{
-  "questions": [
-    {
-      "id": 1,
-      "testId": "test123",
-      "text": "What is the capital of France?",
-      "points": 5,
-      "type": "MCQ",
-      "detail": {
-        "type": "MCQ",
-        "options": ["London", "Paris", "Berlin", "Rome"],
-        "correctOption": 1
-      }
-    },
-    {
-      "id": 2,
-      "testId": "test123",
-      "text": "Explain the concept of recursion.",
-      "points": 10,
-      "type": "LONG_ANSWER",
-      "detail": {
-        "type": "LONG_ANSWER",
-        "imageLinks": [],
-        "extraText": "Include both the definition and one real-world example.",
-        "correctAnswer": "Recursion is a programming concept where a function calls itself..."
-      }
-    }
+    ...
   ]
 }
 
 📌 Constraints and Rules:
+- Each question must include: id, testId, text, points, type, and detail.
+- type must be either "MCQ" or "LONG_ANSWER".
+- The detail.type field must match the parent type field.
+- For MCQs:
+  - Exactly 4 options.
+  - Only one correct option (index from 0 to 3).
+  - Options must be clear, distinct, and grammatically aligned with the question.
+- For long-answer questions:
+  - Must include a model answer and optional image links.
+  - Must require thoughtful, detailed explanations.
+- The points field should match question difficulty: Easy (1–3), Medium (4–6), Hard (7–10).
+- The output JSON must be valid and must not include explanations, notes, or markdown.
+- No two questions should be identical or too similar.
+- No two options in any MCQ should be the same or semantically identical.
 
-Each question must include: id, testId, text, points, type, and detail.
-
-type must be either "MCQ" or "LONG_ANSWER".
-
-The detail.type field must match the parent type field.
-
-For "MCQ" questions:
-
-Exactly 4 options are required.
-
-Only one correct option (index from 0 to 3).
-
-Options must be meaningful and grammatically consistent with the question.
-
-For "LONG_ANSWER" questions:
-
-Provide at least one image link or set "imageLinks": [] if not applicable.
-
-The extraText field may include additional instructions or constraints.
-
-The correctAnswer must clearly explain the expected full answer to earn full points.
-
-Use the points field to reflect question difficulty (e.g., Easy = 1–3, Medium = 4–6, Hard = 7–10).
-
-The number and type of questions should reflect the difficulty distribution in the topics input.
-
-The JSON must be valid and contain no comments, markdown, or explanatory text — only the JSON object as specified.
-
-Now, generate the questions based on the following input.
+Now, generate the questions based on the following input:
 %v
 	`, req)
 
