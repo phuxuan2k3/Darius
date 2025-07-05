@@ -128,6 +128,9 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 1. Carefully analyze the title, description, tags, and outlines to understand the full context and intended coverage.
 2. Brainstorm a diverse pool of possible questions (both MCQ and LONG_ANSWER) aligned with the specified difficulty level and key topics.
 3. Filter questions to ensure:
+   - ✅ Questions language must matches the input language.
+   - ✅ The number of questions matches the requested count.
+   - ✅ The number of MCQ and LONG_ANSWER questions must be balanced.
    - ❌ No repeated or semantically similar questions.
    - ✅ Broad and representative coverage of all outlines and tags.
 4. For MCQ:
@@ -138,6 +141,8 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
    - Provide at least one illustrative image link if applicable.
    - Include clear instructions and an ideal sample answer.
 6. ✅ Final validation steps:
+   - Questions language must match the input language.
+   - The number of MCQ and LONG_ANSWER questions must be balanced.
    - No question or option duplication.
    - All JSON fields are present and conform strictly to the expected schema.
    - Output is a valid JSON object (no markdown, no explanations).
@@ -176,11 +181,12 @@ Return a single **valid JSON object** with the following format:
 }
 📌 Constraints Recap:
 
+Questions language must match the input language.
+The number of MCQ and LONG_ANSWER questions must be balanced.
 Return exactly the number of questions.
 Each MCQ has exactly 4 unique options.
 No repeated questions or options allowed.
 The points field should reflect difficulty level (e.g., Easy = 1–3, Medium = 4–6, Hard = 7–10).
-Language must match the input language.
 All outputs must be raw JSON without any explanations or comments.
 Now, generate the questions based on the provided metadata.
 			`, req)
