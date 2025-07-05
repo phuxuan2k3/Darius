@@ -4,6 +4,7 @@ import (
 	"context"
 	ctxdata "darius/ctx"
 	"darius/internal/constants"
+	"darius/internal/converters"
 	"darius/internal/errors"
 	"darius/pkg/proto/suggest"
 	"encoding/json"
@@ -18,13 +19,12 @@ func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.Sugges
 		return nil, err
 	}
 
-	// questionsContents, err := h.missfortune.GetExamQuestionContent(ctx, converters.ConvertExamRequestToMissfortuneRequest(ctx, req))
-	// if err != nil {
-	// 	log.Printf("[SuggestExamQuestion] error getting exam question content: %v", err)
-	// 	return h.SuggestExamQuestionLegacy(ctx, req)
-	// }
+	questionsContents, err := h.missfortune.GetExamQuestionContent(ctx, converters.ConvertExamRequestToMissfortuneRequest(ctx, req))
+	prompt := ""
+	if err != nil {
+		log.Printf("[SuggestExamQuestion] error getting exam question content: %v", err)
 
-	prompt := fmt.Sprintf(`
+		prompt = fmt.Sprintf(`
 You are an expert exam question designer. Your task is to generate a diverse set of high-quality exam questions based on the structured input below. Each question must be either a multiple-choice question (MCQ) or a long-answer (essay-style) question.
 
 Before generating, follow this step-by-step reasoning to ensure quality and uniqueness:
@@ -90,7 +90,7 @@ Return a **valid JSON object** with an array of questions. Each question must st
 - For long-answer questions:
   - Must include a model answer and optional image links.
   - Must require thoughtful, detailed explanations.
-- The points field should match question difficulty: Easy (1–3), Medium (4–6), Hard (7–10).
+- The points field should match question difficulty: (e.g., Easy = 1–3, Medium = 4–6, Hard = 7–10).
 - The output JSON must be valid and must not include explanations, notes, or markdown.
 - No two questions should be identical or too similar.
 - No two options in any MCQ should be the same or semantically identical.
@@ -98,6 +98,9 @@ Return a **valid JSON object** with an array of questions. Each question must st
 Now, generate the questions based on the following input:
 %v
 	`, req)
+	} else {
+		prompt = generateOptionsPrompt(questionsContents)
+	}
 
 	llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_EXAM, prompt)
 	if err != nil {
@@ -131,10 +134,9 @@ func (h *handler) checkCanCall(ctx context.Context, llmCaller string) (string, e
 		log.Printf("[SuggestExamQuestion] error parsing user ID: %v", err)
 		return "", errors.Error(errors.ErrInvalidInput)
 	}
-	ok, chargeCode := h.bulbasaur.CheckCallingLLM(ctx, uid, amount, desc)
-	if !ok {
-		log.Printf("[SuggestExamQuestion] user %d does not have enough credits to call LLM", uid)
-		return "", errors.Error(errors.ErrNotEnoughCredits)
+	chargeCode, err := h.bulbasaur.CheckCallingLLM(ctx, uid, amount, desc)
+	if err != nil {
+		return "", errors.Error(errors.ErrGeneral)
 	}
 	return chargeCode, nil
 }

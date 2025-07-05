@@ -11,8 +11,8 @@ import (
 
 type mockBulbasaur struct{}
 
-func (m *mockBulbasaur) CheckCallingLLM(ctx context.Context, uid uint64, amount float32, description string) (bool, string) {
-	return false, ""
+func (m *mockBulbasaur) CheckCallingLLM(ctx context.Context, uid uint64, amount float32, description string) (string, error) {
+	return "", nil
 }
 func (m *mockBulbasaur) ChargeCallingLLM(ctx context.Context, code string) bool {
 	return false

@@ -2,12 +2,13 @@ package bulbasaur
 
 import (
 	"context"
+	"darius/internal/errors"
 	"darius/pkg/proto/deps/bulbasaur"
 	"log"
 )
 
 type Service interface {
-	CheckCallingLLM(ctx context.Context, uid uint64, amount float32, description string) (bool, string)
+	CheckCallingLLM(ctx context.Context, uid uint64, amount float32, description string) (string, error)
 	ChargeCallingLLM(ctx context.Context, code string) bool
 }
 
@@ -21,7 +22,7 @@ func NewService(client bulbasaur.VenusaurClient) Service {
 	}
 }
 
-func (s *service) CheckCallingLLM(ctx context.Context, uid uint64, amount float32, description string) (bool, string) {
+func (s *service) CheckCallingLLM(ctx context.Context, uid uint64, amount float32, description string) (string, error) {
 	res, err := s.client.StartTransaction(ctx, &bulbasaur.StartTransactionRequest{
 		UserId: uid,
 		Amount: amount,
@@ -30,12 +31,17 @@ func (s *service) CheckCallingLLM(ctx context.Context, uid uint64, amount float3
 
 	if err != nil {
 		log.Printf("[CheckCallingLLM] Error checking calling LLM: %v", err)
-		return false, "Error checking calling LLM: " + err.Error()
+		return "", errors.Error(errors.ErrNetworkConnection)
 	}
 
 	log.Printf("[CheckCallingLLM]: UserID: %d, Amount: %f, Description: %s, Response: %+v", uid, amount, description, res)
 
-	return res.GetTransactionCode() != "", res.GetTransactionCode()
+	if res.GetTransactionCode() == "" || len(res.GetTransactionCode()) == 0 {
+		log.Printf("[CheckCallingLLM] Empty transaction code received for UserID: %d with amount: %f", uid, amount)
+		return "", errors.Error(errors.ErrGeneral)
+	}
+
+	return res.GetTransactionCode(), nil
 }
 func (s *service) ChargeCallingLLM(ctx context.Context, code string) bool {
 	res, err := s.client.CommitTransaction(ctx, &bulbasaur.CommitTransactionRequest{
