@@ -51,73 +51,113 @@ func generateScoreInterviewPrompt(req *suggest.ScoreInterviewRequest) string {
 	submissionString := string(submissionByte)
 
 	return fmt.Sprintf(`
-		You are an expert interview evaluator. Your job is to evaluate an interview session of a candidate based on the provided Q&A data. Each submission contains a question asked during the interview and the corresponding answer from the candidate.  
+		You are an expert interview evaluator. Your job is to evaluate an interview session of a candidate based on the provided Q&A data. Each submission contains a question and the candidate’s answer. You will analyze and assign a score with detailed feedback.
 
-		Your evaluation must include the following sections and strictly follow the provided JSON structure.
-		
-		---
-		
-		Step 1: Primary Evaluation  
-		For each submission in the interview:
-		- Assign a score from the following set:  
-		  - A = Excellent  
-		  - B = Good  
-		  - C = Fair  
-		  - D = Poor  
-		  - F = Unacceptable  
-		- Provide a short comment about the answer’s quality (optional — leave empty if not needed).
-		
-		Skill evaluation:
-		- You are also given a list of skills to evaluate.
-		- For **each skill provided**, you must assign a score (A–F) that reflects the candidate’s overall demonstrated ability in that skill based on all the submissions.
-		- Always include the 'skills' field in your response.
-		
-		Summary section must include:
-		- 'totalScore': A count of how many times each score (A, B, C, D, F) was given across all submissions.
-		- 'positiveFeedback': A bullet-point list of notable strengths.
-		- 'actionableFeedback': A bullet-point list of areas the candidate needs to improve.
-		- 'finalComment': A 2–3 sentence summary of the candidate's overall performance.
-		
-		---
-		
-		Step 2: Self-Evaluation  
-		Now reflect on your own evaluation from Step 1.
-		
-		- Review the scores and comments you just provided.
-		- Ask yourself:  
-		  - Are there any inconsistencies or overly generous/harsh scores?  
-		  - Are the comments clear, helpful, and aligned with the score given?  
-		  - Are all skills appropriately scored based on the evidence?
-		- Revise the scores or comments **only if needed
-		
-		---
-		
-		✅ Final Output Format (must strictly match this structure):
-		
-		{
-		  "result": [
-			{
-			  "index": 1,
-			  "comment": "Your comment here",
-			  "score": "A"
-			}
-		  ],
-		  "skills": [
-			{
-			  "skill": "Accuracy",
-			  "score": "A"
-			}
-		  ],
-		  "totalScore": {
-			"A": 1,
-			"B": 0,
-			"C": 0,
-			"D": 0,
-			"F": 0
-		  },
-		  "positiveFeedback": "- ...\n- ...",
-		  "actionableFeedback": "- ...\n- ...",
-		  "finalComment": "..."
-		}
+---
+
+🧠 Step 1: Primary Evaluation  
+For each submission:
+1. Think step-by-step:
+   - Is the answer relevant to the question?
+   - Is it complete and accurate?
+   - Is the explanation logically structured and clear?
+2. Based on your reasoning, assign a grade:
+   - A = Excellent
+   - B = Good
+   - C = Fair
+   - D = Poor
+   - F = Unacceptable
+3. Write a **comment of 5–10 full sentences** explaining the score.
+
+---
+
+🧪 Skill Evaluation  
+Evaluate each skill in the provided list by considering **all answers together**. Assign a grade (A–F) and justify the score in your mind (but only include score in the JSON).
+
+---
+
+📊 Summary  
+Provide:
+- "totalScore": How many times each letter was used (A–F)
+- "positiveFeedback": Bullet points of strengths
+- "actionableFeedback": Bullet points for improvement
+- "finalComment": A 3–5 sentence overview of performance
+
+---
+
+🔁 Step 2: Self-Evaluation  
+Reflect on the evaluation. If any score or comment seems inconsistent or too harsh/generous, revise.  
+Add a "selfReviewNote": 2–3 sentences about what you changed (or state no change).
+
+---
+
+📌 Output Format (strictly JSON):
+
+{
+  "result": [
+    {
+      "index": 1,
+      "comment": "Full evaluation comment (5–10 sentences)",
+      "score": "A"
+    }
+  ],
+  "skills": [
+    {
+      "skill": "Problem Solving",
+      "score": "B"
+    }
+  ],
+  "totalScore": {
+    "A": 1,
+    "B": 0,
+    "C": 0,
+    "D": 0,
+    "F": 0
+  },
+  "positiveFeedback": "- Clearly explains reasoning\n- Demonstrates technical accuracy",
+  "actionableFeedback": "- Needs more concise examples\n- Could improve edge-case handling",
+  "finalComment": "The candidate performed well overall, demonstrating confidence and clarity in their answers. Their explanations were logical and showed a good understanding of core concepts. With some refinement in structure and edge-case coverage, they would excel further.",
+  "selfReviewNote": "I maintained the original scores after confirming consistency between answer quality and assigned grade."
+}
+📚 Example Input and Output (Few-shot Prompting):
+
+Example Input:
+{
+  "submissions": [
+    {
+      "question": "Explain the difference between an interface and an abstract class in OOP.",
+      "answer": "An interface only has method declarations, and classes implement it. An abstract class can have method definitions and fields."
+    }
+  ],
+  "skills": ["Object-Oriented Design"]
+}
+Example Output:
+
+{
+  "result": [
+    {
+      "index": 1,
+      "comment": "The answer correctly identifies the distinction between interface and abstract class. It notes that interfaces contain declarations only, while abstract classes can include implementations. However, it could be more complete by mentioning multiple inheritance limitations or constructor availability. The structure is clear, and the terms are used correctly. Overall, a strong and concise response.",
+      "score": "A"
+    }
+  ],
+  "skills": [
+    {
+      "skill": "Object-Oriented Design",
+      "score": "A"
+    }
+  ],
+  "totalScore": {
+    "A": 1,
+    "B": 0,
+    "C": 0,
+    "D": 0,
+    "F": 0
+  },
+  "positiveFeedback": "- Clearly distinguishes concepts\n- Accurate and concise explanation",
+  "actionableFeedback": "- Could briefly mention inheritance limitations",
+  "finalComment": "The candidate gave an accurate, high-level comparison of interface and abstract class. Their explanation was technically sound and easy to follow. This indicates a solid grasp of OOP fundamentals.",
+  "selfReviewNote": "No changes needed; the comment and score align well with the candidate's response."
+}
 %v`, submissionString)
 }

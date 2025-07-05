@@ -113,15 +113,10 @@ Return only a **valid JSON object** as specified below. Do not include explanati
   ]
 }
 ⚠️ Constraints:
-
 Do not include questions that are vague, overly generic, or redundant.
-
 Avoid overlapping with previous questions.
-
 Ensure diversity in format, phrasing, and focus across the two questions.
-
 The output must be strictly valid JSON — no markdown, no comments, no explanations.
-
 Now, generate the next two questions based on the input above.
 	
 		`, req.GetContext().GetPosition(), req.GetContext().GetExperience(), req.GetContext().GetLanguage(), req.GetContext().GetSkills(), req.GetContext().GetMaxQuestions(), listOfPreviosQuestions)
