@@ -18,26 +18,26 @@ func (h *scoringHandler) ScoreV2(ctx context.Context, req *ScoreRequest) {
 	data := &ekko.EvaluationRequestV2{}
 	err := proto.Unmarshal(req.Msg.Body, data)
 	if err != nil {
-		log.Printf("Error unmarshalling message: %v", err)
+		log.Printf("[ScoreV2] Error unmarshalling message: %v", err)
 		return
 	}
 
 	prompt := generatePromptV2(data)
 	llmResponse, err := h.llmManager.Generate(ctx, constants.F2_SCORE, prompt)
 	if err != nil {
-		log.Printf("Error generating response: %v", err)
+		log.Printf("[ScoreV2] Error generating response: %v", err)
 		return
 	}
 
 	parsedResponse, err := sanitizeAndParseResponseV2(llmResponse)
 	if err != nil {
-		log.Printf("Error parsing response: %v", err)
+		log.Printf("[ScoreV2] Error parsing response: %v", err)
 		return
 	}
 
 	responseByte, err := proto.Marshal(parsedResponse)
 	if err != nil {
-		log.Printf("Error marshalling response: %v", err)
+		log.Printf("[ScoreV2] Error marshalling response: %v", err)
 		return
 	}
 
@@ -54,7 +54,7 @@ func (h *scoringHandler) ScoreV2(ctx context.Context, req *ScoreRequest) {
 		},
 	)
 	if err != nil {
-		log.Printf("Error publishing message: %v", err)
+		log.Printf("[ScoreV2] Error publishing message: %v", err)
 	}
 }
 
@@ -71,8 +71,9 @@ You will receive a JSON object with the following structure:
   "correctAnswer": "string",
   "points": number,
   "x-user-id": "string",
-  "x-role-id": "string",
-  "timestamp": "string"
+  "timestamp": "string",
+  "answerId": "string"
+  "language": "string"
 }
 ---
 🧠 Evaluation Guidelines (Chain-of-Thought Reasoning):
@@ -95,7 +96,10 @@ Assign a score (int) between 0 and the maximum "points", applying partial credit
 📤 Output Format (Strictly Required):
 {
   "score": number,
-  "comment": "string (3–5 full sentences)"
+  "comment": "string (3–5 full sentences)",
+  "timestamp": "string" (keep the same as input),
+  "answerId": "string (must keep the same as input)",
+
 }
 
 ---
@@ -110,13 +114,16 @@ Input:
   "correctAnswer": "The capital of France is Paris.",
   "points": 5,
   "x-user-id": "u01",
-  "x-role-id": "student",
   "timestamp": "2025-06-14T09:30:00Z"
+  "answerId": "a01",
+  "language": "English"
 }
 Output:
 {
   "score": 5,
   "comment": "Your answer is short but completely correct. It identifies the capital of France accurately and directly. While brief, it leaves no room for confusion. Well done."
+  "timestamp": "2025-06-14T09:30:00Z",
+  "answerId": "a01"
 }
 
 Example 2:
@@ -127,13 +134,16 @@ Input:
   "correctAnswer": "TCP is a connection-oriented protocol that guarantees delivery and order. UDP is connectionless and faster but doesn't guarantee delivery.",
   "points": 10,
   "x-user-id": "u02",
-  "x-role-id": "student",
-  "timestamp": "2025-06-14T09:35:00Z"
+  "timestamp": "2025-06-14T09:35:00Z",
+  "answerId": "a02",
+  "language": "Vietnamese"
 }
 Output:
 {
   "score": 3,
-  "comment": "Your answer shows a basic awareness of performance differences between TCP and UDP. However, it lacks important technical details such as connection orientation, delivery guarantees, and order. The statement is too vague and could mislead in a technical context. Consider elaborating on each protocol's core behaviors. This would demonstrate a stronger understanding of network fundamentals."
+  "comment": "Câu trả lời của bạn cho thấy nhận thức cơ bản về sự khác biệt về hiệu suất giữa TCP và UDP. Tuy nhiên, nó thiếu các chi tiết kỹ thuật quan trọng như định hướng kết nối, đảm bảo phân phối và thứ tự. Tuyên bố này quá mơ hồ và có thể gây hiểu lầm trong bối cảnh kỹ thuật. Hãy cân nhắc giải thích chi tiết về hành vi cốt lõi của từng giao thức. Điều này sẽ chứng minh sự hiểu biết sâu sắc hơn về các nguyên tắc cơ bản của mạng.",
+  "timestamp": "2025-06-14T09:35:00Z",
+  "answerId": "a02"
 }
 
 Example 3:
@@ -144,14 +154,17 @@ Input:
   "correctAnswer": "Polymorphism allows objects of different classes to be treated through the same interface, enabling methods to behave differently based on the object instance.",
   "points": 3,
   "x-user-id": "u03",
-  "x-role-id": "student",
-  "timestamp": "2025-06-14T09:40:00Z"
+  "timestamp": "2025-06-14T09:40:00Z",
+  "answerId": "a03",
+  "language": "English"
 }
 Output:
 {
   "score": 1,
-  "comment": "Your answer shows some understanding of the core concept behind polymorphism. However, it is too vague and lacks technical accuracy. You did not mention the use of interfaces or the behavior of methods in different object contexts. With more precise language and an example, your answer would be much stronger. Try expanding your definition in future responses."
-}
+  "comment": "Your answer shows some understanding of the core concept behind polymorphism. However, it is too vague and lacks technical accuracy. You did not mention the use of interfaces or the behavior of methods in different object contexts. With more precise language and an example, your answer would be much stronger. Try expanding your definition in future responses.",
+  "timestamp": "2025-06-14T09:40:00Z",
+  "answerId": "a03"
+  }
 
 ---
 
@@ -165,14 +178,14 @@ func sanitizeAndParseResponseV2(input string) (*ekko.EvaluationResponseV2, error
 	start := strings.Index(input, "{")
 	end := strings.LastIndex(input, "}")
 	if start == -1 || end == -1 || start > end {
-		return nil, errors.New("no JSON object found in input")
+		return nil, errors.New("[ScoreV2] no JSON object found in input")
 	}
 	jsonStr := input[start : end+1]
 
 	var parsed ekko.EvaluationResponseV2
 	err := json.Unmarshal([]byte(jsonStr), &parsed)
 	if err != nil {
-		return nil, fmt.Errorf("error unmarshalling JSON: %v", err)
+		return nil, fmt.Errorf("[ScoreV2] error unmarshalling JSON: %v", err)
 	}
 	return &parsed, nil
 }
