@@ -50,12 +50,12 @@ service SuggestService {
         };
     }
 
-    rpc SuggestExamQuestion(SuggestExamQuestionRequest) returns (SuggestExamQuestionResponse) {
-        option (google.api.http) = {
-        post: "/v1/suggest_exam_question"
-        body: "*"
-        };
-    }
+    // rpc SuggestExamQuestion(SuggestExamQuestionRequest) returns (SuggestExamQuestionResponse) {
+    //     option (google.api.http) = {
+    //     post: "/v1/suggest_exam_question"
+    //     body: "*"
+    //     };
+    // }
 
     rpc SuggestExamQuestionV2(SuggestExamQuestionRequest) returns (SuggestExamQuestionResponseV2) {
         option (google.api.http) = {

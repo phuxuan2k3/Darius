@@ -12,7 +12,6 @@ import (
 	llmManager "darius/managers/llm"
 	arceus "darius/pkg/proto/deps/arceus"
 	"darius/pkg/proto/deps/bulbasaur"
-	hello "darius/pkg/proto/hello"
 	suggest "darius/pkg/proto/suggest"
 	"flag"
 	"fmt"
@@ -186,7 +185,7 @@ func startGRPC() {
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(AuthInterceptor),
 	)
-	hello.RegisterHelloServiceServer(grpcServer, handler)
+	// hello.RegisterHelloServiceServer(grpcServer, handler)
 	suggest.RegisterSuggestServiceServer(grpcServer, handler)
 
 	fmt.Println("gRPC server listening on port " + port)

@@ -28,7 +28,6 @@ type SuggestServiceClient interface {
 	SuggestInterviewQuestion(ctx context.Context, in *SuggestInterviewQuestionRequest, opts ...grpc.CallOption) (*SuggestInterviewQuestionResponse, error)
 	ScoreInterview(ctx context.Context, in *ScoreInterviewRequest, opts ...grpc.CallOption) (*ScoreInterviewResponse, error)
 	SuggestOutlines(ctx context.Context, in *SuggestOutlinesRequest, opts ...grpc.CallOption) (*SuggestOutlinesResponse, error)
-	SuggestExamQuestion(ctx context.Context, in *SuggestExamQuestionRequest, opts ...grpc.CallOption) (*SuggestExamQuestionResponse, error)
 	SuggestExamQuestionV2(ctx context.Context, in *SuggestExamQuestionRequest, opts ...grpc.CallOption) (*SuggestExamQuestionResponseV2, error)
 }
 
@@ -94,15 +93,6 @@ func (c *suggestServiceClient) SuggestOutlines(ctx context.Context, in *SuggestO
 	return out, nil
 }
 
-func (c *suggestServiceClient) SuggestExamQuestion(ctx context.Context, in *SuggestExamQuestionRequest, opts ...grpc.CallOption) (*SuggestExamQuestionResponse, error) {
-	out := new(SuggestExamQuestionResponse)
-	err := c.cc.Invoke(ctx, "/suggest.SuggestService/SuggestExamQuestion", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *suggestServiceClient) SuggestExamQuestionV2(ctx context.Context, in *SuggestExamQuestionRequest, opts ...grpc.CallOption) (*SuggestExamQuestionResponseV2, error) {
 	out := new(SuggestExamQuestionResponseV2)
 	err := c.cc.Invoke(ctx, "/suggest.SuggestService/SuggestExamQuestionV2", in, out, opts...)
@@ -122,7 +112,6 @@ type SuggestServiceServer interface {
 	SuggestInterviewQuestion(context.Context, *SuggestInterviewQuestionRequest) (*SuggestInterviewQuestionResponse, error)
 	ScoreInterview(context.Context, *ScoreInterviewRequest) (*ScoreInterviewResponse, error)
 	SuggestOutlines(context.Context, *SuggestOutlinesRequest) (*SuggestOutlinesResponse, error)
-	SuggestExamQuestion(context.Context, *SuggestExamQuestionRequest) (*SuggestExamQuestionResponse, error)
 	SuggestExamQuestionV2(context.Context, *SuggestExamQuestionRequest) (*SuggestExamQuestionResponseV2, error)
 	mustEmbedUnimplementedSuggestServiceServer()
 }
@@ -148,9 +137,6 @@ func (UnimplementedSuggestServiceServer) ScoreInterview(context.Context, *ScoreI
 }
 func (UnimplementedSuggestServiceServer) SuggestOutlines(context.Context, *SuggestOutlinesRequest) (*SuggestOutlinesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SuggestOutlines not implemented")
-}
-func (UnimplementedSuggestServiceServer) SuggestExamQuestion(context.Context, *SuggestExamQuestionRequest) (*SuggestExamQuestionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SuggestExamQuestion not implemented")
 }
 func (UnimplementedSuggestServiceServer) SuggestExamQuestionV2(context.Context, *SuggestExamQuestionRequest) (*SuggestExamQuestionResponseV2, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SuggestExamQuestionV2 not implemented")
@@ -276,24 +262,6 @@ func _SuggestService_SuggestOutlines_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SuggestService_SuggestExamQuestion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SuggestExamQuestionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SuggestServiceServer).SuggestExamQuestion(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/suggest.SuggestService/SuggestExamQuestion",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SuggestServiceServer).SuggestExamQuestion(ctx, req.(*SuggestExamQuestionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _SuggestService_SuggestExamQuestionV2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SuggestExamQuestionRequest)
 	if err := dec(in); err != nil {
@@ -342,10 +310,6 @@ var SuggestService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SuggestOutlines",
 			Handler:    _SuggestService_SuggestOutlines_Handler,
-		},
-		{
-			MethodName: "SuggestExamQuestion",
-			Handler:    _SuggestService_SuggestExamQuestion_Handler,
 		},
 		{
 			MethodName: "SuggestExamQuestionV2",
