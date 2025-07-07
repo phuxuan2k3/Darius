@@ -41,6 +41,8 @@ func (h *scoringHandler) ScoreV2(ctx context.Context, req *ScoreRequest) {
 		return
 	}
 
+	log.Printf("[ScoreV2] Successfully processed request with ID: %s.\n resp: %s ", req.Msg.MessageId, string(responseByte))
+
 	err = h.queueChannel.Publish(
 		"", h.queueQueue.Name,
 		false,

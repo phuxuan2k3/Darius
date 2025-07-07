@@ -159,5 +159,6 @@ Example Output:
   "finalComment": "The candidate gave an accurate, high-level comparison of interface and abstract class. Their explanation was technically sound and easy to follow. This indicates a solid grasp of OOP fundamentals.",
   "selfReviewNote": "No changes needed; the comment and score align well with the candidate's response."
 }
+Now evaluate the following interview session:
 %v`, submissionString)
 }
