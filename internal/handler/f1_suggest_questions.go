@@ -116,7 +116,7 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 	questionsContents, err := h.missfortune.GetExamQuestionContent(ctx, converters.ConvertSuggestQuestionRequestToMissFortuneRequest(ctx, req))
 	prompt := ""
 	if err != nil {
-		log.Printf("[SuggestExamQuestion] error getting exam question content: %v", err)
+		log.Printf("[SuggestQuestions] error getting exam question content: %v", err)
 
 		prompt = fmt.Sprintf(`
 	You are an expert exam question designer. Your task is to generate a diverse, non-redundant, high-quality set of exam questions based on the structured input below.
@@ -202,19 +202,19 @@ Now, generate the questions based on the provided metadata.
 
 	jsonStr, err := extractJSONQuestions(input)
 	if err != nil {
-		fmt.Println("Lỗi:", err)
+		fmt.Println("[SuggestQuestions] error extract Json questions:", err)
 		return nil, errors.Error(errors.ErrJSONParsing)
 	}
 
 	// Parse JSON
 	questionListResp, err := parseQuestions(jsonStr)
 	if err != nil {
-		fmt.Println("Lỗi:", err)
+		fmt.Println("[SuggestQuestions] error parse questions", err)
 		return nil, errors.Error(errors.ErrJSONUnmarshalling)
 	}
 
 	if !h.bulbasaur.ChargeCallingLLM(ctx, chargeCode) {
-		log.Printf("[SuggestExamQuestion] Charge Code %s failed to charge for LLM call", chargeCode)
+		log.Printf("[SuggestQuestions] Charge Code %s failed to charge for LLM call", chargeCode)
 		return nil, errors.Error(errors.ErrChargingFailed)
 	}
 
@@ -382,6 +382,6 @@ func sanitizeJSON(jsonStr string) (string, error) {
 		}
 	}
 
-	fmt.Println("sanitizeJSON: Chuỗi JSON chứa ký tự không thể vệ sinh")
+	fmt.Println("[SuggestQuestions] sanitizeJSON: Chuỗi JSON chứa ký tự không thể vệ sinh")
 	return "", errors.Error(errors.ErrJSONParsing)
 }

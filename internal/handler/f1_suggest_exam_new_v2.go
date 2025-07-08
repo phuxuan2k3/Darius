@@ -114,6 +114,7 @@ Now, generate the questions based on the following input:
 	var exam = &suggest.SuggestExamQuestionResponseV2{}
 	err = json.Unmarshal([]byte(parsedResponse), &exam)
 	if err != nil {
+		log.Printf("[SuggestExamQuestion] error unmarshalling JSON: %v", err)
 		return nil, errors.Error(errors.ErrJSONUnmarshalling)
 	}
 
