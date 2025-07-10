@@ -2,7 +2,6 @@ package llm_grpc
 
 import (
 	"context"
-	"darius/internal/utils"
 	arceus "darius/pkg/proto/deps/arceus"
 	"log"
 )
@@ -34,7 +33,7 @@ func (s *service) Generate(ctx context.Context, text string) (resp *arceus.Gener
 		return &arceus.GenerateTextResponse{}, err
 	}
 
-	log.Printf("[Generate] LLM request: %s, LLM response %s", utils.Shorten(text), utils.Shorten(res.GetContent()))
+	log.Printf("[Generate] LLM request: %s, LLM response %s", text, res.GetContent())
 
 	return res, err
 }
