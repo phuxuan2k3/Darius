@@ -24,9 +24,42 @@ func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.Sugges
 	if err != nil {
 		log.Printf("[SuggestExamQuestion] error getting exam question content: %v", err)
 
+		templateRule := "Generate %v questions of level %v for topic %v.\n"
+		questionCount := 0
+		instruction := ""
+		for _, topic := range req.Topics {
+			if topic.GetDifficultyDistribution().GetIntern() > 0 {
+				instruction += fmt.Sprintf(templateRule, topic.GetDifficultyDistribution().GetIntern(), "Intern", topic.GetName())
+				questionCount += int(topic.GetDifficultyDistribution().GetIntern())
+			}
+			if topic.GetDifficultyDistribution().GetJunior() > 0 {
+				instruction += fmt.Sprintf(templateRule, topic.GetDifficultyDistribution().GetJunior(), "Junior", topic.GetName())
+				questionCount += int(topic.GetDifficultyDistribution().GetJunior())
+			}
+			if topic.GetDifficultyDistribution().GetMiddle() > 0 {
+				instruction += fmt.Sprintf(templateRule, topic.GetDifficultyDistribution().GetMiddle(), "Middle", topic.GetName())
+				questionCount += int(topic.GetDifficultyDistribution().GetMiddle())
+			}
+			if topic.GetDifficultyDistribution().GetSenior() > 0 {
+				instruction += fmt.Sprintf(templateRule, topic.GetDifficultyDistribution().GetSenior(), "Senior", topic.GetName())
+				questionCount += int(topic.GetDifficultyDistribution().GetSenior())
+			}
+			if topic.GetDifficultyDistribution().GetLead() > 0 {
+				instruction += fmt.Sprintf(templateRule, topic.GetDifficultyDistribution().GetLead(), "Lead", topic.GetName())
+				questionCount += int(topic.GetDifficultyDistribution().GetLead())
+			}
+			if topic.GetDifficultyDistribution().GetExpert() > 0 {
+				instruction += fmt.Sprintf(templateRule, topic.GetDifficultyDistribution().GetExpert(), "Expert", topic.GetName())
+				questionCount += int(topic.GetDifficultyDistribution().GetExpert())
+			}
+		}
+
+		instruction += fmt.Sprintf("Total questions you MUST generate: %d.\n", questionCount)
+
 		prompt = fmt.Sprintf(`
 You are an expert exam question designer. Your task is to generate a diverse set of high-quality exam questions based on the structured input below. Each question must be either a multiple-choice question (MCQ) or a long-answer (essay-style) question.
-
+Here is your requirement:
+%v
 Before generating, follow this step-by-step reasoning to ensure conceptual diversity, difficulty alignment, and uniqueness:
 
 ---
@@ -61,25 +94,6 @@ Before generating, follow this step-by-step reasoning to ensure conceptual diver
 - Validate JSON structure before returning.
 
 ---
-
-📥 Input Structure:
-You will receive an object with a "topics" field, where each topic includes:
-message DifficultyDistribution {
-    int32 Intern = 1;
-    int32 Junior = 2;
-    int32 Middle = 3;
-    int32 Senior = 4;
-    int32 Lead = 5;
-    int32 Expert = 6;
-}
-
-message Topic {
-    string name = 1;
-    DifficultyDistribution difficultyDistribution = 2;
-}
-
-Use this structure to determine how many questions to generate per topic and per difficulty.
-
 📤 Output Format:
 Return a valid JSON object with an array of questions. Each question must strictly follow this schema:
 
@@ -157,7 +171,7 @@ Output must be clean, valid JSON with no markdown, explanations, or comments.
 
 Now, generate the questions based on the following input:
 %v
-	`, req)
+	`, instruction, req)
 	} else {
 		prompt = generateOptionsPrompt(questionsContents)
 	}
