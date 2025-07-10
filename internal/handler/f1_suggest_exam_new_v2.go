@@ -55,7 +55,7 @@ func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.Sugges
 		}
 
 		instruction += fmt.Sprintf("Total questions you MUST generate: %d.\n", questionCount)
-
+		req.Topics = nil // Clear topics to avoid duplication in the prompt
 		prompt = fmt.Sprintf(`
 You are an expert exam question designer. Your task is to generate a diverse set of high-quality exam questions based on the structured input below. Each question must be either a multiple-choice question (MCQ) or a long-answer (essay-style) question.
 Here is your requirement:
