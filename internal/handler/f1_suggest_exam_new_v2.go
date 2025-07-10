@@ -11,6 +11,9 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.SuggestExamQuestionRequest) (resp *suggest.SuggestExamQuestionResponseV2, err error) {
@@ -162,7 +165,7 @@ func (h *handler) checkCanCall(ctx context.Context, llmCaller string) (string, e
 	}
 	chargeCode, err := h.bulbasaur.CheckCallingLLM(ctx, uid, amount, desc)
 	if err != nil {
-		return "", errors.Error(errors.ErrGeneral)
+		return "", status.Error(codes.ResourceExhausted, "Payment required: not enough credits")
 	}
 	return chargeCode, nil
 }

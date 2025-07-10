@@ -5,6 +5,9 @@ import (
 	"darius/internal/errors"
 	"darius/pkg/proto/deps/bulbasaur"
 	"log"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Service interface {
@@ -30,8 +33,13 @@ func (s *service) CheckCallingLLM(ctx context.Context, uid uint64, amount float3
 	})
 
 	if err != nil {
+		st, ok := status.FromError(err)
+		if ok && st.Code() == codes.Internal {
+			log.Printf("[CheckCallingLLM] 500 Internal Server Error: %v", err)
+			return "", errors.Error(errors.ErrNotEnoughCredits)
+		}
 		log.Printf("[CheckCallingLLM] Error checking calling LLM: %v", err)
-		return "", errors.Error(errors.ErrNetworkConnection)
+		return "", errors.Error(errors.ErrNotEnoughCredits)
 	}
 
 	log.Printf("[CheckCallingLLM]: UserID: %d, Amount: %f, Description: %s, Response: %+v", uid, amount, description, res)
