@@ -161,7 +161,7 @@ func (h *handler) checkCanCall(ctx context.Context, llmCaller string) (string, e
 	uid, err := strconv.ParseUint(uidStr, 10, 64)
 	if err != nil {
 		log.Printf("[SuggestExamQuestion] error parsing user ID: %v", err)
-		return "", errors.Error(errors.ErrInvalidInput)
+		return "", status.Error(codes.ResourceExhausted, "Payment required: not enough credits")
 	}
 	chargeCode, err := h.bulbasaur.CheckCallingLLM(ctx, uid, amount, desc)
 	if err != nil {
