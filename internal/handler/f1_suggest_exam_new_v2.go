@@ -27,26 +27,61 @@ func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.Sugges
 		prompt = fmt.Sprintf(`
 You are an expert exam question designer. Your task is to generate a diverse set of high-quality exam questions based on the structured input below. Each question must be either a multiple-choice question (MCQ) or a long-answer (essay-style) question.
 
-Before generating, follow this step-by-step reasoning to ensure quality and uniqueness:
+Before generating, follow this step-by-step reasoning to ensure conceptual diversity, difficulty alignment, and uniqueness:
 
-🧠 Step-by-Step Reasoning:
-1. First, generate a conceptual list of question ideas covering different aspects of the provided topics.
-2. Check and confirm that each idea is distinct in content and intent (i.e., no duplicate or near-duplicate questions).
-3. For each MCQ:
-   - Generate 4 answer options that are factually distinct and grammatically consistent.
-   - Ensure that no two options are semantically or syntactically identical or too similar.
-   - The incorrect options must be plausible and non-trivial.
-4. For long-answer questions:
-   - Ensure the question targets higher-order thinking (e.g., analysis, explanation, comparison).
-   - Provide a clear expected answer and optional visual/image links if applicable.
+---
+
+🧠 Step-by-Step Reasoning (Chain-of-Thought Inspired):
+1. Parse the input to extract all topics and their difficulty distributions.
+2. For each topic:
+   - For each difficulty level (Intern to Expert), generate the required number of questions.
+   - The total number of questions per topic must match the sum of all difficulty levels defined in its "difficultyDistribution".
+3. For each question:
+   - Ensure it is relevant to the topic and appropriate for the intended difficulty level.
+   - Vary the question types (MCQ vs. Long Answer) where reasonable.
+4. For MCQ-type questions:
+   - Create exactly 4 answer options per question.
+   - Ensure all 4 options are:
+     - Semantically distinct.
+     - Grammatically aligned with the question.
+     - Plausible (but only one is correct).
+     - Free from duplication or close paraphrases.
+5. For Long Answer questions:
+   - Ensure the question requires analysis, comparison, or in-depth reasoning.
+   - Provide a complete, detailed model answer.
+   - Optionally include one or more imageLinks and/or guiding instructions via "extraText".
+
+---
 
 🔁 Self-Verification (Post-Generation Check):
-- Verify that **no question text** is repeated.
-- Verify that **within each MCQ**, no two options are the same or nearly the same.
-- Verify that the output strictly matches the structure described below and is valid JSON.
+- Verify that **no question text is repeated or similar across topics/difficulties**.
+- For MCQs:
+  - Ensure no two options are identical or overly similar.
+- Confirm the number of questions exactly matches the total count derived from all difficulty distributions across topics.
+- Validate JSON structure before returning.
 
-📤 Output Format
-Return a **valid JSON object** with an array of questions. Each question must strictly follow the schema below:
+---
+
+📥 Input Structure:
+You will receive an object with a "topics" field, where each topic includes:
+message DifficultyDistribution {
+    int32 Intern = 1;
+    int32 Junior = 2;
+    int32 Middle = 3;
+    int32 Senior = 4;
+    int32 Lead = 5;
+    int32 Expert = 6;
+}
+
+message Topic {
+    string name = 1;
+    DifficultyDistribution difficultyDistribution = 2;
+}
+
+Use this structure to determine how many questions to generate per topic and per difficulty.
+
+📤 Output Format:
+Return a valid JSON object with an array of questions. Each question must strictly follow this schema:
 
 {
   "questions": [
@@ -78,22 +113,47 @@ Return a **valid JSON object** with an array of questions. Each question must st
     ...
   ]
 }
-
 📌 Constraints and Rules:
-- Each question must include: id, testId, text, points, type, and detail.
-- type must be either "MCQ" or "LONG_ANSWER".
-- The detail.type field must match the parent type field.
-- For MCQs:
-  - Exactly 4 options.
-  - Only one correct option (index from 0 to 3).
-  - Options must be clear, distinct, and grammatically aligned with the question.
-- For long-answer questions:
-  - Must include a model answer and optional image links.
-  - Must require thoughtful, detailed explanations.
-- The points field should match question difficulty: (e.g., Easy = 1–3, Medium = 4–6, Hard = 7–10).
-- The output JSON must be valid and must not include explanations, notes, or markdown.
-- No two questions should be identical or too similar.
-- No two options in any MCQ should be the same or semantically identical.
+
+Each question must include: id, testId, text, points, type, and detail.
+
+The type must be either "MCQ" or "LONG_ANSWER".
+
+The detail.type must match the parent type.
+
+For MCQ questions:
+
+Exactly 4 options.
+
+Only one correct option (indexed 0–3).
+
+All options must be grammatically correct and distinct in both meaning and phrasing.
+
+For Long Answer:
+
+Must include correctAnswer.
+
+Must target higher-order thinking skills (e.g., explanation, comparison).
+
+imageLinks can be empty or populated.
+
+The points field must reflect the difficulty:
+
+Intern = 1–2
+
+Junior = 2–3
+
+Middle = 4–5
+
+Senior = 6–7
+
+Lead = 8–9
+
+Expert = 10
+
+The total number of questions generated per topic must match the sum of all difficulty levels in its difficultyDistribution.
+
+Output must be clean, valid JSON with no markdown, explanations, or comments.
 
 Now, generate the questions based on the following input:
 %v
