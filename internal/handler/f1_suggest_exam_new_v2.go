@@ -11,9 +11,6 @@ import (
 	"fmt"
 	"log"
 	"strconv"
-
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.SuggestExamQuestionRequest) (resp *suggest.SuggestExamQuestionResponseV2, err error) {
@@ -161,11 +158,12 @@ func (h *handler) checkCanCall(ctx context.Context, llmCaller string) (string, e
 	uid, err := strconv.ParseUint(uidStr, 10, 64)
 	if err != nil {
 		log.Printf("[SuggestExamQuestion] error parsing user ID: %v", err)
-		return "", status.Error(codes.ResourceExhausted, "Payment required: not enough credits")
+		ctxdata.SetHeaders(ctx, ctxdata.HttpCodeHeader, "402")
+		return "", err
 	}
 	chargeCode, err := h.bulbasaur.CheckCallingLLM(ctx, uid, amount, desc)
 	if err != nil {
-		return "", status.Error(codes.ResourceExhausted, "Payment required: not enough credits")
+		return "", err
 	}
 	return chargeCode, nil
 }

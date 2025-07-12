@@ -3,8 +3,11 @@ package ctx
 import (
 	"context"
 
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
+
+const HttpCodeHeader string = "X-Http-Code"
 
 func GetUserIdFromContext(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
@@ -18,4 +21,9 @@ func GetUserIdFromContext(ctx context.Context) (string, error) {
 		return "", nil
 	}
 	return userID[0], nil
+}
+
+func SetHeaders(ctx context.Context, key, value string) error {
+	md := metadata.Pairs(key, value)
+	return grpc.SetHeader(ctx, md)
 }

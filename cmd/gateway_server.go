@@ -5,13 +5,17 @@ import (
 	suggest "darius/pkg/proto/suggest"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 
+	ctxdata "darius/ctx"
+
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
+	proto "google.golang.org/protobuf/proto"
 )
 
 func corsMiddleware(h http.Handler) http.Handler {
@@ -39,11 +43,27 @@ func customHeaderMatcher(key string) (string, bool) {
 	return runtime.DefaultHeaderMatcher(key)
 }
 
+func forwardReponseFunc(ctx context.Context, w http.ResponseWriter, _ proto.Message) error {
+	smd, ok := runtime.ServerMetadataFromContext(ctx)
+	if !ok {
+		return nil
+	}
+	if vals := smd.HeaderMD.Get(ctxdata.HttpCodeHeader); len(vals) > 0 {
+		code, err := strconv.Atoi(vals[0])
+		if err != nil {
+			return err
+		}
+		w.WriteHeader(code)
+	}
+	return nil
+}
+
 func startGateway() {
 	grpcPort := viper.GetString("grpc.port")
 
 	grpcMux := runtime.NewServeMux(
 		runtime.WithIncomingHeaderMatcher(customHeaderMatcher),
+		runtime.WithForwardResponseOption(forwardReponseFunc),
 	)
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	err := suggest.RegisterSuggestServiceHandlerFromEndpoint(context.Background(), grpcMux, "localhost:"+grpcPort, opts)
