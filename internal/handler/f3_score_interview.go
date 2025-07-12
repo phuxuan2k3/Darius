@@ -88,8 +88,6 @@ Provide:
 🔁 Step 2: Self-Evaluation  
 Check if your output is structured correctly and follows the guidelines.
 Reflect on the evaluation. If any score or comment seems inconsistent or too harsh/generous, revise.  
-Add a "selfReviewNote": 2–3 sentences about what you changed (or state no change).
-
 ---
 
 📌 Output Format (strictly JSON):
@@ -118,7 +116,6 @@ Add a "selfReviewNote": 2–3 sentences about what you changed (or state no chan
   "positiveFeedback": "Clearly explains reasoning. Demonstrates technical accuracy",
   "actionableFeedback": "Needs more concise examples. Could improve edge-case handling",
   "finalComment": "The candidate performed well overall, demonstrating confidence and clarity in their answers. Their explanations were logical and showed a good understanding of core concepts. With some refinement in structure and edge-case coverage, they would excel further.",
-  "selfReviewNote": "I maintained the original scores after confirming consistency between answer quality and assigned grade."
 }
 📚 Example Input and Output (Few-shot Prompting):
 
@@ -158,7 +155,6 @@ Example Output:
   "positiveFeedback": "Clearly distinguishes concepts. Accurate and concise explanation",
   "actionableFeedback": "Could briefly mention inheritance limitations",
   "finalComment": "The candidate gave an accurate, high-level comparison of interface and abstract class. Their explanation was technically sound and easy to follow. This indicates a solid grasp of OOP fundamentals.",
-  "selfReviewNote": "No changes needed; the comment and score align well with the candidate's response."
 }
 Now evaluate the following interview session:
 %v`, submissionString)
