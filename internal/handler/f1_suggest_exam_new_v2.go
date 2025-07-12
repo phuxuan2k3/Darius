@@ -158,11 +158,11 @@ func (h *handler) checkCanCall(ctx context.Context, llmCaller string) (string, e
 	uid, err := strconv.ParseUint(uidStr, 10, 64)
 	if err != nil {
 		log.Printf("[SuggestExamQuestion] error parsing user ID: %v", err)
-		ctxdata.SetHeaders(ctx, ctxdata.HttpCodeHeader, "402")
 		return "", err
 	}
 	chargeCode, err := h.bulbasaur.CheckCallingLLM(ctx, uid, amount, desc)
 	if err != nil {
+		ctxdata.SetHeaders(ctx, ctxdata.HttpCodeHeader, "402")
 		return "", err
 	}
 	return chargeCode, nil
