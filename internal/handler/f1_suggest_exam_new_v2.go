@@ -14,7 +14,7 @@ import (
 )
 
 // handleErrorWithStatusCode sets the appropriate HTTP status code and returns the error
-func (h *handler) handleErrorWithStatusCode(ctx context.Context, err error, errorType string) error {
+func (h *handler) handleErrorWithStatusCode(ctx context.Context, _ error, errorType string) error {
 	appError := errors.Error(errorType)
 	ctxdata.SetHeaders(ctx, ctxdata.HttpCodeHeader, errors.GetHTTPStatusCode(appError))
 	return appError

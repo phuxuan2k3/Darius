@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	suggest "darius/pkg/proto/suggest"
-	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -68,11 +67,6 @@ func customErrorHandler(ctx context.Context, mux *runtime.ServeMux, marshaler ru
 			code, parseErr := strconv.Atoi(vals[0])
 			if parseErr == nil {
 				w.WriteHeader(code)
-				// Write error response
-				errorResponse := map[string]interface{}{
-					"error": err.Error(),
-				}
-				json.NewEncoder(w).Encode(errorResponse)
 				return
 			}
 		}
