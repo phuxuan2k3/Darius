@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	suggest "darius/pkg/proto/suggest"
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -43,7 +44,7 @@ func customHeaderMatcher(key string) (string, bool) {
 	return runtime.DefaultHeaderMatcher(key)
 }
 
-func forwardReponseFunc(ctx context.Context, w http.ResponseWriter, _ proto.Message) error {
+func forwardResponseFunc(ctx context.Context, w http.ResponseWriter, _ proto.Message) error {
 	smd, ok := runtime.ServerMetadataFromContext(ctx)
 	if !ok {
 		return nil
@@ -58,12 +59,36 @@ func forwardReponseFunc(ctx context.Context, w http.ResponseWriter, _ proto.Mess
 	return nil
 }
 
+// customErrorHandler handles custom error responses with proper HTTP status codes
+func customErrorHandler(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error) {
+	// Check if we have a custom HTTP status code in the context
+	smd, ok := runtime.ServerMetadataFromContext(ctx)
+	if ok {
+		if vals := smd.HeaderMD.Get(ctxdata.HttpCodeHeader); len(vals) > 0 {
+			code, parseErr := strconv.Atoi(vals[0])
+			if parseErr == nil {
+				w.WriteHeader(code)
+				// Write error response
+				errorResponse := map[string]interface{}{
+					"error": err.Error(),
+				}
+				json.NewEncoder(w).Encode(errorResponse)
+				return
+			}
+		}
+	}
+
+	// Default error handling
+	runtime.DefaultHTTPErrorHandler(ctx, mux, marshaler, w, r, err)
+}
+
 func startGateway() {
 	grpcPort := viper.GetString("grpc.port")
 
 	grpcMux := runtime.NewServeMux(
 		runtime.WithIncomingHeaderMatcher(customHeaderMatcher),
-		runtime.WithForwardResponseOption(forwardReponseFunc),
+		runtime.WithForwardResponseOption(forwardResponseFunc),
+		runtime.WithErrorHandler(customErrorHandler),
 	)
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	err := suggest.RegisterSuggestServiceHandlerFromEndpoint(context.Background(), grpcMux, "localhost:"+grpcPort, opts)

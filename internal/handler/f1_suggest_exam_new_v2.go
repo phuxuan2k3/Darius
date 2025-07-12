@@ -13,6 +13,13 @@ import (
 	"strconv"
 )
 
+// handleErrorWithStatusCode sets the appropriate HTTP status code and returns the error
+func (h *handler) handleErrorWithStatusCode(ctx context.Context, err error, errorType string) error {
+	appError := errors.Error(errorType)
+	ctxdata.SetHeaders(ctx, ctxdata.HttpCodeHeader, errors.GetHTTPStatusCode(appError))
+	return appError
+}
+
 func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.SuggestExamQuestionRequest) (resp *suggest.SuggestExamQuestionResponseV2, err error) {
 	chargeCode, err := h.checkCanCall(ctx, constants.F1_SUGGEST_EXAM)
 	if err != nil {
@@ -129,24 +136,24 @@ Now, generate exactly %v exam questions based on the criteria above.
 
 	llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_EXAM, prompt)
 	if err != nil {
-		return nil, errors.Error(errors.ErrNetworkConnection)
+		return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrNetworkConnection)
 	}
 	parsedResponse, err := sanitizeJSON(llmResponse)
 	if err != nil {
-		return nil, errors.Error(errors.ErrJSONParsing)
+		return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrJSONParsing)
 	}
 	// Convert the parsed response to the expected format
 	var exam = &suggest.SuggestExamQuestionResponseV2{}
 	err = json.Unmarshal([]byte(parsedResponse), &exam)
 	if err != nil {
 		log.Printf("[SuggestExamQuestion] error unmarshalling JSON: %v", err)
-		return nil, errors.Error(errors.ErrJSONUnmarshalling)
+		return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrJSONUnmarshalling)
 	}
 
 	// Charge the user for the LLM call
 	if !h.bulbasaur.ChargeCallingLLM(ctx, chargeCode) {
 		log.Printf("[SuggestExamQuestion] Charge Code %s failed to charge for LLM call", chargeCode)
-		return nil, errors.Error(errors.ErrChargingFailed)
+		return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrChargingFailed)
 	}
 
 	return exam, nil
@@ -158,11 +165,11 @@ func (h *handler) checkCanCall(ctx context.Context, llmCaller string) (string, e
 	uid, err := strconv.ParseUint(uidStr, 10, 64)
 	if err != nil {
 		log.Printf("[SuggestExamQuestion] error parsing user ID: %v", err)
-		return "", err
+		return "", h.handleErrorWithStatusCode(ctx, err, errors.ErrInvalidInput)
 	}
 	chargeCode, err := h.bulbasaur.CheckCallingLLM(ctx, uid, amount, desc)
 	if err != nil {
-		ctxdata.SetHeaders(ctx, ctxdata.HttpCodeHeader, "402")
+		ctxdata.SetHeaders(ctx, ctxdata.HttpCodeHeader, errors.GetHTTPStatusCode(err))
 		return "", err
 	}
 	return chargeCode, nil

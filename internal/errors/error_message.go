@@ -36,3 +36,30 @@ func Error(err string) error {
 		return fmt.Errorf(ErrGeneral)
 	}
 }
+
+// GetHTTPStatusCode maps error types to appropriate HTTP status codes
+func GetHTTPStatusCode(err error) string {
+	if err == nil {
+		return "200"
+	}
+
+	errMsg := err.Error()
+	switch errMsg {
+	case ErrInvalidInput:
+		return "400"
+	case ErrNotEnoughCredits:
+		return "402"
+	case ErrChargingFailed:
+		return "402"
+	case ErrNetworkConnection:
+		return "503"
+	case ErrDatabaseConnection:
+		return "503"
+	case ErrJSONParsing, ErrJSONUnmarshalling:
+		return "422"
+	case ErrLLMGeneration:
+		return "503"
+	default:
+		return "500"
+	}
+}
