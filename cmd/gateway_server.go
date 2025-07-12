@@ -15,7 +15,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
-	proto "google.golang.org/protobuf/proto"
 )
 
 func corsMiddleware(h http.Handler) http.Handler {
@@ -43,21 +42,6 @@ func customHeaderMatcher(key string) (string, bool) {
 	return runtime.DefaultHeaderMatcher(key)
 }
 
-func forwardResponseFunc(ctx context.Context, w http.ResponseWriter, _ proto.Message) error {
-	smd, ok := runtime.ServerMetadataFromContext(ctx)
-	if !ok {
-		return nil
-	}
-	if vals := smd.HeaderMD.Get(ctxdata.HttpCodeHeader); len(vals) > 0 {
-		code, err := strconv.Atoi(vals[0])
-		if err != nil {
-			return err
-		}
-		w.WriteHeader(code)
-	}
-	return nil
-}
-
 // customErrorHandler handles custom error responses with proper HTTP status codes
 func customErrorHandler(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error) {
 	// Check if we have a custom HTTP status code in the context
@@ -81,7 +65,6 @@ func startGateway() {
 
 	grpcMux := runtime.NewServeMux(
 		runtime.WithIncomingHeaderMatcher(customHeaderMatcher),
-		runtime.WithForwardResponseOption(forwardResponseFunc),
 		runtime.WithErrorHandler(customErrorHandler),
 	)
 	opts := []grpc.DialOption{grpc.WithInsecure()}
