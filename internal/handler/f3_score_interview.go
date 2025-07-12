@@ -33,6 +33,7 @@ func sanitizeAndParseResponse(input string) (*suggest.ScoreInterviewResponse, er
 	start := strings.Index(input, "{")
 	end := strings.LastIndex(input, "}")
 	if start == -1 || end == -1 || start > end {
+		log.Print("[ScoreInterview] error parsing json")
 		return nil, errors.Error(errors.ErrJSONParsing)
 	}
 	jsonStr := input[start : end+1]
@@ -40,6 +41,7 @@ func sanitizeAndParseResponse(input string) (*suggest.ScoreInterviewResponse, er
 	var parsed suggest.ScoreInterviewResponse
 	err := proto.Unmarshal([]byte(jsonStr), &parsed)
 	if err != nil {
+		log.Printf("[ScoreInterview] error unmarshalling json: %v", err)
 		return nil, fmt.Errorf("error unmarshalling escaped JSON: %v", err)
 	}
 

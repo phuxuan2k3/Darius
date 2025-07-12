@@ -34,14 +34,14 @@ func convertToInterviewQuestionResponse(llmResponse string) (*suggest.SuggestInt
 
 	jsonStr, err := extractAndSanitizeJSON(input)
 	if err != nil {
-		log.Println("Lỗi:", err)
+		log.Println("[SuggestInterviewQuestion] error json parsing", err)
 		return nil, errors.Error(errors.ErrJSONParsing)
 	}
 
 	// Parse JSON
 	questionListResp, err := parseInterviewQuestions(jsonStr)
 	if err != nil {
-		log.Println("Lỗi:", err)
+		log.Println("[SuggestInterviewQuestion] error json unmarshalling", err)
 		return nil, errors.Error(errors.ErrJSONUnmarshalling)
 	}
 
