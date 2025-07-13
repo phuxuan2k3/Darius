@@ -17,7 +17,7 @@ type ParseFunction interface {
 }
 
 func (h *handler) retryCallLLM(ctx context.Context, entry string, prompt string, parseFunc ParseFunction) (interface{}, error) {
-	for attempt := 1; attempt <= maxRetries; attempt++ {
+	for attempt := 0; attempt <= maxRetries; attempt++ {
 		select {
 		case <-ctx.Done():
 			return nil, ctx.Err()
