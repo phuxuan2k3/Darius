@@ -49,8 +49,6 @@ func sanitizeAndParseResponse(input string) (*suggest.ScoreInterviewResponse, er
 }
 
 func generateScoreInterviewPrompt(req *suggest.ScoreInterviewRequest) string {
-	submissionByte, _ := proto.Marshal(req)
-	submissionString := string(submissionByte)
 
 	return fmt.Sprintf(`
 		You are an expert interview evaluator. Your job is to evaluate an interview session of a candidate based on the provided Q&A data. Each submission contains a question and the candidate’s answer. You will analyze and assign a score with detailed feedback.
@@ -71,6 +69,33 @@ For each submission:
    - F = Unacceptable
 3. Write a **comment of 5–10 full sentences** explaining the score.
 
+---
+
+📋 Input format:
+You will receive a JSON object with the following structure:
+{
+  "submissions": [
+    {
+      "index": 1, // Index of the submission
+      "question": "What is the difference between an interface and an abstract class in OOP?",
+      "answer": "An interface only has method declarations, and classes implement it. An abstract class can have method definitions and fields."
+    }
+    ... // More submissions can be added here
+  ],
+  "skills": ["Problem Solving", "Object-Oriented Design"]
+}
+Each submission contains:
+- "index": The index of the submission
+- "question": The question asked
+- "answer": The candidate's answer
+}
+Each skill is evaluated based on the answers provided in the submissions.
+
+If the answer is not relevant or does not address the question or is empty, assign a score of F and provide a comment explaining why it is unacceptable.
+If the answer is relevant but lacks depth or clarity, assign a score of D or C and provide constructive feedback.
+If the answer is clear, accurate, and well-structured, assign a score of A or B and provide positive feedback.
+If the answer is excellent, assign a score of A and provide a comment that highlights the strengths of the response.
+If the answer is good but could be improved, assign a score of B and provide actionable feedback.
 ---
 
 🧪 Skill Evaluation  
@@ -97,7 +122,7 @@ Reflect on the evaluation. If any score or comment seems inconsistent or too har
 {
   "result": [
     {
-      "index": 1,
+      "index": 1, //Keep remaining the index of the submission
       "comment": "Full evaluation comment (5–10 sentences)",
       "score": "A"
     }
@@ -125,8 +150,14 @@ Example Input:
 {
   "submissions": [
     {
+      "index": 1,
       "question": "Explain the difference between an interface and an abstract class in OOP.",
       "answer": "An interface only has method declarations, and classes implement it. An abstract class can have method definitions and fields."
+    },
+    {
+      "index": 2,
+      "question": "What is polymorphism in object-oriented programming?",
+      "answer": "",
     }
   ],
   "skills": ["Object-Oriented Design"]
@@ -139,12 +170,17 @@ Example Output:
       "index": 1,
       "comment": "The answer correctly identifies the distinction between interface and abstract class. It notes that interfaces contain declarations only, while abstract classes can include implementations. However, it could be more complete by mentioning multiple inheritance limitations or constructor availability. The structure is clear, and the terms are used correctly. Overall, a strong and concise response.",
       "score": "A"
+    },
+    {
+      "index": 2,
+      "comment": "The answer is empty, which is unacceptable. Polymorphism is a fundamental concept in OOP that allows objects to be treated as instances of their parent class, enabling method overriding and dynamic binding. The lack of response indicates a significant gap in understanding.",
+      "score": "F"
     }
   ],
   "skills": [
     {
       "skill": "Object-Oriented Design",
-      "score": "A"
+      "score": "B"
     }
   ],
   "totalScore": {
@@ -152,12 +188,12 @@ Example Output:
     "B": 0,
     "C": 0,
     "D": 0,
-    "F": 0
+    "F": 1
   },
   "positiveFeedback": "Clearly distinguishes concepts. Accurate and concise explanation",
-  "actionableFeedback": "Could briefly mention inheritance limitations",
-  "finalComment": "The candidate gave an accurate, high-level comparison of interface and abstract class. Their explanation was technically sound and easy to follow. This indicates a solid grasp of OOP fundamentals.",
+  "actionableFeedback": "Could briefly mention inheritance limitations, constructor availability. Needs to address polymorphism",
+  "finalComment": "The candidate gave an accurate, high-level comparison of interface and abstract class. Their explanation was technically sound and easy to follow. This indicates a solid grasp of OOP fundamentals. However, the empty response to the second question shows a significant gap in understanding polymorphism, which is crucial in OOP. The candidate should focus on improving their knowledge of core concepts and providing complete answers.",
 }
 Now evaluate the following interview session:
-%v`, submissionString)
+%v`, req)
 }
