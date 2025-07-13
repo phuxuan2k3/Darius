@@ -27,7 +27,7 @@ func (h *handler) SuggestInterviewQuestion(ctx context.Context, req *suggest.Sug
 	listOfPreviosQuestions := convertSuggestInterviewSubmissionToString(req.GetSubmissions())
 	prompt := generateSuggestInterviewQuestionPrompt(req, listOfPreviosQuestions)
 
-	parseFunc := ScoreInterviewParseFunc{}
+	parseFunc := SuggestInterviewQuestionParseFunc{}
 	result, err := h.retryCallLLM(ctx, constants.F3_SCORE_INTERVIEW_QUESTIONS, prompt, parseFunc)
 	if err != nil {
 		return nil, err
