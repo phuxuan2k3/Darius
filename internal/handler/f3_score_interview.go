@@ -79,7 +79,7 @@ For each submission:
    - C = Fair
    - D = Poor
    - F = Unacceptable
-3. Write a **comment of 5–10 full sentences** explaining the score.
+3. Write a **comment of 5–10 full sentences** explaining the score. The language of comment **must** be compatible with the language of the question and answer. If the answer is in Vietnamese, the comment must also be in Vietnamese.
 
 ---
 
@@ -125,7 +125,7 @@ Provide:
 ---
 
 🔁 Step 2: Self-Evaluation  
-Check if your output is structured correctly and follows the guidelines.
+Check if your output is structured correctly and follows the guidelines and language matching.
 Reflect on the evaluation. If any score or comment seems inconsistent or too harsh/generous, revise.  
 ---
 
