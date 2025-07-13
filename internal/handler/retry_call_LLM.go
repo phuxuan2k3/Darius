@@ -17,6 +17,8 @@ type ParseFunction interface {
 }
 
 func (h *handler) retryCallLLM(ctx context.Context, entry string, prompt string, parseFunc ParseFunction) (interface{}, error) {
+	var conversationId *uint64 = nil
+
 	for attempt := 0; attempt <= maxRetries; attempt++ {
 		select {
 		case <-ctx.Done():
@@ -33,12 +35,17 @@ func (h *handler) retryCallLLM(ctx context.Context, entry string, prompt string,
 			return nil, ctx.Err()
 		}
 
-		llmResponse, err := h.llmManager.Generate(ctx, entry, prompt)
+		conversationIdInt, llmResponse, err := h.llmManager.Generate(ctx, entry, prompt, conversationId)
+		conversationId = &conversationIdInt
+
 		if err != nil {
 			log.Printf("[retryCallLLM] LLM call failed on attempt %d: %v", attempt, err)
 			if attempt == maxRetries {
 				return nil, err
 			}
+
+			prompt = "Please try to generate the response again. The previous attempt has just met the error: " + err.Error()
+
 			continue
 		}
 
@@ -49,6 +56,7 @@ func (h *handler) retryCallLLM(ctx context.Context, entry string, prompt string,
 		}
 
 		log.Printf("[retryCallLLM] Failed to parse response on attempt %d: %v", attempt, err)
+		prompt = "I could not parse the response. Please try to generate the response again. The previous attempt has just met the error: " + err.Error()
 	}
 
 	log.Printf("[retryCallLLM] All %d retry attempts failed", maxRetries)

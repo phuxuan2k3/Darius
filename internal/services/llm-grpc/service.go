@@ -7,7 +7,7 @@ import (
 )
 
 type Service interface {
-	Generate(context.Context, string) (*arceus.GenerateTextResponse, error)
+	Generate(context.Context, string, *uint64) (*arceus.GenerateTextResponse, error)
 }
 
 func NewService(client arceus.ArceusClient, llm_model string) Service {
@@ -22,10 +22,11 @@ type service struct {
 	llm_model string
 }
 
-func (s *service) Generate(ctx context.Context, text string) (resp *arceus.GenerateTextResponse, err error) {
+func (s *service) Generate(ctx context.Context, text string, conversationId *uint64) (resp *arceus.GenerateTextResponse, err error) {
 	res, err := s.client.GenerateText(ctx, &arceus.GenerateTextRequest{
-		Content: text,
-		Model:   s.llm_model,
+		Content:        text,
+		Model:          s.llm_model,
+		ConversationId: conversationId,
 	})
 
 	if err != nil {
@@ -33,7 +34,7 @@ func (s *service) Generate(ctx context.Context, text string) (resp *arceus.Gener
 		return &arceus.GenerateTextResponse{}, err
 	}
 
-	log.Printf("[Generate] LLM request: %s, LLM response %s", text, res.GetContent())
+	log.Printf("[Generate] LLM request: %s, LLM response %s", text, res)
 
 	return res, err
 }

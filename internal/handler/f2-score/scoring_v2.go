@@ -23,7 +23,7 @@ func (h *scoringHandler) ScoreV2(ctx context.Context, req *ScoreRequest) {
 	}
 
 	prompt := generatePromptV2(data)
-	llmResponse, err := h.llmManager.Generate(ctx, constants.F2_SCORE, prompt)
+	_, llmResponse, err := h.llmManager.Generate(ctx, constants.F2_SCORE, prompt, nil)
 	if err != nil {
 		log.Printf("[ScoreV2] Error generating response: %v", err)
 		return

@@ -193,7 +193,7 @@ Now, generate the questions based on the provided metadata.
 	} else {
 		prompt = generateOptionsPrompt(questionsContents)
 	}
-	llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_QUESTIONS, prompt)
+	_, llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_QUESTIONS, prompt, nil)
 	if err != nil {
 		return nil, errors.Error(errors.ErrNetworkConnection)
 	}

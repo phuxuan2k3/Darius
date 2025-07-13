@@ -134,7 +134,7 @@ Now, generate exactly %v exam questions based on the criteria above.
 		prompt = generateOptionsPrompt(questionsContents)
 	}
 
-	llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_EXAM, prompt)
+	_, llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_EXAM, prompt, nil)
 	if err != nil {
 		return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrNetworkConnection)
 	}
