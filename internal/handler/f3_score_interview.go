@@ -41,7 +41,7 @@ func sanitizeAndParseResponse(input string) (*suggest.ScoreInterviewResponse, er
 	var parsed suggest.ScoreInterviewResponse
 	err := proto.Unmarshal([]byte(jsonStr), &parsed)
 	if err != nil {
-		log.Printf("[ScoreInterview] error unmarshalling json: %v", err)
+		log.Printf("[ScoreInterview] error unmarshalling json: %v \n %v", err, jsonStr)
 		return nil, fmt.Errorf("error unmarshalling escaped JSON: %v", err)
 	}
 
@@ -118,7 +118,6 @@ Reflect on the evaluation. If any score or comment seems inconsistent or too har
 ---
 
 📌 Output Format (strictly JSON):
-
 {
   "result": [
     {
