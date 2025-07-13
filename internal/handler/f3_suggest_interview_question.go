@@ -12,6 +12,12 @@ import (
 	"strings"
 )
 
+type SuggestInterviewQuestionParseFunc struct{}
+
+func (p SuggestInterviewQuestionParseFunc) Parse(input string) (interface{}, error) {
+	return convertToInterviewQuestionResponse(input)
+}
+
 func (h *handler) SuggestInterviewQuestion(ctx context.Context, req *suggest.SuggestInterviewQuestionRequest) (*suggest.SuggestInterviewQuestionResponse, error) {
 	if req.GetContext() == nil || req.GetSubmissions() == nil {
 		log.Println("[SuggestInterviewQuestion] context or submissions is nil")
@@ -21,12 +27,17 @@ func (h *handler) SuggestInterviewQuestion(ctx context.Context, req *suggest.Sug
 	listOfPreviosQuestions := convertSuggestInterviewSubmissionToString(req.GetSubmissions())
 	prompt := generateSuggestInterviewQuestionPrompt(req, listOfPreviosQuestions)
 
-	llmResponse, err := h.llmManager.Generate(ctx, constants.F3_SUGGEST_INTERVIEW_QUESTIONS, prompt)
+	parseFunc := ScoreInterviewParseFunc{}
+	result, err := h.retryCallLLM(ctx, constants.F3_SCORE_INTERVIEW_QUESTIONS, prompt, parseFunc)
 	if err != nil {
-		return nil, errors.Error(errors.ErrNetworkConnection)
+		return nil, err
 	}
 
-	return convertToInterviewQuestionResponse(llmResponse)
+	if scoreResp, ok := result.(*suggest.SuggestInterviewQuestionResponse); ok {
+		return scoreResp, nil
+	}
+
+	return nil, errors.Error(errors.ErrJSONParsing)
 }
 
 func convertToInterviewQuestionResponse(llmResponse string) (*suggest.SuggestInterviewQuestionResponse, error) {
