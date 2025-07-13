@@ -12,6 +12,13 @@ import (
 	proto "google.golang.org/protobuf/encoding/protojson"
 )
 
+// ScoreInterviewParseFunc implements ParseFunction for ScoreInterviewResponse
+type ScoreInterviewParseFunc struct{}
+
+func (p ScoreInterviewParseFunc) Parse(input string) (interface{}, error) {
+	return sanitizeAndParseResponse(input)
+}
+
 func (h *handler) ScoreInterview(ctx context.Context, req *suggest.ScoreInterviewRequest) (*suggest.ScoreInterviewResponse, error) {
 	if len(req.GetSubmissions()) == 0 {
 		log.Println("[ScoreInterview] submissions is nil")
@@ -20,12 +27,17 @@ func (h *handler) ScoreInterview(ctx context.Context, req *suggest.ScoreIntervie
 
 	prompt := generateScoreInterviewPrompt(req)
 
-	llmResponse, err := h.llmManager.Generate(ctx, constants.F3_SCORE_INTERVIEW_QUESTIONS, prompt)
+	parseFunc := ScoreInterviewParseFunc{}
+	result, err := h.retryCallLLM(ctx, constants.F3_SCORE_INTERVIEW_QUESTIONS, prompt, parseFunc)
 	if err != nil {
-		return nil, errors.Error(errors.ErrNetworkConnection)
+		return nil, err
 	}
 
-	return sanitizeAndParseResponse(llmResponse)
+	if scoreResp, ok := result.(*suggest.ScoreInterviewResponse); ok {
+		return scoreResp, nil
+	}
+
+	return nil, errors.Error(errors.ErrJSONParsing)
 }
 
 func sanitizeAndParseResponse(input string) (*suggest.ScoreInterviewResponse, error) {

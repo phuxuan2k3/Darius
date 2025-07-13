@@ -27,13 +27,13 @@ func NewManager(llmService llm_grpc.Service, databaseService databaseService.Ser
 func (m *manager) Generate(ctx context.Context, entryPoint string, req string) (string, error) {
 	resp, err := m.llmService.Generate(ctx, req)
 	if err != nil {
-		log.Fatalf("Error generating text: %v", err)
+		log.Printf("[Generate] Error generating text: %v", err)
 		return "", err
 	}
 
 	err = m.databaseService.CreateLLMCallReport(ctx, entryPoint, req, resp.GetContent(), float64(resp.GetUsage().GetTotalTokens()))
 	if err != nil {
-		log.Fatalf("Error creating LLM call report: %v", err)
+		log.Printf("[Generate] Error creating LLM call report: %v", err)
 		return "", err
 	}
 
