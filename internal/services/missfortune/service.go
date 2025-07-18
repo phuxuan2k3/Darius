@@ -39,7 +39,7 @@ func (s *service) GetExamQuestionContent(ctx context.Context, req *missfortune.S
 	requestURL := s.address + URL_GetExamQuestionContent
 	httpReq, err := http.NewRequest(http.MethodPost, requestURL, bodyReader)
 	if err != nil {
-		log.Printf("Error creating HTTP request: %v", err)
+		log.Printf("[MFT][GetExamQuestionContent] Error creating HTTP request: %v, \n MFT body: %v", err, httpReq)
 		return nil, err
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
@@ -49,26 +49,26 @@ func (s *service) GetExamQuestionContent(ctx context.Context, req *missfortune.S
 
 	httpResp, err := client.Do(httpReq)
 	if err != nil {
-		log.Printf("Error making HTTP request: %v", err)
+		log.Printf("[MFT][GetExamQuestionContent] Error making HTTP request: %v,\n MFT body: %v", err, httpReq)
 		return nil, err
 	}
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode != http.StatusOK {
-		log.Printf("HTTP request failed with status code: %d\n MFT body: %v", httpResp.StatusCode, httpReq)
+		log.Printf("[MFT][GetExamQuestionContent] HTTP request failed with status code: %d\n MFT body: %v", httpResp.StatusCode, httpReq)
 		return nil, fmt.Errorf("HTTP request failed with status code: %d", httpResp.StatusCode)
 	}
 
 	respBody, err := io.ReadAll(httpResp.Body)
 	if err != nil {
-		log.Printf("Error reading response body: %v", err)
+		log.Printf("[MFT][GetExamQuestionContent] Error reading response body: %v, \n MFT body: %v", err, httpReq)
 		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
 	questionsContent := &missfortune.SuggestExamQuestionResponse{}
 
 	if err := json.Unmarshal(respBody, questionsContent); err != nil {
-		log.Printf("Error unmarshalling response body: %v", err)
+		log.Printf("[MFT][GetExamQuestionContent] Error unmarshalling response body: %v, \n MFT body: %v", err, httpReq)
 		return nil, fmt.Errorf("failed to unmarshal response body: %w", err)
 	}
 
