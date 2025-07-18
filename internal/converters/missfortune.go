@@ -20,6 +20,7 @@ func ConvertExamRequestToMissfortuneRequest(ctx context.Context, req *suggest.Su
 			Text:  req.GetContext().GetText(),
 			Links: req.GetContext().GetLinks(),
 		},
+		QuestionType: "Multiple Choice",
 	}
 }
 
@@ -39,6 +40,7 @@ func ConvertSuggestQuestionRequestToMissFortuneRequest(ctx context.Context, req 
 				Number of options: %d,
 				`, req.GetMinutesToAnswer(), req.GetTags(), req.GetOutlines(), req.GetNumberOfQuestions(), req.GetNumberOfOptions()),
 		},
+		QuestionType: "Multiple Choice",
 	}
 }
 

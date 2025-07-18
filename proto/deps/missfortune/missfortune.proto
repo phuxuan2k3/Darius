@@ -35,6 +35,7 @@ message SuggestExamQuestionRequest {
         repeated string links = 2; // External links
     }
     Context context = 7;
+    string question_type =8;
 }
 
 message SuggestExamQuestionResponse {
