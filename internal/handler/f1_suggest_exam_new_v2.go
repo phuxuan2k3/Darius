@@ -25,7 +25,7 @@ func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.Sugges
 	if err != nil {
 		return nil, err
 	}
-
+	log.Printf("[MFT] req: %+v", converters.ConvertExamRequestToMissfortuneRequest(ctx, req))
 	questionsContents, err := h.missfortune.GetExamQuestionContent(ctx, converters.ConvertExamRequestToMissfortuneRequest(ctx, req))
 	prompt := ""
 	if err != nil {
