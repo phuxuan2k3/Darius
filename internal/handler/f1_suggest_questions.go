@@ -113,7 +113,7 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 		return nil, err
 	}
 
-	fmt.Printf("[MFT] req: %+v", converters.ConvertSuggestQuestionRequestToMissFortuneRequest(ctx, req))
+	log.Printf("[MFT] req: %+v", converters.ConvertSuggestQuestionRequestToMissFortuneRequest(ctx, req))
 
 	questionsContents, err := h.missfortune.GetExamQuestionContent(ctx, converters.ConvertSuggestQuestionRequestToMissFortuneRequest(ctx, req))
 	prompt := ""
