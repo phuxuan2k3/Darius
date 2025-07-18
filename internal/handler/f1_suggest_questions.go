@@ -113,26 +113,27 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 		return nil, err
 	}
 
+	fmt.Printf("[MFT] req: %+v", converters.ConvertSuggestQuestionRequestToMissFortuneRequest(ctx, req))
+
 	questionsContents, err := h.missfortune.GetExamQuestionContent(ctx, converters.ConvertSuggestQuestionRequestToMissFortuneRequest(ctx, req))
 	prompt := ""
 	if err != nil {
 		log.Printf("[SuggestQuestions] error getting exam question content: %v", err)
 
 		prompt = fmt.Sprintf(`
-	You are an expert exam question designer. Your task is to generate a diverse, non-redundant, high-quality set of exam questions based on the structured input below.
+	You are an expert exam question designer. Your task is to generate diverse, non-redundant, high-quality set of exam questions based on the structured input below.
+	
+	Input Metadata: %v
 
-📥 Input Metadata:
-%v
-
-🧠 Generation Process (Chain-of-Thought Required):
+	Generation Process (Chain-of-Thought Required):
 1. Carefully analyze the title, description, tags, and outlines to understand the full context and intended coverage.
 2. Brainstorm a diverse pool of possible questions (both MCQ and LONG_ANSWER) aligned with the specified difficulty level and key topics.
 3. Filter questions to ensure:
-   - ✅ Questions language must matches the input language.
-   - ✅ The number of questions matches the requested count.
-   - ✅ The number of MCQ and LONG_ANSWER questions must be balanced.
-   - ❌ No repeated or semantically similar questions.
-   - ✅ Broad and representative coverage of all outlines and tags.
+   - Questions language must matches the input language.
+   - The number of questions matches the requested count.
+   - The number of MCQ and LONG_ANSWER questions must be balanced.
+   - No repeated or semantically similar questions.
+   - Broad and representative coverage of all outlines and tags.
 4. For MCQ:
    - Generate **exactly 4 unique options**.
    - Ensure only **1 correct answer** is clearly identifiable (correctOption index: 0–3).
@@ -140,15 +141,15 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 5. For LONG_ANSWER:
    - Provide at least one illustrative image link if applicable.
    - Include clear instructions and an ideal sample answer.
-6. ✅ Final validation steps:
+6. Final validation steps:
    - Questions language must match the input language.
    - The number of MCQ and LONG_ANSWER questions must be balanced.
    - No question or option duplication.
    - All JSON fields are present and conform strictly to the expected schema.
    - Output is a valid JSON object (no markdown, no explanations).
 
-📤 Output Format:
-Return a single **valid JSON object** with the following format:
+	Output Format:
+	Return a single **valid JSON object** with the following format:
 {
   "questions": [
     {
@@ -179,16 +180,16 @@ Return a single **valid JSON object** with the following format:
 	...
   ]
 }
-📌 Constraints Recap:
+	Constraints Recap:
+	- Questions language must match the input language.
+	- The number of MCQ and LONG_ANSWER questions must be balanced.
+	- Return exactly the number of questions.
+	- Each MCQ has exactly 4 unique options.
+	- No repeated questions or options allowed.
+	- The points field should reflect difficulty level (e.g., Easy = 1–3, Medium = 4–6, Hard = 7–10).
+	- All outputs must be raw JSON without any explanations or comments.
 
-Questions language must match the input language.
-The number of MCQ and LONG_ANSWER questions must be balanced.
-Return exactly the number of questions.
-Each MCQ has exactly 4 unique options.
-No repeated questions or options allowed.
-The points field should reflect difficulty level (e.g., Easy = 1–3, Medium = 4–6, Hard = 7–10).
-All outputs must be raw JSON without any explanations or comments.
-Now, generate the questions based on the provided metadata.
+	Now, generate the questions based on the provided metadata.
 			`, req)
 	} else {
 		prompt = generateOptionsPrompt(questionsContents)
