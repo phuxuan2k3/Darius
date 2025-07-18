@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	URL_GetExamQuestionContent = "/SuggestExamQuestion"
+	URL_GetExamQuestionContent = "/generate"
 )
 
 type Service interface {
