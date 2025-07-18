@@ -17,7 +17,9 @@ import (
 
 func generateOptionsPrompt(questionsContent interface{}) string {
 	return fmt.Sprintf(`
-	You are an expert in designing high-quality standardized multiple-choice exam content. Your task is to generate **exactly 4 answer options** for each of the provided questions, identifying one correct answer and ensuring all options are meaningful and unique.
+	You are an expert in designing high-quality standardized multiple-choice exam content.
+	 You will receive a list of questions, your task is define the type of questions are MCQ (Multiple Choice Questions) and LONG_ANSWER (Essay-style questions) based on the provided content.
+	With MCQ questions, your task is to generate **exactly 4 answer options**, with LONG_ANSWER questions, your task is to provide a detailed answer with illustrative image links if applicable.
 	---
 	📥 Input Format:
 	You will receive a JSON object with the following structure:
@@ -33,14 +35,16 @@ func generateOptionsPrompt(questionsContent interface{}) string {
 	
 	🧠 Thought Process (Chain-of-Thought Required):
 	1. **Understand the concept** behind each question and identify the accurate correct answer.
-	2. **Generate three incorrect but plausible options** that are:
-	   - Contextually related to the topic.
-	   - Grammatically and semantically consistent with the question.
-	   - Distinct from the correct answer and from each other.
-	3. Before finalizing each set of options:
-	   - Check for **semantic duplication** (e.g., “Rome” vs. “Roma”) or repetition (e.g., two identical options).
-	   - Validate that no two options have the same meaning, phrasing, or structure.
-	4. Ensure the correct answer is placed at a random index (from 0 to 3), and record that index in the "correctOption" field.
+	2. **Define the type of question**:
+	   - If the question can be answered with a single correct answer from a set of options, it is an MCQ.
+	   - If the question requires a detailed explanation or essay-style response, it is a LONG_ANSWER question.
+	3. **Generate the answer options**:
+	   - For MCQ questions, create **exactly 4 unique options**:
+	   		+ Ensure one option is the **correct answer** and the other three are **plausible but incorrect**.
+			+ Ensure the correct answer is placed at a random index (from 0 to 3), and record that index in the "correctOption" field.
+	   - For LONG_ANSWER questions, provide a detailed answer and illustrative image links if applicable.
+	4. **Ensure diversity** in the options:
+	   - Options must be **grammatically and semantically consistent** with the question.
 	5. Use the "points" field to reflect question difficulty (e.g., Easy = 1–3, Medium = 4–6, Hard = 7–10).
 	
 	---
@@ -48,60 +52,42 @@ func generateOptionsPrompt(questionsContent interface{}) string {
 	📤 Output Format:
 	Respond with a valid **strict JSON object** that adheres to the following Protobuf-compatible schema:
 	{
-	  "questions": [
-		{
-		  "text": "Question text here",
-		  "options": [
-			"Option A",
-			"Option B",
-			"Option C",
-			"Option D"
-		  ],
-		  "points": 1,
-		  "correctOption": 2
-		},
-		...
-	  ]
-	}
+  "questions": [
+    {
+      "id": 1,
+      "testId": "test123",
+      "text": "Question text here",
+      "points": 2,
+      "type": "MCQ",
+      "detail": {
+        "type": "MCQ",
+        "options": ["A", "B", "C", "D"],
+        "correctOption": 2
+      }
+    },
+    {
+      "id": 2,
+      "testId": "test123",
+      "text": "Question text here",
+      "points": 5,
+      "type": "LONG_ANSWER",
+      "detail": {
+        "type": "LONG_ANSWER",
+        "imageLinks": [],
+        "extraText": "Instructions here",
+        "correctAnswer": "Expected answer here"
+      }
+    }
+    ...
+  ]
+}
 	📌 Constraints and Rules:
 	
-	Exactly 4 answer options per question.
-	Only one correct option, indicated by the correctOption index (0–3).
-	Incorrect options must be plausible but clearly incorrect.
-	No two options may be textually or semantically identical.
-	Options must be diverse in content and style, not simple variations.
-	All options must be grammatically compatible with the question.
-	The order of questions in the output must match the input.
-	Output must be valid JSON without comments, explanations, or formatting errors.
-	
-	📝 Example:
-	Input:
-	{
-	  "questions": [
-		"What is the boiling point of water at sea level?"
-	  ]
-	}
-	Output:
-	{
-	  "questions": [
-		{
-		  "text": "What is the boiling point of water at sea level?",
-		  "options": [
-			"100°C",
-			"90°C",
-			"120°C",
-			"80°C"
-		  ],
-		  "points": 3,
-		  "correctOption": 0
-		}
-	  ]
-	}
-	  🧪 Validation Tip:
-	Before returning the result, double-check:
-	Each question has exactly one correct answer.
-	There is no overlap in the options.
-	The format is strictly valid JSON.
+	🔁 Final Validation (Self-Verification):
+- Confirm that **no two questions are identical or overlapping** in content.
+- Confirm that all MCQs have 4 distinct options with only one correct.
+- Confirm that output is valid JSON, with no notes, markdown, or trailing commas.
+
 	Now, based on the following input, generate the answer options:
 	%v
 		`, questionsContent)
