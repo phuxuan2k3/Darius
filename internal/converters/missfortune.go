@@ -18,7 +18,7 @@ func ConvertExamRequestToMissfortuneRequest(ctx context.Context, req *suggest.Su
 		Creativity: req.GetCreativity(),
 		Context: &missfortune.SuggestExamQuestionRequest_Context{
 			Text:  "a",
-			Links: []string{"a"},
+			Links: []string{"a", "b"},
 		},
 		QuestionType: "Multiple Choice",
 	}
