@@ -33,7 +33,7 @@ func NewService(address string, httpClient *http.Client) Service {
 }
 
 func (s *service) GetExamQuestionContent(ctx context.Context, req *missfortune.SuggestExamQuestionRequest) (*missfortune.SuggestExamQuestionResponse, error) {
-	jsonBody := []byte(req.String())
+	jsonBody := []byte(req.json())
 	bodyReader := bytes.NewReader(jsonBody)
 
 	requestURL := s.address + URL_GetExamQuestionContent
