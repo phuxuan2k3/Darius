@@ -55,7 +55,7 @@ func (s *service) GetExamQuestionContent(ctx context.Context, req *missfortune.S
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode != http.StatusOK {
-		log.Printf("HTTP request failed with status code: %d", httpResp.StatusCode)
+		log.Printf("HTTP request failed with status code: %d\n MFT body: %v", httpResp.StatusCode, httpReq)
 		return nil, fmt.Errorf("HTTP request failed with status code: %d", httpResp.StatusCode)
 	}
 
