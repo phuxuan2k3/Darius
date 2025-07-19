@@ -26,6 +26,14 @@ func NewManager(llmService llm_grpc.Service, databaseService databaseService.Ser
 
 func (m *manager) Generate(ctx context.Context, entryPoint string, req string, conversationId *uint64) (uint64, string, error) {
 	resp, err := m.llmService.Generate(ctx, req, conversationId)
+
+	// If conversationId is nil, we create a new one
+	var convId uint64
+	if conversationId == nil {
+		convId = 0
+		conversationId = &convId
+	}
+
 	if err != nil {
 		log.Printf("[Generate] Error generating text: %v", err)
 		return *conversationId, "", err
