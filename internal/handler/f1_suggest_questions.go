@@ -94,6 +94,10 @@ func generateOptionsPrompt(questionsContent interface{}) string {
 }
 
 func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQuestionsRequest) (*suggest.SuggestExamQuestionResponseV2, error) {
+	if req.GetQuestionType() == "" || len(req.GetQuestionType()) == 0 {
+		req.QuestionType = "MIXED" //default question type
+	}
+
 	chargeCode, err := h.checkCanCall(ctx, constants.F1_SUGGEST_QUESTIONS)
 	if err != nil {
 		return nil, err
@@ -112,12 +116,15 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 	Input Metadata: %v
 
 	Generation Process (Chain-of-Thought Required):
-1. Carefully analyze the title, description, tags, and outlines to understand the full context and intended coverage.
-2. Brainstorm a diverse pool of possible questions (both MCQ and LONG_ANSWER) aligned with the specified difficulty level and key topics.
+1. Carefully analyze the title, description, tags, question type and outlines to understand the full context and intended coverage:
+	- If questionType is "MCQ", generate all questions as Multiple Choice Questions (MCQ).
+	- If questionType is "LONG_ANSWER", generate all questions as Essay-style questions (LONG_ANSWER).
+	- If questionType is "MIXED", generate a balanced mix of MCQ and LONG_ANSWER questions.
+2. Brainstorm a diverse pool of possible questions aligned with the specified difficulty level, questionType and key topics.
 3. Filter questions to ensure:
    - Questions language must matches the input language.
    - The number of questions matches the requested count.
-   - The number of MCQ and LONG_ANSWER questions must be balanced.
+   - The type of questions matches the requested questionType.
    - No repeated or semantically similar questions.
    - Broad and representative coverage of all outlines and tags.
 4. For MCQ:
@@ -129,7 +136,7 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
    - Include clear instructions and an ideal sample answer.
 6. Final validation steps:
    - Questions language must match the input language.
-   - The number of MCQ and LONG_ANSWER questions must be balanced.
+   - The type of questions must match the requested questionType.
    - No question or option duplication.
    - All JSON fields are present and conform strictly to the expected schema.
    - Output is a valid JSON object (no markdown, no explanations).
@@ -168,7 +175,7 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 }
 	Constraints Recap:
 	- Questions language must match the input language.
-	- The number of MCQ and LONG_ANSWER questions must be balanced.
+	- The type of questions must match the requested questionType.
 	- Return exactly the number of questions.
 	- Each MCQ has exactly 4 unique options.
 	- No repeated questions or options allowed.

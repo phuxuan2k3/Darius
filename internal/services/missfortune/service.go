@@ -10,8 +10,6 @@ import (
 	"log"
 	"net/http"
 	"time"
-
-	"go.uber.org/zap"
 )
 
 const (
@@ -42,12 +40,12 @@ func (s *service) GetExamQuestionContent(ctx context.Context, req *missfortune.S
 		return nil, fmt.Errorf("failed to marshal request body: %w", err)
 	}
 
-	zap.L().Error(
-		"[MFT][GetExamQuestionContent] Marshal request failed",
-		zap.Error(err),
-		zap.Reflect("request", req),
-		zap.String("jsonBody", string(jsonBody)),
-	)
+	// zap.L().Error(
+	// 	"[MFT][GetExamQuestionContent] Marshal request failed",
+	// 	zap.Error(err),
+	// 	zap.Reflect("request", req),
+	// 	zap.String("jsonBody", string(jsonBody)),
+	// )
 
 	bodyReader := bytes.NewReader(jsonBody)
 

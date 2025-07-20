@@ -9,7 +9,7 @@ import (
 )
 
 type Manager interface {
-	Generate(context.Context, string, string, *uint64) (uint64, string, error)
+	Generate(context.Context, string, string, *uint64) (*uint64, string, error)
 }
 
 type manager struct {
@@ -24,28 +24,23 @@ func NewManager(llmService llm_grpc.Service, databaseService databaseService.Ser
 	}
 }
 
-func (m *manager) Generate(ctx context.Context, entryPoint string, req string, conversationId *uint64) (uint64, string, error) {
+func (m *manager) Generate(ctx context.Context, entryPoint string, req string, conversationId *uint64) (*uint64, string, error) {
 	resp, err := m.llmService.Generate(ctx, req, conversationId)
-
-	// If conversationId is nil, we create a new one
-	var convId uint64
-	if conversationId == nil {
-		convId = 0
-		conversationId = &convId
-	}
 
 	if err != nil {
 		log.Printf("[Generate] Error generating text: %v", err)
-		return *conversationId, "", err
+		return nil, "", err
 	}
 
 	err = m.databaseService.CreateLLMCallReport(ctx, entryPoint, req, resp.GetContent(), float64(resp.GetUsage().GetTotalTokens()))
 	if err != nil {
 		log.Printf("[Generate] Error creating LLM call report: %v", err)
-		return *conversationId, "", err
+		return nil, "", err
 	}
 
 	metrics.LLMRequestCounter.WithLabelValues(entryPoint).Inc()
 	metrics.LLMTokenCounter.WithLabelValues(entryPoint).Add(float64(resp.GetUsage().GetTotalTokens()))
-	return resp.GetConversationId(), resp.GetContent(), nil
+
+	conID := resp.GetConversationId()
+	return &conID, resp.GetContent(), nil
 }

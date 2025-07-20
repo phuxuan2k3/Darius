@@ -132,6 +132,7 @@ message SuggestExamQuestionRequest {
         repeated string links = 2; // External links
     }
     Context context = 7;
+    string questionType = 8;
 }
 
 message SuggestExamQuestionResponse {
@@ -241,6 +242,7 @@ message SuggestQuestionsRequest {
     repeated string outlines = 7; 
     int32 numberOfQuestions = 8; 
     int32 numberOfOptions = 9;
+    string questionType = 10; 
 }
 
 message ScoreInterviewRequest {

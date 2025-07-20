@@ -35,8 +35,8 @@ func (h *handler) retryCallLLM(ctx context.Context, entry string, prompt string,
 			return nil, ctx.Err()
 		}
 
-		conversationIdInt, llmResponse, err := h.llmManager.Generate(ctx, entry, prompt, conversationId)
-		conversationId = &conversationIdInt
+		conversationIdResp, llmResponse, err := h.llmManager.Generate(ctx, entry, prompt, conversationId)
+		conversationId = conversationIdResp
 
 		if err != nil {
 			log.Printf("[retryCallLLM] LLM call failed on attempt %d: %v", attempt, err)
@@ -44,7 +44,9 @@ func (h *handler) retryCallLLM(ctx context.Context, entry string, prompt string,
 				return nil, err
 			}
 
-			prompt = "Please try to generate the response again. The previous attempt has just met the error: " + err.Error()
+			if conversationId != nil {
+				prompt = "Please try to generate the response again. The previous attempt has just met the error: " + err.Error()
+			}
 
 			continue
 		}

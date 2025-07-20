@@ -21,6 +21,10 @@ func (h *handler) handleErrorWithStatusCode(ctx context.Context, _ error, errorT
 }
 
 func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.SuggestExamQuestionRequest) (resp *suggest.SuggestExamQuestionResponseV2, err error) {
+	if req.GetQuestionType() == "" || len(req.GetQuestionType()) == 0 {
+		req.QuestionType = "MIXED" //default question type
+	}
+
 	chargeCode, err := h.checkCanCall(ctx, constants.F1_SUGGEST_EXAM)
 	if err != nil {
 		return nil, err
@@ -73,14 +77,16 @@ You are an expert exam question designer. Your task is to generate exactly **%v 
 ---
 
 🧠 Reasoning Steps (Quality Assurance):
-1. Generate a distinct and relevant idea for each question based on its topic and level.
+1. Generate a distinct and relevant idea for each question based on its topic and level that match with the question type.
+	- If questionType is "MCQ", generate all questions as Multiple Choice Questions (MCQ).
+	- If questionType is "LONG_ANSWER", generate all questions as Essay-style questions (LONG_ANSWER).
+	- If questionType is "MIXED", generate a balanced mix of MCQ and LONG_ANSWER questions.
 2. Ensure all %v questions are unique in wording and intent (no duplication).
-3. Choose a mix of MCQs and Long Answer types across the dataset, while aligning with difficulty level.
-4. For MCQs:
+3. For MCQs:
    - Provide exactly 4 options.
    - All options must be grammatically aligned, factually plausible, and **clearly distinct** from one another.
    - One option must be clearly correct, indicated by "correctOption" (index 0–3).
-5. For Long Answer:
+4. For Long Answer:
    - Require deep reasoning, explanation, or comparison.
    - Include a clear, complete expected answer ("correctAnswer").
    - Use "imageLinks" if relevant, or leave it as an empty array.
@@ -90,7 +96,8 @@ You are an expert exam question designer. Your task is to generate exactly **%v 
 🔁 Final Validation (Self-Verification):
 - Confirm that exactly %v questions are generated, matching the exact breakdown.
 - Confirm that **no two questions are identical or overlapping** in content.
-- Confirm that all MCQs have 4 distinct options with only one correct.
+- Confirm that all questions are relevant to the specified topics and levels.
+- Confirm that all questions must match the specified question type.
 - Confirm that output is valid JSON, with no notes, markdown, or trailing commas.
 
 ---
@@ -128,7 +135,7 @@ Return only a valid JSON object structured like this:
     ...
   ]
 }
-Now, generate exactly %v exam questions based on the criteria above.
+Now, generate questions base on the following requirements: %v
 	`, questionCount, instruction, questionCount, questionCount, questionCount, req)
 	} else {
 		prompt = generateOptionsPrompt(questionsContents)
