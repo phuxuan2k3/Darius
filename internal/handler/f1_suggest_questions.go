@@ -120,7 +120,7 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 	}
 
 	req.RequestKey = uuid.New().String()
-	go h.f1_generate(ctx, req)
+	go h.f1_generate(context.Background(), req)
 
 	return &suggest.SuggestExamQuestionResponseV2{
 		RequestKey: req.GetRequestKey(),
