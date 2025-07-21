@@ -8,6 +8,7 @@ const (
 	ErrJSONParsing        = "Error parsing JSON data"
 	ErrJSONUnmarshalling  = "Error unmarshalling JSON data"
 	ErrLLMGeneration      = "Error generating response from LLM"
+	ErrDataHasNotReady    = "Data has not been ready yet, please try again later"
 	ErrNetworkConnection  = "Network connection error"
 	ErrGeneral            = "An unexpected error occurred"
 	ErrNotEnoughCredits   = "Not enough credits to perform this operation"
@@ -32,6 +33,8 @@ func Error(err string) error {
 		return fmt.Errorf(ErrNotEnoughCredits)
 	case ErrChargingFailed:
 		return fmt.Errorf(ErrChargingFailed)
+	case ErrDataHasNotReady:
+		return fmt.Errorf(ErrDataHasNotReady)
 	default:
 		return fmt.Errorf(ErrGeneral)
 	}
@@ -58,6 +61,8 @@ func GetHTTPStatusCode(err error) string {
 	case ErrJSONParsing, ErrJSONUnmarshalling:
 		return "422"
 	case ErrLLMGeneration:
+		return "503"
+	case ErrDataHasNotReady:
 		return "503"
 	default:
 		return "500"

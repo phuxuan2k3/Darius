@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+
+	"github.com/google/uuid"
 )
 
 // handleErrorWithStatusCode sets the appropriate HTTP status code and returns the error
@@ -25,9 +27,42 @@ func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.Sugges
 		req.QuestionType = "MIXED" //default question type
 	}
 
+	if req.GetRequestKey() != "" && len(req.GetRequestKey()) != 0 {
+
+		respStr, err := h.llmManager.GetByRequestKey(ctx, req.GetRequestKey())
+		if err != nil {
+			return nil, errors.Error(errors.ErrDataHasNotReady)
+		}
+
+		parsedResponse, err := sanitizeJSON(respStr)
+		if err != nil {
+			return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrJSONParsing)
+		}
+		// Convert the parsed response to the expected format
+		var exam = &suggest.SuggestExamQuestionResponseV2{}
+		err = json.Unmarshal([]byte(parsedResponse), &exam)
+		if err != nil {
+			log.Printf("[SuggestExamQuestion] error unmarshalling JSON: %v", err)
+			return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrJSONUnmarshalling)
+		}
+
+		return exam, nil
+	}
+
+	req.RequestKey = uuid.New().String()
+	clonedCtx := ctxdata.CloneContextWithValues(ctx, []interface{}{"x-user-id", "x-user-name", "x-user-name", "x-user-role", "x-user-role"})
+
+	go h.f2_generate(clonedCtx, req)
+
+	return &suggest.SuggestExamQuestionResponseV2{
+		RequestKey: req.GetRequestKey(),
+	}, nil
+}
+
+func (h *handler) f2_generate(ctx context.Context, req *suggest.SuggestExamQuestionRequest) {
 	chargeCode, err := h.checkCanCall(ctx, constants.F1_SUGGEST_EXAM)
 	if err != nil {
-		return nil, err
+		return
 	}
 	log.Printf("[MFT] req: %+v", converters.ConvertExamRequestToMissfortuneRequest(ctx, req))
 	questionsContents, err := h.missfortune.GetExamQuestionContent(ctx, converters.ConvertExamRequestToMissfortuneRequest(ctx, req))
@@ -64,7 +99,7 @@ func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.Sugges
 				questionCount += int(topic.GetDifficultyDistribution().GetExpert())
 			}
 		}
-		req.Topics = nil // Clear topics to avoid duplication in the prompt
+		req.Topics = nil
 		prompt = fmt.Sprintf(`
 You are an expert exam question designer. Your task is to generate exactly **%v diverse and high-quality exam questions** based on the structured requirements below. Each question must be either a multiple-choice question (MCQ) or a long-answer (essay-style) question.
 
@@ -143,27 +178,24 @@ Now, generate questions base on the following requirements: %v
 
 	_, llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_EXAM, prompt, req.GetRequestKey(), nil)
 	if err != nil {
-		return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrNetworkConnection)
+		return
 	}
 	parsedResponse, err := sanitizeJSON(llmResponse)
 	if err != nil {
-		return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrJSONParsing)
+		return
 	}
-	// Convert the parsed response to the expected format
+
 	var exam = &suggest.SuggestExamQuestionResponseV2{}
 	err = json.Unmarshal([]byte(parsedResponse), &exam)
 	if err != nil {
 		log.Printf("[SuggestExamQuestion] error unmarshalling JSON: %v", err)
-		return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrJSONUnmarshalling)
+		return
 	}
 
-	// Charge the user for the LLM call
 	if !h.bulbasaur.ChargeCallingLLM(ctx, chargeCode) {
 		log.Printf("[SuggestExamQuestion] Charge Code %s failed to charge for LLM call", chargeCode)
-		return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrChargingFailed)
+		return
 	}
-
-	return exam, nil
 }
 
 func (h *handler) checkCanCall(ctx context.Context, llmCaller string) (string, error) {

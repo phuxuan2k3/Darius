@@ -105,7 +105,7 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 
 		respStr, err := h.llmManager.GetByRequestKey(ctx, req.GetRequestKey())
 		if err != nil {
-			return nil, errors.Error(errors.ErrLLMGeneration)
+			return nil, errors.Error(errors.ErrDataHasNotReady)
 		}
 
 		input := respStr
