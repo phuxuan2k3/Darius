@@ -119,6 +119,7 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 		}, nil
 	}
 
+	req.RequestKey = uuid.New().String()
 	go h.f1_generate(ctx, req)
 
 	return &suggest.SuggestExamQuestionResponseV2{
@@ -128,7 +129,6 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 
 func (h *handler) f1_generate(ctx context.Context, req *suggest.SuggestQuestionsRequest) error {
 
-	req.RequestKey = uuid.New().String()
 	chargeCode, err := h.checkCanCall(ctx, constants.F1_SUGGEST_QUESTIONS)
 	if err != nil {
 		return err
