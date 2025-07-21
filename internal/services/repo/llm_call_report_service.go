@@ -24,7 +24,7 @@ func NewService(db db.Database) Service {
 func (s *service) CreateLLMCallReport(ctx context.Context, entry, res, resp, requestKey string, amount float64) error {
 	if s.db == nil {
 		log.Print("Database service is not initialized")
-		return "", nil
+		return nil
 	}
 	return s.db.CreateReport(
 		entry,
