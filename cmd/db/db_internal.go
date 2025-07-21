@@ -11,7 +11,8 @@ import (
 )
 
 type Database interface {
-	CreateReport(entry, res, resp string, amount float64) (string, error)
+	CreateReport(entry, res, resp, requestKey string, amount float64) error
+	GetByRequestKey(requestKey string) (*models.LLMCallReport, error)
 }
 
 type db struct {
@@ -58,14 +59,24 @@ func (d *db) connectDatabase() error {
 	return nil
 }
 
-func (d *db) CreateReport(entry, res, resp string, amount float64) (string, error) {
+func (d *db) CreateReport(entry, res, resp, requestKey string, amount float64) error {
 	report := models.LLMCallReport{
-		Entry:  entry,
-		Res:    res,
-		Resp:   resp,
-		Amount: amount,
+		Entry:      entry,
+		Res:        res,
+		Resp:       resp,
+		Amount:     amount,
+		RequestKey: requestKey,
 	}
 
 	result := d.DB.Create(&report)
-	return string(report.ID), result.Error
+	return result.Error
+}
+
+func (d *db) GetByRequestKey(requestKey string) (*models.LLMCallReport, error) {
+	var report models.LLMCallReport
+	result := d.DB.Where("request_key = ?", requestKey).First(&report)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &report, nil
 }

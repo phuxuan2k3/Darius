@@ -141,7 +141,7 @@ Now, generate questions base on the following requirements: %v
 		prompt = generateOptionsPrompt(questionsContents)
 	}
 
-	_, _, llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_EXAM, prompt, nil)
+	_, llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_EXAM, prompt, req.GetRequestKey(), nil)
 	if err != nil {
 		return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrNetworkConnection)
 	}

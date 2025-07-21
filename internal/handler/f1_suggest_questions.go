@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	ctxdata "darius/ctx"
 	"darius/internal/constants"
 	"darius/internal/converters"
 	"darius/internal/errors"
@@ -15,8 +16,6 @@ import (
 	"unicode"
 
 	"github.com/google/uuid"
-
-	"go.uber.org/zap"
 )
 
 func generateOptionsPrompt(questionsContent interface{}) string {
@@ -104,23 +103,31 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 
 	if req.GetRequestKey() != "" && len(req.GetRequestKey()) != 0 {
 
-		if resp, ok := h.cache[req.GetRequestKey()]; ok {
-			if realResp, ok := resp.(*suggest.SuggestExamQuestionResponseV2); ok {
-				delete(h.cache, req.GetRequestKey())
-				return realResp, nil
-			}
-			zap.L().Error("SuggestQuestions: Cache hit but type assertion failed", zap.Any("requestKey", req.GetRequestKey()))
+		respStr, err := h.llmManager.GetByRequestKey(ctx, req.GetRequestKey())
+		if err != nil {
 			return nil, errors.Error(errors.ErrLLMGeneration)
 		}
 
-		zap.L().Info("SuggestQuestions: Do not receive LLM response", zap.Any("requestKey", req.GetRequestKey()))
-		return &suggest.SuggestExamQuestionResponseV2{
-			RequestKey: req.GetRequestKey(),
-		}, nil
+		input := respStr
+
+		jsonStr, err := extractJSONQuestions(input)
+		if err != nil {
+			fmt.Println("[SuggestQuestions] error extract Json questions:", err)
+			return nil, errors.Error(errors.ErrJSONParsing)
+		}
+
+		questionListResp, err := parseQuestions(jsonStr)
+		if err != nil {
+			fmt.Println("[SuggestQuestions] error parse questions", err)
+			return nil, errors.Error(errors.ErrJSONUnmarshalling)
+		}
+
+		return questionListResp, nil
 	}
 
 	req.RequestKey = uuid.New().String()
-	go h.f1_generate(context.Background(), req)
+	clonedCtx := ctxdata.CloneContextWithValues(ctx, []interface{}{"x-user-id", "x-user-name", "x-user-name", "x-user-role", "x-user-role"})
+	go h.f1_generate(clonedCtx, req)
 
 	return &suggest.SuggestExamQuestionResponseV2{
 		RequestKey: req.GetRequestKey(),
@@ -218,31 +225,16 @@ func (h *handler) f1_generate(ctx context.Context, req *suggest.SuggestQuestions
 	} else {
 		prompt = generateOptionsPrompt(questionsContents)
 	}
-	_, _, llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_QUESTIONS, prompt, nil)
+	_, _, err = h.llmManager.Generate(ctx, constants.F1_SUGGEST_QUESTIONS, prompt, req.GetRequestKey(), nil)
 	if err != nil {
 		return errors.Error(errors.ErrNetworkConnection)
-	}
-
-	input := llmResponse
-
-	jsonStr, err := extractJSONQuestions(input)
-	if err != nil {
-		fmt.Println("[SuggestQuestions] error extract Json questions:", err)
-		return errors.Error(errors.ErrJSONParsing)
-	}
-
-	questionListResp, err := parseQuestions(jsonStr)
-	if err != nil {
-		fmt.Println("[SuggestQuestions] error parse questions", err)
-		return errors.Error(errors.ErrJSONUnmarshalling)
 	}
 
 	if !h.bulbasaur.ChargeCallingLLM(ctx, chargeCode) {
 		log.Printf("[SuggestQuestions] Charge Code %s failed to charge for LLM call", chargeCode)
 		return errors.Error(errors.ErrChargingFailed)
 	}
-	questionListResp.RequestKey = req.GetRequestKey()
-	h.cache[req.GetRequestKey()] = questionListResp
+
 	return nil
 }
 

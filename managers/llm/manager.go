@@ -9,7 +9,8 @@ import (
 )
 
 type Manager interface {
-	Generate(context.Context, string, string, *uint64) (string, *uint64, string, error)
+	Generate(context.Context, string, string, string, *uint64) (*uint64, string, error)
+	GetByRequestKey(context.Context, string) (string, error)
 }
 
 type manager struct {
@@ -24,23 +25,32 @@ func NewManager(llmService llm_grpc.Service, databaseService databaseService.Ser
 	}
 }
 
-func (m *manager) Generate(ctx context.Context, entryPoint string, req string, conversationId *uint64) (string, *uint64, string, error) {
+func (m *manager) Generate(ctx context.Context, entryPoint string, req string, requestKey string, conversationId *uint64) (*uint64, string, error) {
 	resp, err := m.llmService.Generate(ctx, req, conversationId)
 
 	if err != nil {
 		log.Printf("[Generate] Error generating text: %v", err)
-		return "", nil, "", err
+		return nil, "", err
 	}
 
-	respID, err := m.databaseService.CreateLLMCallReport(ctx, entryPoint, req, resp.GetContent(), float64(resp.GetUsage().GetTotalTokens()))
+	err = m.databaseService.CreateLLMCallReport(ctx, entryPoint, req, resp.GetContent(), requestKey, float64(resp.GetUsage().GetTotalTokens()))
 	if err != nil {
 		log.Printf("[Generate] Error creating LLM call report: %v", err)
-		return "", nil, "", err
+		return nil, "", err
 	}
 
 	metrics.LLMRequestCounter.WithLabelValues(entryPoint).Inc()
 	metrics.LLMTokenCounter.WithLabelValues(entryPoint).Add(float64(resp.GetUsage().GetTotalTokens()))
 
 	conID := resp.GetConversationId()
-	return respID, &conID, resp.GetContent(), nil
+	return &conID, resp.GetContent(), nil
+}
+
+func (m *manager) GetByRequestKey(ctx context.Context, requestKey string) (string, error) {
+	report, err := m.databaseService.GetByRequestKey(ctx, requestKey)
+	if err != nil {
+		log.Printf("[GetByRequestKey] Error getting report by request key: %v", err)
+		return "", err
+	}
+	return report, nil
 }

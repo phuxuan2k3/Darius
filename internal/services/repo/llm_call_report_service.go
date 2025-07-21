@@ -7,7 +7,8 @@ import (
 )
 
 type Service interface {
-	CreateLLMCallReport(context.Context, string, string, string, float64) (string, error)
+	CreateLLMCallReport(context.Context, string, string, string, string, float64) error
+	GetByRequestKey(context.Context, string) (string, error)
 }
 
 type service struct {
@@ -20,7 +21,7 @@ func NewService(db db.Database) Service {
 	}
 }
 
-func (s *service) CreateLLMCallReport(ctx context.Context, entry, res, resp string, amount float64) (string, error) {
+func (s *service) CreateLLMCallReport(ctx context.Context, entry, res, resp, requestKey string, amount float64) error {
 	if s.db == nil {
 		log.Print("Database service is not initialized")
 		return "", nil
@@ -29,6 +30,20 @@ func (s *service) CreateLLMCallReport(ctx context.Context, entry, res, resp stri
 		entry,
 		res,
 		resp,
+		requestKey,
 		amount,
 	)
+}
+
+func (s *service) GetByRequestKey(ctx context.Context, requestKey string) (string, error) {
+	if s.db == nil {
+		log.Print("Database service is not initialized")
+		return "", nil
+	}
+	report, err := s.db.GetByRequestKey(requestKey)
+	if err != nil {
+		log.Printf("Error getting report by request key: %v", err)
+		return "", err
+	}
+	return report.Resp, nil
 }

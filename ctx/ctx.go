@@ -27,3 +27,14 @@ func SetHeaders(ctx context.Context, key, value string) error {
 	md := metadata.Pairs(key, value)
 	return grpc.SetHeader(ctx, md)
 }
+
+func CloneContextWithValues(ctx context.Context, keys []interface{}) context.Context {
+	newCtx := context.Background()
+	for _, key := range keys {
+		val := ctx.Value(key)
+		if val != nil {
+			newCtx = context.WithValue(newCtx, key, val)
+		}
+	}
+	return newCtx
+}
