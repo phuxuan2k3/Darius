@@ -11,7 +11,7 @@ import (
 )
 
 type Database interface {
-	CreateReport(entry, res, resp string, amount float64) error
+	CreateReport(entry, res, resp string, amount float64) (string, error)
 }
 
 type db struct {
@@ -58,7 +58,7 @@ func (d *db) connectDatabase() error {
 	return nil
 }
 
-func (d *db) CreateReport(entry, res, resp string, amount float64) error {
+func (d *db) CreateReport(entry, res, resp string, amount float64) (string, error) {
 	report := models.LLMCallReport{
 		Entry:  entry,
 		Res:    res,
@@ -67,5 +67,5 @@ func (d *db) CreateReport(entry, res, resp string, amount float64) error {
 	}
 
 	result := d.DB.Create(&report)
-	return result.Error
+	return string(report.ID), result.Error
 }

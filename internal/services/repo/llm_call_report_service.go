@@ -7,7 +7,7 @@ import (
 )
 
 type Service interface {
-	CreateLLMCallReport(context.Context, string, string, string, float64) error
+	CreateLLMCallReport(context.Context, string, string, string, float64) (string, error)
 }
 
 type service struct {
@@ -20,10 +20,10 @@ func NewService(db db.Database) Service {
 	}
 }
 
-func (s *service) CreateLLMCallReport(ctx context.Context, entry, res, resp string, amount float64) error {
+func (s *service) CreateLLMCallReport(ctx context.Context, entry, res, resp string, amount float64) (string, error) {
 	if s.db == nil {
 		log.Print("Database service is not initialized")
-		return nil
+		return "", nil
 	}
 	return s.db.CreateReport(
 		entry,

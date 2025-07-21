@@ -13,6 +13,8 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
+
+	"go.uber.org/zap"
 )
 
 func generateOptionsPrompt(questionsContent interface{}) string {
@@ -98,9 +100,33 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 		req.QuestionType = "MIXED" //default question type
 	}
 
+	if req.GetRequestKey() != "" && len(req.GetRequestKey()) != 0 {
+
+		if resp, ok := h.cache[req.GetRequestKey()]; ok {
+			if realResp, ok := resp.(*suggest.SuggestExamQuestionResponseV2); ok {
+				return realResp, nil
+			}
+			zap.L().Error("SuggestQuestions: Cache hit but type assertion failed", zap.Any("requestKey", req.GetRequestKey()))
+			return nil, errors.Error(errors.ErrLLMGeneration)
+		}
+
+		zap.L().Info("SuggestQuestions: Do not receive LLM response", zap.Any("requestKey", req.GetRequestKey()))
+		return &suggest.SuggestExamQuestionResponseV2{
+			RequestKey: req.GetRequestKey(),
+		}, nil
+	}
+
+	go h.f1_generate(ctx, req)
+
+	return &suggest.SuggestExamQuestionResponseV2{
+		RequestKey: req.GetRequestKey(),
+	}, nil
+}
+
+func (h *handler) f1_generate(ctx context.Context, req *suggest.SuggestQuestionsRequest) error {
 	chargeCode, err := h.checkCanCall(ctx, constants.F1_SUGGEST_QUESTIONS)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	log.Printf("[MFT] req: %+v", converters.ConvertSuggestQuestionRequestToMissFortuneRequest(ctx, req))
@@ -187,9 +213,9 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 	} else {
 		prompt = generateOptionsPrompt(questionsContents)
 	}
-	_, llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_QUESTIONS, prompt, nil)
+	_, _, llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_QUESTIONS, prompt, nil)
 	if err != nil {
-		return nil, errors.Error(errors.ErrNetworkConnection)
+		return errors.Error(errors.ErrNetworkConnection)
 	}
 
 	input := llmResponse
@@ -197,22 +223,22 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 	jsonStr, err := extractJSONQuestions(input)
 	if err != nil {
 		fmt.Println("[SuggestQuestions] error extract Json questions:", err)
-		return nil, errors.Error(errors.ErrJSONParsing)
+		return errors.Error(errors.ErrJSONParsing)
 	}
 
-	// Parse JSON
 	questionListResp, err := parseQuestions(jsonStr)
 	if err != nil {
 		fmt.Println("[SuggestQuestions] error parse questions", err)
-		return nil, errors.Error(errors.ErrJSONUnmarshalling)
+		return errors.Error(errors.ErrJSONUnmarshalling)
 	}
 
 	if !h.bulbasaur.ChargeCallingLLM(ctx, chargeCode) {
 		log.Printf("[SuggestQuestions] Charge Code %s failed to charge for LLM call", chargeCode)
-		return nil, errors.Error(errors.ErrChargingFailed)
+		return errors.Error(errors.ErrChargingFailed)
 	}
-
-	return questionListResp, nil
+	questionListResp.RequestKey = req.GetRequestKey()
+	h.cache[req.GetRequestKey()] = questionListResp
+	return nil
 }
 
 func (h *handler) SuggestOptions(ctx context.Context, req *suggest.SuggestOptionsRequest) (*suggest.SuggestOptionsResponse, error) {

@@ -35,7 +35,7 @@ func (h *handler) retryCallLLM(ctx context.Context, entry string, prompt string,
 			return nil, ctx.Err()
 		}
 
-		conversationIdResp, llmResponse, err := h.llmManager.Generate(ctx, entry, prompt, conversationId)
+		_, conversationIdResp, llmResponse, err := h.llmManager.Generate(ctx, entry, prompt, conversationId)
 		conversationId = conversationIdResp
 
 		if err != nil {

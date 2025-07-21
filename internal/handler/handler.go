@@ -26,6 +26,8 @@ type handler struct {
 	llmManager  llmManager.Manager
 	missfortune missfortune.Service
 	bulbasaur   bulbasaur.Service
+
+	cache map[string]interface{}
 }
 
 func NewHandlerWithDeps(deps Dependency) *handler {
@@ -34,6 +36,7 @@ func NewHandlerWithDeps(deps Dependency) *handler {
 		llmManager:  deps.LLMManager,
 		missfortune: deps.Missfortune,
 		bulbasaur:   deps.Bulbasaur,
+		cache:       make(map[string]interface{}),
 	}
 }
 
