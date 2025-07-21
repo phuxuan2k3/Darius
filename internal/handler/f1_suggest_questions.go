@@ -105,7 +105,10 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 
 		respStr, err := h.llmManager.GetByRequestKey(ctx, req.GetRequestKey())
 		if err != nil {
-			return nil, errors.Error(errors.ErrDataHasNotReady)
+			return &suggest.SuggestExamQuestionResponseV2{
+				RequestKey: req.GetRequestKey(),
+				Questions:  nil,
+			}, nil
 		}
 
 		input := respStr
@@ -131,6 +134,7 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 
 	return &suggest.SuggestExamQuestionResponseV2{
 		RequestKey: req.GetRequestKey(),
+		Questions:  nil,
 	}, nil
 }
 

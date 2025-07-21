@@ -31,7 +31,10 @@ func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.Sugges
 
 		respStr, err := h.llmManager.GetByRequestKey(ctx, req.GetRequestKey())
 		if err != nil {
-			return nil, errors.Error(errors.ErrDataHasNotReady)
+			return &suggest.SuggestExamQuestionResponseV2{
+				RequestKey: req.GetRequestKey(),
+				Questions:  nil,
+			}, nil
 		}
 
 		parsedResponse, err := sanitizeJSON(respStr)
@@ -56,6 +59,7 @@ func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.Sugges
 
 	return &suggest.SuggestExamQuestionResponseV2{
 		RequestKey: req.GetRequestKey(),
+		Questions:  nil,
 	}, nil
 }
 
