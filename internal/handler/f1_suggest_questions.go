@@ -14,6 +14,8 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/google/uuid"
+
 	"go.uber.org/zap"
 )
 
@@ -104,6 +106,7 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 
 		if resp, ok := h.cache[req.GetRequestKey()]; ok {
 			if realResp, ok := resp.(*suggest.SuggestExamQuestionResponseV2); ok {
+				delete(h.cache, req.GetRequestKey())
 				return realResp, nil
 			}
 			zap.L().Error("SuggestQuestions: Cache hit but type assertion failed", zap.Any("requestKey", req.GetRequestKey()))
@@ -124,6 +127,8 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 }
 
 func (h *handler) f1_generate(ctx context.Context, req *suggest.SuggestQuestionsRequest) error {
+
+	req.RequestKey = uuid.New().String()
 	chargeCode, err := h.checkCanCall(ctx, constants.F1_SUGGEST_QUESTIONS)
 	if err != nil {
 		return err

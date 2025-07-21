@@ -4,6 +4,7 @@ go 1.23.6
 
 require (
 	github.com/envoyproxy/protoc-gen-validate v1.1.0
+	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.1
 	github.com/prometheus/client_golang v1.22.0
 	github.com/rabbitmq/amqp091-go v1.10.0
