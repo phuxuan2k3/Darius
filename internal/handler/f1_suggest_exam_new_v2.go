@@ -50,7 +50,7 @@ func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.Sugges
 	}
 
 	req.RequestKey = uuid.New().String()
-	clonedCtx := ctxdata.CloneContextWithValues(ctx, []interface{}{"x-user-id", "x-user-name", "x-user-name", "x-user-role", "x-user-role"})
+	clonedCtx := ctxdata.CloneContextWithValues(ctx)
 
 	go h.f2_generate(clonedCtx, req)
 
@@ -203,7 +203,7 @@ func (h *handler) checkCanCall(ctx context.Context, llmCaller string) (string, e
 	uidStr, _ := ctxdata.GetUserIdFromContext(ctx)
 	uid, err := strconv.ParseUint(uidStr, 10, 64)
 	if err != nil {
-		log.Printf("[SuggestExamQuestion] error parsing user ID: %v", err)
+		log.Printf("[SuggestExamQuestion] error parsing user ID: %v; ", err)
 		return "", h.handleErrorWithStatusCode(ctx, err, errors.ErrInvalidInput)
 	}
 	chargeCode, err := h.bulbasaur.CheckCallingLLM(ctx, uid, amount, desc)

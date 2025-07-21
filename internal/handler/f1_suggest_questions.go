@@ -126,7 +126,7 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 	}
 
 	req.RequestKey = uuid.New().String()
-	clonedCtx := ctxdata.CloneContextWithValues(ctx, []interface{}{"x-user-id", "x-user-name", "x-user-name", "x-user-role", "x-user-role"})
+	clonedCtx := ctxdata.CloneContextWithValues(ctx)
 	go h.f1_generate(clonedCtx, req)
 
 	return &suggest.SuggestExamQuestionResponseV2{
