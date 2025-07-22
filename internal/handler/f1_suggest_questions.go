@@ -125,6 +125,8 @@ func (h *handler) SuggestQuestions(ctx context.Context, req *suggest.SuggestQues
 			return nil, errors.Error(errors.ErrJSONUnmarshalling)
 		}
 
+		questionListResp.RequestKey = req.GetRequestKey()
+
 		return questionListResp, nil
 	}
 

@@ -49,6 +49,8 @@ func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.Sugges
 			return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrJSONUnmarshalling)
 		}
 
+		exam.RequestKey = req.GetRequestKey()
+
 		return exam, nil
 	}
 
