@@ -11,8 +11,6 @@ import (
 	"fmt"
 	"log"
 	"strconv"
-
-	"github.com/google/uuid"
 )
 
 // handleErrorWithStatusCode sets the appropriate HTTP status code and returns the error
@@ -27,48 +25,9 @@ func (h *handler) SuggestExamQuestionV2(ctx context.Context, req *suggest.Sugges
 		req.QuestionType = "MIXED" //default question type
 	}
 
-	if req.GetRequestKey() != "" && len(req.GetRequestKey()) != 0 {
-
-		respStr, err := h.llmManager.GetByRequestKey(ctx, req.GetRequestKey())
-		if err != nil {
-			return &suggest.SuggestExamQuestionResponseV2{
-				RequestKey: req.GetRequestKey(),
-				Questions:  nil,
-			}, nil
-		}
-
-		parsedResponse, err := sanitizeJSON(respStr)
-		if err != nil {
-			return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrJSONParsing)
-		}
-		// Convert the parsed response to the expected format
-		var exam = &suggest.SuggestExamQuestionResponseV2{}
-		err = json.Unmarshal([]byte(parsedResponse), &exam)
-		if err != nil {
-			log.Printf("[SuggestExamQuestion] error unmarshalling JSON: %v", err)
-			return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrJSONUnmarshalling)
-		}
-
-		exam.RequestKey = req.GetRequestKey()
-
-		return exam, nil
-	}
-
-	req.RequestKey = uuid.New().String()
-	clonedCtx := ctxdata.CloneContextWithValues(ctx)
-
-	go h.f2_generate(clonedCtx, req)
-
-	return &suggest.SuggestExamQuestionResponseV2{
-		RequestKey: req.GetRequestKey(),
-		Questions:  nil,
-	}, nil
-}
-
-func (h *handler) f2_generate(ctx context.Context, req *suggest.SuggestExamQuestionRequest) {
 	chargeCode, err := h.checkCanCall(ctx, constants.F1_SUGGEST_EXAM)
 	if err != nil {
-		return
+		return nil, err
 	}
 	log.Printf("[MFT] req: %+v", converters.ConvertExamRequestToMissfortuneRequest(ctx, req))
 	questionsContents, err := h.missfortune.GetExamQuestionContent(ctx, converters.ConvertExamRequestToMissfortuneRequest(ctx, req))
@@ -105,7 +64,7 @@ func (h *handler) f2_generate(ctx context.Context, req *suggest.SuggestExamQuest
 				questionCount += int(topic.GetDifficultyDistribution().GetExpert())
 			}
 		}
-		req.Topics = nil
+		req.Topics = nil // Clear topics to avoid duplication in the prompt
 		prompt = fmt.Sprintf(`
 You are an expert exam question designer. Your task is to generate exactly **%v diverse and high-quality exam questions** based on the structured requirements below. Each question must be either a multiple-choice question (MCQ) or a long-answer (essay-style) question.
 
@@ -184,24 +143,27 @@ Now, generate questions base on the following requirements: %v
 
 	_, llmResponse, err := h.llmManager.Generate(ctx, constants.F1_SUGGEST_EXAM, prompt, req.GetRequestKey(), nil)
 	if err != nil {
-		return
+		return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrNetworkConnection)
 	}
 	parsedResponse, err := sanitizeJSON(llmResponse)
 	if err != nil {
-		return
+		return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrJSONParsing)
 	}
-
+	// Convert the parsed response to the expected format
 	var exam = &suggest.SuggestExamQuestionResponseV2{}
 	err = json.Unmarshal([]byte(parsedResponse), &exam)
 	if err != nil {
 		log.Printf("[SuggestExamQuestion] error unmarshalling JSON: %v", err)
-		return
+		return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrJSONUnmarshalling)
 	}
 
+	// Charge the user for the LLM call
 	if !h.bulbasaur.ChargeCallingLLM(ctx, chargeCode) {
 		log.Printf("[SuggestExamQuestion] Charge Code %s failed to charge for LLM call", chargeCode)
-		return
+		return nil, h.handleErrorWithStatusCode(ctx, err, errors.ErrChargingFailed)
 	}
+
+	return exam, nil
 }
 
 func (h *handler) checkCanCall(ctx context.Context, llmCaller string) (string, error) {
@@ -209,7 +171,7 @@ func (h *handler) checkCanCall(ctx context.Context, llmCaller string) (string, e
 	uidStr, _ := ctxdata.GetUserIdFromContext(ctx)
 	uid, err := strconv.ParseUint(uidStr, 10, 64)
 	if err != nil {
-		log.Printf("[SuggestExamQuestion] error parsing user ID: %v; ", err)
+		log.Printf("[SuggestExamQuestion] error parsing user ID: %v", err)
 		return "", h.handleErrorWithStatusCode(ctx, err, errors.ErrInvalidInput)
 	}
 	chargeCode, err := h.bulbasaur.CheckCallingLLM(ctx, uid, amount, desc)
